@@ -33,6 +33,6 @@ layout (location = 3) in vec4 color;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE RED
+	//Here we take the stored input color (at location 3 in the attributes) and assign it to the returned color.
 	rtFragColor = color;
 }

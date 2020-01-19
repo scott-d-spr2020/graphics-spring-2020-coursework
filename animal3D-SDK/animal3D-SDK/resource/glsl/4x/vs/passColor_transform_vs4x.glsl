@@ -38,7 +38,11 @@ layout (location = 3) out vec4 outFragColor;
 
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
+	//This is a simple operation to map the input position to the proper screen position through multiplication of
+	//the model, view, and projection matrices.
+
+	//We also take in a varying color attribute, and assign our output color to that
+
 	gl_Position = uMVP * aPosition;
 	outFragColor = color;
 }

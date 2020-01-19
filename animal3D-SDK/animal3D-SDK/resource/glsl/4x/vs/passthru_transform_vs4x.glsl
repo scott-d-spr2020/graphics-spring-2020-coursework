@@ -33,7 +33,7 @@ uniform mat4 uMVP;
 
 void main()
 {
-	//declare uMVP somehow
-	// DUMMY OUTPUT: directly assign input position to output position
+	//This is a simple operation to map the input position to the proper screen position through multiplication of
+	//the model, view, and projection matrices.
 	gl_Position = uMVP * aPosition;
 }
