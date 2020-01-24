@@ -31,7 +31,11 @@
 //	4) implement Lambert shading model
 //	Note: test all data and inbound values before using them!
 
+
 out vec4 rtFragColor;
+
+uniform vec4 mainTex;
+
 
 void main()
 {
