@@ -38,24 +38,34 @@
 //	10+) see instructions in passTexcoord...vs4x.glsl for information on 
 //		how to handle the texture coordinate
 
+
+//Layout qualifiers cannot be used in blocks, so no in block.
 layout (location = 0) in vec4 aPosition;
 layout (location = 2) in vec4 aNorm;
 layout (location = 8) in vec4 inTexCoord0;
 
-out vec2 outTexCoord;
-out vec4 outViewPosition;
-out vec4 outNormal;
 
-uniform mat4 uMV;
-uniform mat4 uP;
-uniform mat4 uMV_nrm;
-uniform mat4 uAtlas;
+out VaryingData
+{
+	vec2 outTexCoord;
+	vec4 outViewPosition;
+	vec4 outNormal;
+} outData;
+
+
+uniform UniformMatrices
+{
+	mat4 uMV;
+	mat4 uP;
+	mat4 uMV_nrm;
+	mat4 uAtlas;
+} uniformMatrices;
 
 void main()
 {
-	outViewPosition = uMV * aPosition;
-	outNormal = uMV_nrm * aNorm;
-	outTexCoord = (uAtlas * inTexCoord0).xy;
+	outData.outViewPosition = uniformMatrices.uMV * aPosition;
+	outData.outNormal = uniformMatrices.uMV_nrm * aNorm;
+	outData.outTexCoord = (uniformMatrices.uAtlas * inTexCoord0).xy;
 
-	gl_Position = uP * outViewPosition;
+	gl_Position = uniformMatrices.uP * outData.outViewPosition;
 }
