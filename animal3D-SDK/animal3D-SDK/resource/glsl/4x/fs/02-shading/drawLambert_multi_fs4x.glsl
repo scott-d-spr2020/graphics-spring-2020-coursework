@@ -31,6 +31,8 @@
 //	4) implement Lambert shading model
 //	Note: test all data and inbound values before using them!
 
+const int maxLightCount = 4;
+
 in vec4 outNormal;
 in vec2 outTexCoord;
 in vec4 outViewPosition;
@@ -41,17 +43,17 @@ uniform sampler2D mainTex;
 uniform int uLightCt;
 uniform int uLightSz;
 uniform int uLightSzInvSq;
-uniform vec4 uLightPos;
-uniform vec4 uLightCol;
+uniform vec4 uLightPos[maxLightCount];
+uniform vec4 uLightCol[maxLightCount];
 uniform vec4 uColor;
 
-vec4 CalculateDiffuse(vec4 norm)
+vec4 CalculateDiffuse(vec4 norm, int index)
 {
-	vec4 L_vector = normalize(uLightPos- outViewPosition);
+	vec4 L_vector = normalize(uLightPos[index]- outViewPosition);
 
 	float dotProd = max(0.0f, dot(norm, L_vector));
 
-	vec4 diffuseResult = uLightCol * dotProd;
+	vec4 diffuseResult = uLightCol[index] * dotProd;
 
 	return diffuseResult;
 }
@@ -65,7 +67,7 @@ void main()
 
 	for(int i = 0; i < uLightCt; i++)
 	{
-		vec4 tempDiff = CalculateDiffuse(outNormal_normalized);
+		vec4 tempDiff = CalculateDiffuse(outNormal_normalized, i);
 
 		diffuse += tempDiff;
 	}
