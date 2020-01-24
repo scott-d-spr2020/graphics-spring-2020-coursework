@@ -32,21 +32,43 @@
 //	Note: test all data and inbound values before using them!
 
 in vec4 outNormal;
-in vec4 outTexCoord;
+in vec2 outTexCoord;
 in vec4 outViewPosition;
 
 out vec4 rtFragColor;
 
-uniform vec4 mainTex;
-uniform float uLightCt;
-uniform float uLightSz;
-uniform float uLightSzInvSq;
+uniform sampler2D mainTex;
+uniform int uLightCt;
+uniform int uLightSz;
+uniform int uLightSzInvSq;
 uniform vec4 uLightPos;
 uniform vec4 uLightCol;
 uniform vec4 uColor;
 
+vec4 CalculateDiffuse(vec4 norm)
+{
+	vec4 L_vector = normalize(uLightPos- outViewPosition);
+
+	float dotProd = max(0.0f, dot(norm, L_vector));
+
+	vec4 diffuseResult = uLightCol * dotProd;
+
+	return diffuseResult;
+}
+
 void main()
 {
 	//normalize normal vector
-	rtFragColor = vec4(outNormal.x, outNormal.y, outNormal.z, 1.0);
+	vec4 outNormal_normalized = normalize(outNormal);
+
+	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
+
+	for(int i = 0; i < uLightCt; i++)
+	{
+		vec4 tempDiff = CalculateDiffuse(outNormal_normalized);
+
+		diffuse += tempDiff;
+	}
+
+	rtFragColor = texture(mainTex, outTexCoord) * diffuse;
 }

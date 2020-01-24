@@ -422,7 +422,6 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		lightPos[k] = pointLight->viewPos;
 		lightCol[k] = pointLight->color;
 	}
-	
 
 
 	// support multiple geometry passes
