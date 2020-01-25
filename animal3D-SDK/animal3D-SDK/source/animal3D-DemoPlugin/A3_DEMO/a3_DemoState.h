@@ -109,6 +109,7 @@ extern "C"
 		demoStateForwardShadingMode_Lambert,
 		demoStateForwardShadingMode_Phong,
 		demoStateForwardShadingMode_nonphoto,
+		demoStateForwardShadingMode_Gooch,
 	};
 
 	
