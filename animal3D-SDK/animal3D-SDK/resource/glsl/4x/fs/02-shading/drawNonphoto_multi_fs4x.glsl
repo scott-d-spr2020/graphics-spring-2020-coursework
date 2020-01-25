@@ -33,32 +33,27 @@
 
 const int maxLightCount = 4;
 
-in PassData
-{
-	vec4 outNormal;
-	vec2 outTexCoord;
-	vec4 outViewPosition;
-} inData;
+in vec4 outNormal;
+in vec2 outTexCoord;
+in vec4 outViewPosition;
 
 out vec4 rtFragColor;
 
-uniform LightingUniforms
-{
-	int uLightCt;
-	int uLightSz;
-	int uLightSzInvSq;
-	vec4 uLightPos[maxLightCount];	//In render.c, lines 456-460, the lighting uniforms are sent. Lines 459 and 460 actually send arrays of uLightPos and uLightCol witht the "->v"
-	vec4 uLightCol[maxLightCount];
-} lightData;
+uniform int uLightCt;
+uniform int uLightSz;
+uniform int uLightSzInvSq;
+uniform vec4 uLightPos[maxLightCount];	//In render.c, lines 456-460, the lighting uniforms are sent. Lines 459 and 460 actually send arrays of uLightPos and uLightCol witht the "->v"
+uniform vec4 uLightCol[maxLightCount];
 
 //General uniforms (GLSL forces sampler2D to be outside of blocks).
-uniform sampler1D rampTex;
+uniform sampler2D uTex_dm_ramp;	//Ramp texture for cell shading, only sample X coord
+uniform sampler2D mainTex;
 uniform vec4 uColor;
 
 float CalculateDiffuseCoefficient(vec4 norm, int index)
 {
 	//Just like with the normal vector, the light vector needs to be normalized for a proper dot product
-	vec4 L_vector = normalize(lightData.uLightPos[index]- inData.outViewPosition);
+	vec4 L_vector = normalize(uLightPos[index]- outViewPosition);
 
 	//Like in the book, we need to take the dot product which is the intensity. Color cannot be negative, hence the max.
 	float dotProd = max(0.0f, dot(norm, L_vector));
@@ -75,13 +70,13 @@ float CalculateDiffuseCoefficient(vec4 norm, int index)
 void main()
 {
 	//normalize normal vector to account for scale
-	vec4 outNormal_normalized = normalize(inData.outNormal);
+	vec4 outNormal_normalized = normalize(outNormal);
 
 	float diffuseCoeff = 0.0;
-	for(int i = 0; i < lightData.uLightCt; i++)
+	for(int i = 0; i < uLightCt; i++)
 	{
 		diffuseCoeff += CalculateDiffuseCoefficient(outNormal_normalized, i);
 	}
 
-	rtFragColor = texture(rampTex, diffuseCoeff) * (diffuseCoeff * 0.8 + 0.2);
+	rtFragColor = texture(mainTex, outTexCoord) * texture(uTex_dm_ramp, vec2(diffuseCoeff, 0.0));
 }
