@@ -18,18 +18,11 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 	
-	drawNonphoto_multi_fs4x.glsl
-	Draw nonphotorealistic shading model for multiple lights.
+	drawPhong_multi_fs4x.glsl
+	Draw Phong shading model for multiple lights.
 */
 
 #version 410
-
-// ****TO-DO: 
-//	1) declare uniform variables for textures; see demo code for hints
-//	2) declare uniform variables for lights; see demo code for hints
-//	3) declare inbound varying data
-//	4) implement nonphotorealistic shading model
-//	Note: test all data and inbound values before using them!
 
 const int maxLightCount = 4;
 
@@ -40,46 +33,58 @@ in CoordData
 	vec4 mvNormal;
 } coordData;
 
-out vec4 rtFragColor;
-
+uniform sampler2D mainTex;
 uniform int uLightCt;
 uniform int uLightSz;
 uniform int uLightSzInvSq;
-uniform vec4 uLightPos[maxLightCount];	//In render.c, lines 456-460, the lighting uniforms are sent. Lines 459 and 460 actually send arrays of uLightPos and uLightCol witht the "->v"
+uniform vec4 uLightPos[maxLightCount];
 uniform vec4 uLightCol[maxLightCount];
-
-//General uniforms (GLSL forces sampler2D to be outside of blocks).
-uniform sampler2D uTex_dm_ramp;	//Ramp texture for cell shading, only sample X coord
-uniform sampler2D mainTex;
 uniform vec4 uColor;
 
-float CalculateDiffuseCoefficient(vec4 norm, int index)
+uniform mat4 uMV;
+
+const vec4 cHighlight = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+const vec4 cCool = vec4(0.0f, 0.0f, 0.55f, 1.0f);
+const vec4 cWarm = vec4(0.3f, 0.3f, 0.0f, 1.0f);
+
+// ****TO-DO: 
+//	1) declare uniform variables for textures; see demo code for hints
+//	2) declare uniform variables for lights; see demo code for hints
+//	3) declare inbound varying data
+//	4) implement Phong shading model
+//	Note: test all data and inbound values before using them!
+
+out vec4 rtFragColor;
+
+vec4 CalculateGooch(vec4 n_vector, int index)
 {
-	//Just like with the normal vector, the light vector needs to be normalized for a proper dot product
-	vec4 L_vector = normalize(uLightPos[index]- coordData.mvPosition);
+	vec3 NVec3d = n_vector.xyz;
+	vec3 LVec3d = normalize(uLightPos[index].xyz - coordData.mvPosition.xyz);
+	vec3 VVec3d = normalize(-coordData.mvPosition.xyz);
+	vec3 RVec3d = (2.0f * max(0.0f,dot(NVec3d, LVec3d)) * NVec3d) - LVec3d;
 
-	//Like in the book, we need to take the dot product which is the intensity. Color cannot be negative, hence the max.
-	float dotProd = max(0.0f, dot(norm, L_vector));
+	float t = (dot(NVec3d, LVec3d) + 1.0f)/2.0f;
+	float s = clamp(100.0f * dot(RVec3d, VVec3d) - 97.0f, 0.0f, 1.0f);
 
-	/*
-	For regular diffuse lighting
-	//Multiply the light color by the dot product scalar to get the color
-	//vec4 diffuseResult = lightData.uLightCol[index] * dotProd;
-	//return diffuseResult;
-	*/
-	return dotProd;
+	vec4 surfaceColor = 0.25f * texture(mainTex, coordData.texCoord);
+	vec4 cShaded = s * cHighlight + (1.0f-s)*(t*(cWarm+surfaceColor) + (1.0f-t)*(cCool+surfaceColor));
+	return cShaded;
 }
+
 
 void main()
 {
-	//normalize normal vector to account for scale
-	vec4 outNormal_normalized = normalize(coordData.mvNormal);
+	//this part's the same as Lambert
+	vec4 mvNormal_normalized = normalize(coordData.mvNormal);
 
-	float diffuseCoeff = 0.0;
+	vec4 gooch = vec4(0.0, 0.0, 0.0, 1.0);
+
 	for(int i = 0; i < uLightCt; i++)
 	{
-		diffuseCoeff += CalculateDiffuseCoefficient(outNormal_normalized, i);
+		vec4 tempGooch = CalculateGooch(mvNormal_normalized, i);
+		gooch += tempGooch;
 	}
 
-	rtFragColor = texture(mainTex, coordData.texCoord) * texture(uTex_dm_ramp, vec2(diffuseCoeff, 0.0));
+	rtFragColor.rgb = gooch.rgb;
+
 }
