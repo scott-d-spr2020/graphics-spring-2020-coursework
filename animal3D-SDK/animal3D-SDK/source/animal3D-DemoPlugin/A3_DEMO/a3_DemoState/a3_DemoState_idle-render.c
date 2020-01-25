@@ -139,6 +139,7 @@ void a3demo_render_main_controls(const a3_DemoState *demoState,
 		"Lambert shading",
 		"Phong shading",
 		"Nonphotorealistic shading",
+		"Gooch Shading",
 	};
 
 	// text color
