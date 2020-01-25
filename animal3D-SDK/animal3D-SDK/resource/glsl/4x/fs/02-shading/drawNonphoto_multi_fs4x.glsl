@@ -33,9 +33,12 @@
 
 const int maxLightCount = 4;
 
-in vec4 outNormal;
-in vec2 outTexCoord;
-in vec4 outViewPosition;
+in CoordData
+{
+	vec2 texCoord;
+	vec4 mvPosition;
+	vec4 mvNormal;
+} coordData;
 
 out vec4 rtFragColor;
 
@@ -53,7 +56,7 @@ uniform vec4 uColor;
 float CalculateDiffuseCoefficient(vec4 norm, int index)
 {
 	//Just like with the normal vector, the light vector needs to be normalized for a proper dot product
-	vec4 L_vector = normalize(uLightPos[index]- outViewPosition);
+	vec4 L_vector = normalize(uLightPos[index]- coordData.mvPosition);
 
 	//Like in the book, we need to take the dot product which is the intensity. Color cannot be negative, hence the max.
 	float dotProd = max(0.0f, dot(norm, L_vector));
@@ -70,7 +73,7 @@ float CalculateDiffuseCoefficient(vec4 norm, int index)
 void main()
 {
 	//normalize normal vector to account for scale
-	vec4 outNormal_normalized = normalize(outNormal);
+	vec4 outNormal_normalized = normalize(coordData.mvNormal);
 
 	float diffuseCoeff = 0.0;
 	for(int i = 0; i < uLightCt; i++)
@@ -78,5 +81,5 @@ void main()
 		diffuseCoeff += CalculateDiffuseCoefficient(outNormal_normalized, i);
 	}
 
-	rtFragColor = texture(mainTex, outTexCoord) * texture(uTex_dm_ramp, vec2(diffuseCoeff, 0.0));
+	rtFragColor = texture(mainTex, coordData.texCoord) * texture(uTex_dm_ramp, vec2(diffuseCoeff, 0.0));
 }

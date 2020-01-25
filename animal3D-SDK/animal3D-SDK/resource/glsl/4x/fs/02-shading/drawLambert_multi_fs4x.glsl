@@ -33,9 +33,12 @@
 
 const int maxLightCount = 4;
 
-in vec4 outNormal;
-in vec2 outTexCoord;
-in vec4 outViewPosition;
+in CoordData
+{
+	vec2 texCoord;
+	vec4 mvPosition;
+	vec4 mvNormal;
+} coordData;
 
 out vec4 rtFragColor;
 
@@ -49,7 +52,7 @@ uniform vec4 uColor;
 
 vec4 CalculateDiffuse(vec4 norm, int index)
 {
-	vec4 L_vector = normalize(uLightPos[index]- outViewPosition);
+	vec4 L_vector = normalize(uLightPos[index]- coordData.mvPosition);
 
 	float dotProd = max(0.0f, dot(norm, L_vector));
 
@@ -61,16 +64,16 @@ vec4 CalculateDiffuse(vec4 norm, int index)
 void main()
 {
 	//normalize normal vector
-	vec4 outNormal_normalized = normalize(outNormal);
+	vec4 mvNormal_normalized = normalize(coordData.mvNormal);
 
 	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
 
 	for(int i = 0; i < uLightCt; i++)
 	{
-		vec4 tempDiff = CalculateDiffuse(outNormal_normalized, i);
+		vec4 tempDiff = CalculateDiffuse(mvNormal_normalized, i);
 
 		diffuse += tempDiff;
 	}
 
-	rtFragColor = texture(mainTex, outTexCoord) * diffuse;
+	rtFragColor = texture(mainTex, coordData.texCoord) * diffuse;
 }

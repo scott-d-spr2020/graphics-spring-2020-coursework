@@ -42,9 +42,12 @@ layout (location = 0) in vec4 aPosition;
 layout (location = 2) in vec4 aNorm;
 layout (location = 8) in vec4 inTexCoord0;
 
-out vec2 outTexCoord;
-out vec4 outViewPosition;
-out vec4 outNormal;
+out CoordData
+{
+	vec2 texCoord;
+	vec4 mvPosition;
+	vec4 mvNormal;
+} coordData;
 
 uniform mat4 uMV;
 uniform mat4 uP;
@@ -53,9 +56,9 @@ uniform mat4 uAtlas;
 
 void main()
 {
-	outViewPosition = uMV * aPosition;
-	outNormal = uMV_nrm * aNorm;
-	outTexCoord = (uAtlas * inTexCoord0).xy;
+	coordData.mvPosition = uMV * aPosition;
+	coordData.mvNormal = uMV_nrm * aNorm;
+	coordData.texCoord = (uAtlas * inTexCoord0).xy;
 
-	gl_Position = uP * outViewPosition;
+	gl_Position = uP * coordData.mvPosition;
 }
