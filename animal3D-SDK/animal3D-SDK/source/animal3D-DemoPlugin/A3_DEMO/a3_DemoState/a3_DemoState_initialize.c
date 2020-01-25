@@ -125,7 +125,7 @@ void a3demo_initScene(a3_DemoState *demoState)
 	// shading mode
 	demoState->lightingPipelineMode = demoStatePipelineMode_forward;
 	demoState->forwardShadingMode = demoStateForwardShadingMode_solid;
-	demoState->forwardShadingModeCount = 5;
+	demoState->forwardShadingModeCount = 6;
 
 
 	// lights
