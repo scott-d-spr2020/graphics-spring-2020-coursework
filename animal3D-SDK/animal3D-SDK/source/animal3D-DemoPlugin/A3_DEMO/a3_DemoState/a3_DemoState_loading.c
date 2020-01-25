@@ -527,7 +527,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawLambert_multi_fs->shader);
 	
 	// ****TO-DO: 
-	//	-> 4.1b: Phong shading program initialization
+	//	-> 4.1a: Phong shading program initialization
 	
 	// Phong shading program
 	currentDemoProg = demoState->prog_drawPhong_multi;
@@ -536,7 +536,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_multi_fs->shader);
 	
 	// ****TO-DO: 
-	//	-> 2.1b: nonphotorealistic shading program initialization
+	//	-> 2.1a: nonphotorealistic shading program initialization
 //	/*
 	// nonphotorealistic shading program
 	currentDemoProg = demoState->prog_drawNonphoto_multi;
