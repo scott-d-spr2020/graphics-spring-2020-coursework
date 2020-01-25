@@ -547,6 +547,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawNonphoto_multi_fs->shader);
 //	*/
 
+	//Adding Gooch shader because why not
+	currentDemoProg = demoState->prog_drawGooch_multi;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Gooch-multi");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawGooch_multi_fs->shader);
+
 
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs
