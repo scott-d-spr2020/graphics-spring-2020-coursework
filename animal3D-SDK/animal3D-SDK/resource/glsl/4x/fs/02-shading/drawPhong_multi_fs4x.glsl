@@ -49,7 +49,7 @@ uniform mat4 uMV;
 
 out vec4 rtFragColor;
 
-const int power = 128;
+const int power = 16;
 
 vec4 CalculateDiffuse(vec4 norm, int index)
 {
@@ -64,12 +64,11 @@ vec4 CalculateDiffuse(vec4 norm, int index)
 
 vec4 CalculateSpecular(vec4 n_vector, int index)
 {
-	vec3 cameraPos = vec3(1.0f,1.0f,0.0f);
 	vec3 NVec3d = n_vector.xyz;
 	vec3 LVec3d = normalize(uLightPos[index].xyz - outViewPosition.xyz);
-	vec3 VVec3d = normalize(cameraPos - outViewPosition.xyz);
-	vec3 RVec3d = (2.0f * dot(NVec3d, LVec3d) * NVec3d) - LVec3d;
-	return pow(dot(VVec3d, RVec3d), power) * uLightCol[index];
+	vec3 VVec3d = normalize(-outViewPosition.xyz);
+	vec3 RVec3d = (2.0f * max(0.0f,dot(NVec3d, LVec3d)) * NVec3d) - LVec3d;
+	return pow(max(0.0f, dot(VVec3d, RVec3d)), power) * uLightCol[index];
 }
 
 
@@ -89,7 +88,7 @@ void main()
 		diffuse += tempDiff;
 	}
 	vec4 diffColor = texture(mainTex, outTexCoord) * diffuse;
-	vec4 phongColor = texture(mainTex, outTexCoord) * CalculateSpecular(outNormal_normalized, 0);
+	vec4 phongColor = texture(mainTex, outTexCoord) * specular;
 	rtFragColor.rgb = diffColor.rgb + phongColor.rgb;
 
 }
