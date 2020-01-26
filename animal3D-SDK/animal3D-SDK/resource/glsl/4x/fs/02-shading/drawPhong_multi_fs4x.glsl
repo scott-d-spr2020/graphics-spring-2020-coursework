@@ -53,6 +53,7 @@ uniform mat4 uMV;
 out vec4 rtFragColor;
 
 const int power = 16;
+const vec3 ambientColor = vec3(0.1f);
 
 vec4 CalculateDiffuse(vec4 norm, int index)
 {
@@ -92,6 +93,6 @@ void main()
 	}
 	vec4 diffColor = texture(mainTex, coordData.texCoord) * diffuse;
 	vec4 phongColor = texture(mainTex, coordData.texCoord) * specular;
-	rtFragColor.rgb = diffColor.rgb + phongColor.rgb;
+	rtFragColor.rgb = diffColor.rgb + phongColor.rgb + (0.3f * ambientColor);
 
 }
