@@ -33,6 +33,9 @@
 //	5) set location of final color render target (location 0)
 //	6) declare render targets for each attribute and shading component
 
+
+
+
 out vec4 rtFragColor;
 
 void main()
