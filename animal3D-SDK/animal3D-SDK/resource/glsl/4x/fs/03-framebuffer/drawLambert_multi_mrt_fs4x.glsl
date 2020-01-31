@@ -79,5 +79,6 @@ void main()
 		diffuse += tempDiff;
 	}
 
-	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	rtFragColor = texture(mainTex, coordData.texCoord) * diffuse;
+	rtTexCoord = vec4(coordData.texCoord, 0.0, 1.0);
 }
