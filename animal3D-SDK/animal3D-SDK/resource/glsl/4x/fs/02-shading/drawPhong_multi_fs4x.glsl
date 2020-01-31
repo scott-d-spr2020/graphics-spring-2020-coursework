@@ -95,5 +95,4 @@ void main()
 	vec4 diffColor = texture(mainTex, coordData.texCoord) * diffuse;
 	vec4 specularColor = texture(mainTex, coordData.texCoord) * specular;
 	rtFragColor.rgb = diffColor.rgb + specularColor.rgb + (0.3f * ambientColor);
-
 }

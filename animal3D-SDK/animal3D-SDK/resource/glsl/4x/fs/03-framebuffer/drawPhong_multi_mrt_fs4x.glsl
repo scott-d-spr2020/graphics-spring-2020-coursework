@@ -58,23 +58,22 @@ out vec4 rtFragColor;
 const int power = 16;
 const vec3 ambientColor = vec3(0.1f);
 
-vec4 CalculateDiffuse(vec4 norm, int index)
+vec4 CalculateDiffuse(vec4 norm, int index, out vec4 LVec)
 {
-	vec4 L_vector = normalize(uLightPos[index]- coordData.mvPosition);
+	LVec = normalize(uLightPos[index]- coordData.mvPosition);
 
-	float dotProd = max(0.0f, dot(norm, L_vector));
+	float dotProd = max(0.0f, dot(norm, LVec));
 
 	vec4 diffuseResult = uLightCol[index] * dotProd;
 
 	return diffuseResult;
 }
 
-vec4 CalculateSpecular(vec4 n_vector, int index)
+vec4 CalculateSpecular(vec4 n_vector, int index, vec4 LVec, vec3 VVec3d)
 {
 	vec3 NVec3d = n_vector.xyz;
-	vec3 LVec3d = normalize(uLightPos[index].xyz - coordData.mvPosition.xyz);
-	vec3 VVec3d = normalize(-coordData.mvPosition.xyz);
-	vec3 RVec3d = (2.0f * max(0.0f,dot(NVec3d, LVec3d)) * NVec3d) - LVec3d;
+	vec3 LVec3d = LVec.xyz; //unsure if this is actually necessary
+	vec3 RVec3d = (2.0f * dot(NVec3d, LVec3d) * NVec3d) - LVec3d;
 	return pow(max(0.0f, dot(VVec3d, RVec3d)), power) * uLightCol[index];
 }
 
@@ -86,17 +85,16 @@ void main()
 
 	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
 	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
-
+	vec3 VVec3d = normalize(-coordData.mvPosition.xyz);
 	for(int i = 0; i < uLightCt; i++)
 	{
-		vec4 tempDiff = CalculateDiffuse(mvNormal_normalized, i);
-		vec4 tempSpec = CalculateSpecular(mvNormal_normalized, i);
+		vec4 LVecI;
+		vec4 tempDiff = CalculateDiffuse(mvNormal_normalized, i, LVecI);
+		vec4 tempSpec = CalculateSpecular(mvNormal_normalized, i, LVecI, VVec3d);
 		specular += tempSpec;
 		diffuse += tempDiff;
 	}
 	vec4 diffColor = texture(mainTex, coordData.texCoord) * diffuse;
-	vec4 phongColor = texture(mainTex, coordData.texCoord) * specular;
-	rtFragColor.rgb = diffColor.rgb + phongColor.rgb + (0.3f * ambientColor);
-
+	vec4 specularColor = texture(mainTex, coordData.texCoord) * specular;
+	rtFragColor.rgb = diffColor.rgb + specularColor.rgb + (0.3f * ambientColor);
 }
-
