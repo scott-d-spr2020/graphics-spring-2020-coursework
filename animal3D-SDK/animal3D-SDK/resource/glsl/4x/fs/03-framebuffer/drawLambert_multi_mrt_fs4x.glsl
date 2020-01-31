@@ -33,13 +33,51 @@
 //	5) set location of final color render target (location 0)
 //	6) declare render targets for each attribute and shading component
 
+const int maxLightCount = 4;
+
+in CoordData
+{
+	vec2 texCoord;
+	vec4 mvPosition;
+	vec4 mvNormal;
+} coordData;
+
+layout (location = 0) out vec4 rtFragColor;
+layout (location = 3) out vec4 rtTexCoord;
 
 
+uniform sampler2D mainTex;
+uniform int uLightCt;
+uniform int uLightSz;
+uniform int uLightSzInvSq;
+uniform vec4 uLightPos[maxLightCount];
+uniform vec4 uLightCol[maxLightCount];
+uniform vec4 uColor;
 
-out vec4 rtFragColor;
+vec4 CalculateDiffuse(vec4 norm, int index)
+{
+	vec4 L_vector = normalize(uLightPos[index]- coordData.mvPosition);
+
+	float dotProd = max(0.0f, dot(norm, L_vector));
+
+	vec4 diffuseResult = uLightCol[index] * dotProd;
+
+	return diffuseResult;
+}
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE RED
+	//normalize normal vector
+	vec4 mvNormal_normalized = normalize(coordData.mvNormal);
+
+	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
+
+	for(int i = 0; i < uLightCt; i++)
+	{
+		vec4 tempDiff = CalculateDiffuse(mvNormal_normalized, i);
+
+		diffuse += tempDiff;
+	}
+
 	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }
