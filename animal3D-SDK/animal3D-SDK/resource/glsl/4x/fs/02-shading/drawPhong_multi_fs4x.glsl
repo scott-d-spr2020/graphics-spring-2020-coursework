@@ -24,6 +24,26 @@
 
 #version 410
 
+//code taken from Lab 2
+const int maxLightCount = 4;
+
+in CoordData
+{
+	vec2 texCoord;
+	vec4 mvPosition;
+	vec4 mvNormal;
+} coordData;
+
+uniform sampler2D mainTex;
+uniform int uLightCt;
+uniform int uLightSz;
+uniform int uLightSzInvSq;
+uniform vec4 uLightPos[maxLightCount];
+uniform vec4 uLightCol[maxLightCount];
+uniform vec4 uColor;
+
+uniform mat4 uMV;
+
 // ****TO-DO: 
 //	1) declare uniform variables for textures; see demo code for hints
 //	2) declare uniform variables for lights; see demo code for hints
@@ -33,8 +53,47 @@
 
 out vec4 rtFragColor;
 
+const int power = 16;
+const vec3 ambientColor = vec3(0.1f);
+
+vec4 CalculateDiffuse(vec4 norm, int index)
+{
+	vec4 L_vector = normalize(uLightPos[index]- coordData.mvPosition);
+
+	float dotProd = max(0.0f, dot(norm, L_vector));
+
+	vec4 diffuseResult = uLightCol[index] * dotProd;
+
+	return diffuseResult;
+}
+
+vec4 CalculateSpecular(vec4 n_vector, int index)
+{
+	vec3 NVec3d = n_vector.xyz;
+	vec3 LVec3d = normalize(uLightPos[index].xyz - coordData.mvPosition.xyz);
+	vec3 VVec3d = normalize(-coordData.mvPosition.xyz);
+	vec3 RVec3d = (2.0f * max(0.0f,dot(NVec3d, LVec3d)) * NVec3d) - LVec3d;
+	return pow(max(0.0f, dot(VVec3d, RVec3d)), power) * uLightCol[index];
+}
+
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
-	rtFragColor = vec4(0.0, 1.0, 0.0, 1.0);
+	//this part's the same as Lambert
+	vec4 mvNormal_normalized = normalize(coordData.mvNormal);
+
+	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
+	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
+
+	for(int i = 0; i < uLightCt; i++)
+	{
+		vec4 tempDiff = CalculateDiffuse(mvNormal_normalized, i);
+		vec4 tempSpec = CalculateSpecular(mvNormal_normalized, i);
+		specular += tempSpec;
+		diffuse += tempDiff;
+	}
+	vec4 diffColor = texture(mainTex, coordData.texCoord) * diffuse;
+	vec4 phongColor = texture(mainTex, coordData.texCoord) * specular;
+	rtFragColor.rgb = diffColor.rgb + phongColor.rgb + (0.3f * ambientColor);
+
 }
