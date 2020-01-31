@@ -58,22 +58,29 @@ out vec4 rtFragColor;
 const int power = 16;
 const vec3 ambientColor = vec3(0.1f);
 
-vec4 CalculateDiffuse(vec4 norm, int index, out vec4 LVec)
+struct LambertData
 {
-	LVec = normalize(uLightPos[index]- coordData.mvPosition);
+	vec4 LVec;
+	float dotProd_LN;
+};
 
-	float dotProd = max(0.0f, dot(norm, LVec));
+vec4 CalculateDiffuse(vec4 NVec, int index, out LambertData lambert)
+{
+	vec4 LVec = normalize(uLightPos[index]- coordData.mvPosition); //w coord is zero, probably
+	float dotProd_LN = dot(NVec, LVec);
+	lambert = LambertData(LVec, dotProd_LN);
+	float dotProd = max(0.0f, dotProd_LN);
 
 	vec4 diffuseResult = uLightCol[index] * dotProd;
 
 	return diffuseResult;
 }
 
-vec4 CalculateSpecular(vec4 n_vector, int index, vec4 LVec, vec3 VVec3d)
+vec4 CalculateSpecular(vec4 NVec, int index, LambertData lambert, vec3 VVec3d)
 {
-	vec3 NVec3d = n_vector.xyz;
-	vec3 LVec3d = LVec.xyz; //unsure if this is actually necessary
-	vec3 RVec3d = (2.0f * dot(NVec3d, LVec3d) * NVec3d) - LVec3d;
+	vec3 NVec3d = NVec.xyz;
+	vec3 LVec3d = lambert.LVec.xyz; //unsure if this is actually necessary
+	vec3 RVec3d = (2.0f * lambert.dotProd_LN * NVec3d) - LVec3d;
 	return pow(max(0.0f, dot(VVec3d, RVec3d)), power) * uLightCol[index];
 }
 
@@ -88,9 +95,9 @@ void main()
 	vec3 VVec3d = normalize(-coordData.mvPosition.xyz);
 	for(int i = 0; i < uLightCt; i++)
 	{
-		vec4 LVecI;
-		vec4 tempDiff = CalculateDiffuse(mvNormal_normalized, i, LVecI);
-		vec4 tempSpec = CalculateSpecular(mvNormal_normalized, i, LVecI, VVec3d);
+		LambertData lambert;
+		vec4 tempDiff = CalculateDiffuse(mvNormal_normalized, i, lambert);
+		vec4 tempSpec = CalculateSpecular(mvNormal_normalized, i, lambert, VVec3d);
 		specular += tempSpec;
 		diffuse += tempDiff;
 	}
