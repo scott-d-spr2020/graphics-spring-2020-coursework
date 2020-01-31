@@ -18,8 +18,8 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 	
-	drawTexture_mrt_fs4x.glsl
-	Draw texture sample with MRT output.
+	drawTexture_fs4x.glsl
+	Draw texture sample.
 */
 
 #version 410
@@ -28,20 +28,17 @@
 //	1) declare uniform variable for texture; see demo code for hints
 //	2) declare inbound varying for texture coordinate
 //	3) sample texture using texture coordinate
-//	4) assign sample to output render target (location 0)
-//	5) declare new render target (location 3) and output texcoord
-
-//out vec4 rtFragColor;
-
-in vec2 vTexCoord;
-uniform sampler2D uTex_dm;
+//	4) assign sample to output color
 
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 3) out vec4 rtTexCoord;
 
+in vec2 outTexCoord;
+
+uniform sampler2D mainTex;
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE WHITE
-	rtFragColor = vec4(1.0, 1.0, 1.0, 1.0);
-	rtTexCoord = vec4(vTexCoord, 0.0, 1.0);
+	rtFragColor = texture(mainTex, outTexCoord);
+	rtTexCoord = vec4(outTexCoord, 0.0, 1.0);
 }
