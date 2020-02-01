@@ -38,34 +38,18 @@ const float radius = 0.25f;
 const vec2 center = vec2(0.5f);
 uniform double uTime;
 
-
-vec2 ccwRot(vec2 coord, vec2 origin, float time)
-{
-    vec2 currDir = coord - origin;
-    float currAngle = atan(currDir.y/currDir.x);
-	float dist = length(currDir);
-	vec2 newDir = vec2(cos(currAngle + time), sin(currAngle + time));
-	return origin + (newDir * dist);
-}
-
-vec2 cwRot(vec2 coord, vec2 origin, float time)
-{
-    vec2 currDir = coord - origin;
-    float currAngle = atan(currDir.y/currDir.x);
-	float dist = length(currDir);
-	vec2 newDir = vec2(cos(currAngle + time), -sin(currAngle + time));
-	return origin + (newDir * dist);
-}
-
-
-
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE DARK GREY
-	float stepOutput = step(distance(outTexCoord, center), 0.25f);
 	float fTime = 0.1f * float(uTime);
-	vec2 ccwTexCoord = ccwRot(outTexCoord, center, fTime);
-	vec2 cwTexCoord = cwRot(outTexCoord, center, fTime);
+	vec2 currDir = outTexCoord - center;
+    float currAngle = atan(currDir.y/currDir.x);
+	float dist = length(currDir);
+	float newAngle = currAngle + fTime;
+	//two new texcoords
+	vec2 ccwTexCoord = center + vec2(cos(newAngle), sin(newAngle)) * dist;
+	vec2 cwTexCoord = center + vec2(cos(newAngle), -sin(newAngle)) * dist;
+	float stepOutput = step(distance(outTexCoord, center), radius);
+
 	vec2 tempTexCoord = (stepOutput * ccwTexCoord + ((1.0f - stepOutput) * cwTexCoord));
 	rtFragColor = texture(mainTex, tempTexCoord);
 }
