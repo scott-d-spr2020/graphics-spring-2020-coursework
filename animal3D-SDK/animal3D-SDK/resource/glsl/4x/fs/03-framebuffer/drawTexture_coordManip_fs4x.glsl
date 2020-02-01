@@ -32,9 +32,40 @@
 //	5) assign sample to output color
 
 out vec4 rtFragColor;
+uniform sampler2D mainTex;
+in vec2 outTexCoord;
+const float radius = 0.25f;
+const vec2 center = vec2(0.5f);
+uniform double uTime;
+
+
+vec2 ccwRot(vec2 coord, vec2 origin, float time)
+{
+    vec2 currDir = coord - origin;
+    float currAngle = atan(currDir.y/currDir.x);
+	float dist = length(currDir);
+	vec2 newDir = vec2(cos(currAngle + time), sin(currAngle + time));
+	return origin + (newDir * dist);
+}
+
+vec2 cwRot(vec2 coord, vec2 origin, float time)
+{
+    vec2 currDir = coord - origin;
+    float currAngle = atan(currDir.y/currDir.x);
+	float dist = length(currDir);
+	vec2 newDir = vec2(cos(currAngle + time), -sin(currAngle + time));
+	return origin + (newDir * dist);
+}
+
+
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE DARK GREY
-	rtFragColor = vec4(0.2, 0.2, 0.2, 1.0);
+	float stepOutput = step(distance(outTexCoord, center), 0.25f);
+	float fTime = 0.1f * float(uTime);
+	vec2 ccwTexCoord = ccwRot(outTexCoord, center, fTime);
+	vec2 cwTexCoord = cwRot(outTexCoord, center, fTime);
+	vec2 tempTexCoord = (stepOutput * ccwTexCoord + ((1.0f - stepOutput) * cwTexCoord));
+	rtFragColor = texture(mainTex, tempTexCoord);
 }
