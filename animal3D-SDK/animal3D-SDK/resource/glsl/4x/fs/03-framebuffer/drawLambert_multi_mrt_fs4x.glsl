@@ -43,8 +43,9 @@ in CoordData
 } coordData;
 
 layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtViewPosition;
+layout (location = 2) out vec4 rtNormal;
 layout (location = 3) out vec4 rtTexCoord;
-
 
 uniform sampler2D mainTex;
 uniform int uLightCt;
@@ -81,4 +82,6 @@ void main()
 
 	rtFragColor = texture(mainTex, coordData.texCoord) * diffuse;
 	rtTexCoord = vec4(coordData.texCoord, 0.0, 1.0);
+	rtNormal = vec4(mvNormal_normalized.x, mvNormal_normalized.y, mvNormal_normalized.z, 1.0);
+	rtViewPosition = coordData.mvPosition;
 }
