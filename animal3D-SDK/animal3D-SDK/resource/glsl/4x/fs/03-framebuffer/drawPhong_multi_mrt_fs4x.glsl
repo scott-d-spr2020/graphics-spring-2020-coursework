@@ -35,6 +35,7 @@ in CoordData
 } coordData;
 
 uniform sampler2D mainTex;
+uniform sampler2D uTex_sm_Ramp;
 uniform int uLightCt;
 uniform int uLightSz;
 uniform int uLightSzInvSq;
@@ -53,7 +54,14 @@ uniform mat4 uMV;
 //	5) set location of final color render target (location 0)
 //	6) declare render targets for each attribute and shading component
 
-out vec4 rtFragColor;
+layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtViewPosition;
+layout (location = 2) out vec4 rtNormal;
+layout (location = 3) out vec4 rtTexCoord;
+layout (location = 4) out vec4 rtDiffuseMap;
+layout (location = 5) out vec4 rtSpecularMap;
+layout (location = 6) out vec4 rtDiffuseTotal;
+layout (location = 7) out vec4 rtSpecularTotal;
 
 const int power = 16;
 const vec3 ambientColor = vec3(0.1f);
@@ -76,12 +84,13 @@ vec4 CalculateDiffuse(vec4 NVec, int index, out LambertData lambert)
 	return diffuseResult;
 }
 
-vec4 CalculateSpecular(vec4 NVec, int index, LambertData lambert, vec3 VVec3d)
+vec4 CalculateSpecular(vec4 NVec, int index, LambertData lambert, vec3 VVec3d, out float specValue)
 {
 	vec3 NVec3d = NVec.xyz;
 	vec3 LVec3d = lambert.LVec.xyz; //unsure if this is actually necessary
 	vec3 RVec3d = (2.0f * lambert.dotProd_LN * NVec3d) - LVec3d;
-	return pow(max(0.0f, dot(VVec3d, RVec3d)), power) * uLightCol[index];
+	specValue = pow(max(0.0f, dot(VVec3d, RVec3d)), power);
+	return specValue * uLightCol[index];
 }
 
 
@@ -92,16 +101,25 @@ void main()
 
 	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
 	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
+	float specVal = 0.0f;
 	vec3 VVec3d = normalize(-coordData.mvPosition.xyz);
 	for(int i = 0; i < uLightCt; i++)
 	{
 		LambertData lambert;
 		vec4 tempDiff = CalculateDiffuse(mvNormal_normalized, i, lambert);
-		vec4 tempSpec = CalculateSpecular(mvNormal_normalized, i, lambert, VVec3d);
+		vec4 tempSpec = CalculateSpecular(mvNormal_normalized, i, lambert, VVec3d, specVal);
 		specular += tempSpec;
 		diffuse += tempDiff;
 	}
 	vec4 diffColor = texture(mainTex, coordData.texCoord) * diffuse;
 	vec4 specularColor = texture(mainTex, coordData.texCoord) * specular;
-	rtFragColor.rgb = diffColor.rgb + specularColor.rgb + (0.3f * ambientColor);
+
+	rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.3f * ambientColor), 1.0);
+	rtViewPosition = coordData.mvPosition;
+	rtNormal =  vec4(mvNormal_normalized.xyz, 1.0);
+	rtTexCoord = vec4(coordData.texCoord, 0.0, 1.0);
+	rtDiffuseMap = texture(mainTex, coordData.texCoord);
+	rtSpecularMap = texture(uTex_sm_Ramp, vec2(specVal, 0.0));
+	rtDiffuseTotal = diffuse;
+	rtSpecularTotal = specular;
 }

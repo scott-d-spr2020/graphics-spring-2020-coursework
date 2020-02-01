@@ -84,7 +84,7 @@ void main()
 
 	rtFragColor = texture(mainTex, coordData.texCoord) * diffuse;
 	rtTexCoord = vec4(coordData.texCoord, 0.0, 1.0);
-	rtNormal = vec4(mvNormal_normalized.x, mvNormal_normalized.y, mvNormal_normalized.z, 1.0);
+	rtNormal = vec4(mvNormal_normalized.xyz, 1.0);
 	rtViewPosition = coordData.mvPosition;
 	rtDiffuseMap = texture(mainTex, coordData.texCoord);
 	rtDiffuseTotal = diffuse;
