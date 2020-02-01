@@ -35,7 +35,7 @@ in CoordData
 } coordData;
 
 uniform sampler2D mainTex;
-uniform sampler2D uTex_sm_Ramp;
+uniform sampler2D uTex_sm;
 uniform int uLightCt;
 uniform int uLightSz;
 uniform int uLightSzInvSq;
@@ -119,7 +119,7 @@ void main()
 	rtNormal =  vec4(mvNormal_normalized.xyz, 1.0);
 	rtTexCoord = vec4(coordData.texCoord, 0.0, 1.0);
 	rtDiffuseMap = texture(mainTex, coordData.texCoord);
-	rtSpecularMap = texture(uTex_sm_Ramp, vec2(specVal, 0.0));
+	rtSpecularMap = texture(uTex_sm, coordData.texCoord);
 	rtDiffuseTotal = diffuse;
 	rtSpecularTotal = specular;
 }
