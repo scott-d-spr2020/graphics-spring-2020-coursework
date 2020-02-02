@@ -209,13 +209,16 @@
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\a3_dylib_config_export.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\resource\glsl\4x\fs\02-shading\drawGooch_multi_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\02-shading\drawLambert_multi_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\02-shading\drawNonphoto_multi_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\02-shading\drawPhong_multi_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\02-shading\drawTexture_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\fs\03-framebuffer\drawGooch_multi_mrt_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\03-framebuffer\drawLambert_multi_mrt_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\03-framebuffer\drawNonphoto_multi_mrt_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\03-framebuffer\drawPhong_multi_mrt_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\fs\03-framebuffer\drawTexture_allManip_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\03-framebuffer\drawTexture_colorManip_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\03-framebuffer\drawTexture_coordManip_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\03-framebuffer\drawTexture_mrt_fs4x.glsl" />
