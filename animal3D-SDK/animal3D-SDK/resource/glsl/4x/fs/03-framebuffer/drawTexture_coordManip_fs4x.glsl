@@ -42,12 +42,13 @@ void main()
 {
 	float fTime = 0.1f * float(uTime);
 	vec2 currDir = outTexCoord - center;
-    float currAngle = atan(currDir.y/currDir.x);
+    float currAngle = atan(currDir.y,currDir.x);
 	float dist = length(currDir);
-	float newAngle = currAngle + fTime;
+	float ccwAngle = currAngle + fTime;
+	float cwAngle = currAngle - fTime;
 	//two new texcoords
-	vec2 ccwTexCoord = center + vec2(cos(newAngle), sin(newAngle)) * dist;
-	vec2 cwTexCoord = center + vec2(cos(newAngle), -sin(newAngle)) * dist;
+	vec2 ccwTexCoord = center + vec2(cos(ccwAngle), sin(ccwAngle)) * dist;
+	vec2 cwTexCoord = center + vec2(cos(cwAngle), sin(cwAngle)) * dist;
 	float stepOutput = step(distance(outTexCoord, center), radius);
 
 	vec2 tempTexCoord = (stepOutput * ccwTexCoord + ((1.0f - stepOutput) * cwTexCoord));
