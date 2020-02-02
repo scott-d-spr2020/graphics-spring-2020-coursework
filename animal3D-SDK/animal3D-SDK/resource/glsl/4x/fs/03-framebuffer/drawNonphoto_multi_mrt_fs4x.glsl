@@ -69,12 +69,14 @@ uniform sampler2D uTex_sm;
 uniform sampler2D mainTex;
 uniform vec4 uColor;
 
-vec4 CalculateDiffuse(vec4 NVec, int index, out LambertData lambert)
+vec4 CalculateDiffuse(vec4 NVec, int index, out LambertData lambert, out float dotProduct)
 {
 	vec4 LVec = normalize(uLightPos[index]- coordData.mvPosition); //w coord is zero, probably
 	float dotProd_LN = dot(NVec, LVec);
 	lambert = LambertData(LVec, dotProd_LN);
 	float dotProd = max(0.0f, dotProd_LN);
+
+	dotProduct = dotProd;
 
 	vec4 diffuseResult = uLightCol[index] * dotProd;
 
@@ -107,10 +109,10 @@ void main()
 		LambertData lambert;
 		float tempDiffuseCoeff, tempSpecCoeff;
 
-		diffuseLighting += CalculateDiffuse(outNormal_normalized, i, lambert);
+		diffuseLighting += CalculateDiffuse(outNormal_normalized, i, lambert, tempDiffuseCoeff);
 		specularLighting += CalculateSpecular(outNormal_normalized, i, lambert, VVec3d, tempSpecCoeff);
 
-		diffuseCoeff += lambert.dotProd_LN;
+		diffuseCoeff += tempDiffuseCoeff;
 		specularCoeff += tempSpecCoeff;
 	}
 
@@ -121,12 +123,12 @@ void main()
 	vec4 diffColor = mainSample * diffuseLighting;
 	vec4 specularColor = specularSample * specularLighting;
 
-	rtFragColor = vec4((rampSample.rgb * diffColor.rgb) + specularColor.rgb + (0.05f * ambientColor), 1.0);
+	rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.05f * ambientColor), 1.0) * rampSample;
 	rtViewPosition = coordData.mvPosition;
 	rtNormal = vec4(outNormal_normalized.xyz, 1.0);
 	rtTexCoord = vec4(coordData.texCoord, 0.0, 1.0);
 	rtDiffuseMap = mainSample;
 	rtSpecularMap = specularSample;
-	rtDiffuseTotal = rampSample * diffuseLighting;
+	rtDiffuseTotal = diffuseLighting;
 	rtSpecularTotal = specularColor;
 }
