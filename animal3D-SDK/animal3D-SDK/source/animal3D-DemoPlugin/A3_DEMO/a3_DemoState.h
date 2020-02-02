@@ -132,7 +132,7 @@ extern "C"
 		demoStateForwardShadingMode_Lambert,
 		demoStateForwardShadingMode_Phong,
 		demoStateForwardShadingMode_nonphoto,
-
+		demoStateForwardShadingMode_Gooch,
 		demoStateForwardShadingModeMax
 	};
 
@@ -142,7 +142,7 @@ extern "C"
 		demoStateForwardDisplayMode_texture,
 		demoStateForwardDisplayMode_texture_colorManip,
 		demoStateForwardDisplayMode_texture_texcoordManip,
-
+		demoStateForwardDisplayMode_texture_allManip,
 		demoStateForwardDisplayModeMax
 	};
 
@@ -333,6 +333,7 @@ extern "C"
 					prog_drawColorAttrib[1],					// draw color attribute
 					prog_drawColorUnif[1];						// draw uniform color
 				a3_DemoStateShaderProgram
+					prog_drawGooch_multi[1],					// draw Gooch, multiple lights
 					prog_drawNonphoto_multi[1],					// draw non-photorealistic shading model, multiple lights
 					prog_drawPhong_multi[1],					// draw Phong shading model, multiple lights
 					prog_drawLambert_multi[1],					// draw Lambert shading model, multiple lights
@@ -340,6 +341,8 @@ extern "C"
 				a3_DemoStateShaderProgram
 					prog_drawTexture_coordManip[1],				// draw texture with manipulated texture coordinates
 					prog_drawTexture_colorManip[1],				// draw texture with manipulated output color
+					prog_drawTexture_allManip[1],				// draw texture with all manipulation
+					prog_drawGooch_multi_mrt[1],				// draw Gooch, multiple lights, MRT
 					prog_drawNonphoto_multi_mrt[1],				// draw non-photorealistic shading model, multiple lights, MRT
 					prog_drawPhong_multi_mrt[1],				// draw Phong shading model, multiple lights, MRT
 					prog_drawLambert_multi_mrt[1],				// draw Lambert shading model, multiple lights, MRT

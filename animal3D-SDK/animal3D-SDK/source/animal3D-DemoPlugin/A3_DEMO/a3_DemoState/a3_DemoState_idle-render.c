@@ -168,6 +168,7 @@ void a3demo_render_main_controls(const a3_DemoState *demoState,
 		"Lambert shading",
 		"Phong shading",
 		"Nonphotorealistic shading",
+		"Gooch Shading",
 	};
 
 	// forward display names
@@ -175,6 +176,7 @@ void a3demo_render_main_controls(const a3_DemoState *demoState,
 		"Texture",
 		"Color manipulation",
 		"Texcoord manipulation",
+		"All manipulation",
 	};
 
 	// text color
@@ -394,12 +396,14 @@ void a3demo_render_main(const a3_DemoState *demoState,
 			demoState->prog_drawLambert_multi,
 			demoState->prog_drawPhong_multi,
 			demoState->prog_drawNonphoto_multi,
+			demoState->prog_drawGooch_multi,
 		}, {
 			demoState->prog_drawColorUnif,
 			demoState->prog_drawTexture_mrt,
 			demoState->prog_drawLambert_multi_mrt,
 			demoState->prog_drawPhong_multi_mrt,
 			demoState->prog_drawNonphoto_multi_mrt,
+			demoState->prog_drawGooch_multi_mrt,
 		},
 	};
 

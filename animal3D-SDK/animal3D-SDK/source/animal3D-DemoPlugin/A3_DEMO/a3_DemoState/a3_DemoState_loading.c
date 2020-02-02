@@ -430,15 +430,18 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				drawTexture_fs[1],
 				drawLambert_multi_fs[1],
 				drawPhong_multi_fs[1],
-				drawNonphoto_multi_fs[1];
+				drawNonphoto_multi_fs[1],
+				drawGooch_multi_fs[1];
 			// 03-framebuffer
 			a3_DemoStateShader
 				drawTexture_mrt_fs[1],
 				drawTexture_colorManip_fs[1],
 				drawTexture_coordManip_fs[1],
+				drawTexture_allManip_fs[1],
 				drawLambert_multi_mrt_fs[1],
 				drawPhong_multi_mrt_fs[1],
-				drawNonphoto_multi_mrt_fs[1];
+				drawNonphoto_multi_mrt_fs[1],
+				drawGooch_multi_mrt_fs[1];
 		};
 	} shaderList = {
 		{
@@ -466,13 +469,16 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-Lambert-multi",		a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/drawLambert_multi_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Phong-multi",			a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/drawPhong_multi_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-nonphoto-multi",		a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/drawNonphoto_multi_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Gooch-multi",			a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/drawGooch_multi_fs4x.glsl" } } },
 			// 03-framebuffer
 			{ { { 0 },	"shdr-fs:draw-tex-mrt",				a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawTexture_mrt_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-tex-colormanip",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawTexture_colorManip_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-tex-coordmanip",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawTexture_coordManip_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-allmanip",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawTexture_allManip_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Lambert-multi-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawLambert_multi_mrt_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Phong-multi-mrt",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawPhong_multi_mrt_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-nonphoto-multi-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawNonphoto_multi_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Gooch-multi-mrt",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawGooch_multi_mrt_fs4x.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -553,6 +559,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawNonphoto_multi_fs->shader);
 
+	// Gooch shading program
+	currentDemoProg = demoState->prog_drawGooch_multi;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Gooch-multi");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawGooch_multi_fs->shader);
+
 	// 03-framebuffer programs: 
 	// texturing program with MRT
 	currentDemoProg = demoState->prog_drawTexture_mrt;
@@ -574,6 +586,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-nonphoto-multi-mrt");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawNonphoto_multi_mrt_fs->shader);
+	// Gooch shading program with MRT
+	currentDemoProg = demoState->prog_drawGooch_multi_mrt;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Gooch-multi_mrt");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawGooch_multi_mrt_fs->shader);
 	// texturing with color manipulation
 	currentDemoProg = demoState->prog_drawTexture_colorManip;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-colormanip");
@@ -584,7 +601,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-coordmanip");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_coordManip_fs->shader);
-
+	// texturing with all manipulation
+	currentDemoProg = demoState->prog_drawTexture_allManip;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-allmanip");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_allManip_fs->shader);
 
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs
