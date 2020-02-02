@@ -54,7 +54,12 @@ const vec4 cWarm = vec4(0.3f, 0.3f, 0.0f, 1.0f);
 //	4) implement Phong shading model
 //	Note: test all data and inbound values before using them!
 
-out vec4 rtFragColor;
+layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtViewPosition;
+layout (location = 2) out vec4 rtNormal;
+layout (location = 3) out vec4 rtTexCoord;
+layout (location = 4) out vec4 rtDiffuseMap;
+
 
 vec4 CalculateGooch(vec4 n_vector, int index)
 {
@@ -85,6 +90,9 @@ void main()
 		gooch += tempGooch;
 	}
 
-	rtFragColor.rgb = gooch.rgb;
-
+	rtFragColor = vec4(gooch.rgb, 1.0f);
+	rtTexCoord = vec4(coordData.texCoord, 0.0, 1.0);
+	rtNormal = vec4(mvNormal_normalized.xyz, 1.0);
+	rtViewPosition = coordData.mvPosition;
+	rtDiffuseMap = texture(mainTex, coordData.texCoord);
 }
