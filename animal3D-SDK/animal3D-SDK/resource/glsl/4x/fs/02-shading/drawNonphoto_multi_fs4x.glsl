@@ -32,6 +32,8 @@
 //	Note: test all data and inbound values before using them!
 
 const int maxLightCount = 4;
+const int power = 256;
+const vec3 ambientColor = vec3(1.0, 0.8, 0.65);
 
 in CoordData
 {
@@ -39,6 +41,12 @@ in CoordData
 	vec4 mvPosition;
 	vec4 mvNormal;
 } coordData;
+
+struct LambertData
+{
+	vec4 LVec;
+	float dotProd_LN;
+};
 
 out vec4 rtFragColor;
 
@@ -50,24 +58,29 @@ uniform vec4 uLightCol[maxLightCount];
 
 //General uniforms (GLSL forces sampler2D to be outside of blocks).
 uniform sampler2D uTex_dm_ramp;	//Ramp texture for cell shading, only sample X coord
+uniform sampler2D uTex_sm;
 uniform sampler2D mainTex;
 uniform vec4 uColor;
 
-float CalculateDiffuseCoefficient(vec4 norm, int index)
+vec4 CalculateDiffuse(vec4 NVec, int index, out LambertData lambert)
 {
-	//Just like with the normal vector, the light vector needs to be normalized for a proper dot product
-	vec4 L_vector = normalize(uLightPos[index]- coordData.mvPosition);
+	vec4 LVec = normalize(uLightPos[index]- coordData.mvPosition); //w coord is zero, probably
+	float dotProd_LN = dot(NVec, LVec);
+	lambert = LambertData(LVec, dotProd_LN);
+	float dotProd = max(0.0f, dotProd_LN);
 
-	//Like in the book, we need to take the dot product which is the intensity. Color cannot be negative, hence the max.
-	float dotProd = max(0.0f, dot(norm, L_vector));
+	vec4 diffuseResult = uLightCol[index] * dotProd;
 
-	/*
-	For regular diffuse lighting
-	//Multiply the light color by the dot product scalar to get the color
-	//vec4 diffuseResult = lightData.uLightCol[index] * dotProd;
-	//return diffuseResult;
-	*/
-	return dotProd;
+	return diffuseResult;
+}
+
+vec4 CalculateSpecular(vec4 NVec, int index, LambertData lambert, vec3 VVec3d, out float specValue)
+{
+	vec3 NVec3d = NVec.xyz;
+	vec3 LVec3d = lambert.LVec.xyz; //unsure if this is actually necessary
+	vec3 RVec3d = (2.0f * lambert.dotProd_LN * NVec3d) - LVec3d;
+	specValue = pow(max(0.0f, dot(VVec3d, RVec3d)), power);
+	return specValue * uLightCol[index];
 }
 
 void main()
@@ -75,11 +88,31 @@ void main()
 	//normalize normal vector to account for scale
 	vec4 outNormal_normalized = normalize(coordData.mvNormal);
 
+	vec4 diffuseLighting = vec4(0.0, 0.0, 0.0, 1.0);
 	float diffuseCoeff = 0.0;
+
+	vec4 specularLighting = vec4(0.0, 0.0, 0.0, 1.0);
+	float specularCoeff = 0.0f;
+	vec3 VVec3d = normalize(-coordData.mvPosition.xyz);
+
 	for(int i = 0; i < uLightCt; i++)
 	{
-		diffuseCoeff += CalculateDiffuseCoefficient(outNormal_normalized, i);
+		LambertData lambert;
+		float tempDiffuseCoeff, tempSpecCoeff;
+
+		diffuseLighting += CalculateDiffuse(outNormal_normalized, i, lambert);
+		specularLighting += CalculateSpecular(outNormal_normalized, i, lambert, VVec3d, tempSpecCoeff);
+
+		diffuseCoeff += lambert.dotProd_LN;
+		specularCoeff += tempSpecCoeff;
 	}
 
-	rtFragColor = texture(mainTex, coordData.texCoord) * texture(uTex_dm_ramp, vec2(diffuseCoeff, 0.0));
+	vec4 mainSample = texture(mainTex, coordData.texCoord);
+	vec4 rampSample = texture(uTex_dm_ramp, vec2(diffuseCoeff, 0.0));
+	vec4 specularSample = texture(uTex_sm, coordData.texCoord);
+
+	vec4 diffColor = mainSample * diffuseLighting;
+	vec4 specularColor = specularSample * specularLighting;
+
+	rtFragColor = vec4((rampSample.rgb * diffColor.rgb) + specularColor.rgb + (0.05f * ambientColor), 1.0);
 }
