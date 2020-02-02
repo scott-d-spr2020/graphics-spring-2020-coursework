@@ -31,19 +31,47 @@
 //	4) modify sample in some creative way
 //	5) assign modified sample to output color
 
+const float radius = 0.25f;
+const vec2 center = vec2(0.5f);
+
 out vec4 rtFragColor;
 uniform double uTime;
 uniform sampler2D mainTex;
 in vec2 outTexCoord;
 
-void main()
+vec4 CalculateManipulatedColor(float fTime)
 {
-	float fTime = float(uTime);
 	float r = sin(fTime);
 	float g = -sin(0.5f * fTime);
 	float b = cos(fTime);
 	float a = 0.5f*sin(1.0f * fTime) + 0.5f;
-	// DUMMY OUTPUT: all fragments are OPAQUE LIGHT GREY
-	//rtFragColor = vec4(0.5f, 0.5f, 0.5f, 1.0f);
-	rtFragColor = texture(mainTex, outTexCoord) * vec4(r, g, b, a);
+
+	return vec4(r, g, b, a);
+}
+
+vec2 CalculateManipulatedCoord(float fTime)
+{
+vec2 currDir = outTexCoord - center;
+    float currAngle = atan(currDir.y,currDir.x);
+	float dist = length(currDir);
+	float ccwAngle = currAngle + fTime;
+	float cwAngle = currAngle - fTime;
+	//two new texcoords
+	vec2 ccwTexCoord = center + vec2(cos(ccwAngle), sin(ccwAngle)) * dist;
+	vec2 cwTexCoord = center + vec2(cos(cwAngle), sin(cwAngle)) * dist;
+	float stepOutput = step(distance(outTexCoord, center), radius);
+
+	vec2 tempTexCoord = (stepOutput * ccwTexCoord + ((1.0f - stepOutput) * cwTexCoord));
+	return tempTexCoord;
+}
+
+void main()
+{
+	float fTime = float(uTime);
+	vec4 manipColor = CalculateManipulatedColor(fTime);
+	
+	fTime = 0.1f * float(uTime);
+	vec2 manipCoord = CalculateManipulatedCoord(fTime);
+
+	rtFragColor = texture(mainTex, manipCoord) * manipColor;
 }
