@@ -415,6 +415,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 			demoState->prog_drawTexture,
 			demoState->prog_drawTexture_colorManip,
 			demoState->prog_drawTexture_coordManip,
+			demoState->prog_drawTexture_allManip,
 		},
 	};
 

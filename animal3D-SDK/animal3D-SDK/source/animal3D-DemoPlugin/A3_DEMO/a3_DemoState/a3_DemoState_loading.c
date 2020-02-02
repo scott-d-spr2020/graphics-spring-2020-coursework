@@ -588,7 +588,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawNonphoto_multi_mrt_fs->shader);
 	// Gooch shading program with MRT
 	currentDemoProg = demoState->prog_drawGooch_multi_mrt;
-	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Gooch-multi_mrt");
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Gooch-multi-mrt");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawGooch_multi_mrt_fs->shader);
 	// texturing with color manipulation
