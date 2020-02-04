@@ -45,6 +45,8 @@ in CoordData
 
 uniform sampler2D mainTex;
 uniform sampler2D uTex_sm;
+uniform sampler2D uTex_shadow;
+
 uniform int uLightCt;
 uniform int uLightSz;
 uniform int uLightSzInvSq;
@@ -58,8 +60,8 @@ layout (location = 0) out vec4 rtFragColor;
 layout (location = 1) out vec4 rtViewPosition;
 layout (location = 2) out vec4 rtNormal;
 layout (location = 3) out vec4 rtTexCoord;
-layout (location = 4) out vec4 rtDiffuseMap;
-layout (location = 5) out vec4 rtSpecularMap;
+layout (location = 4) out vec4 rtShadowCoord;
+layout (location = 5) out vec4 rtShadowTest;
 layout (location = 6) out vec4 rtDiffuseTotal;
 layout (location = 7) out vec4 rtSpecularTotal;
 
@@ -114,14 +116,23 @@ void main()
 	vec4 diffColor = texture(mainTex, coordData.texCoord) * diffuse;
 	vec4 specularColor = texture(mainTex, coordData.texCoord) * specular;
 
-	vec4 perspDivideShadowCoord = coordData.shadowCoord / coordData.shadowCoord.w;
+	vec4 shadowScreen = coordData.shadowCoord / coordData.shadowCoord.w;
+	float shadowSample = texture(uTex_shadow, shadowScreen.xy).r;
 
-	rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.3f * ambientColor), 1.0);
+	bool shadowTest = (shadowScreen.z > (shadowSample + 0.0025));
+
+	vec4 shadowColor = textureProj(uTex_shadow, coordData.shadowCoord) * vec4(1.0);
+
+	if(!shadowTest)
+		rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.3f * ambientColor), 1.0);
+	else
+		rtFragColor = shadowColor;
+
 	rtViewPosition = coordData.mvPosition;
 	rtNormal =  vec4(mvNormal_normalized.xyz, 1.0);
 	rtTexCoord = vec4(coordData.texCoord, 0.0, 1.0);
-	rtDiffuseMap = texture(mainTex, coordData.texCoord);
-	rtSpecularMap = texture(uTex_sm, coordData.texCoord);
+	rtShadowCoord = vec4(shadowScreen.xyz, 1.0);
+	rtShadowTest = vec4(!shadowTest, !shadowTest, !shadowTest, 1.0);
 	rtDiffuseTotal = diffuse;
 	rtSpecularTotal = specular;
 }

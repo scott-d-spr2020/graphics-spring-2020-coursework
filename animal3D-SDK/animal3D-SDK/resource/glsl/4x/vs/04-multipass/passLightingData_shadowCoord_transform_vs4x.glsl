@@ -49,7 +49,7 @@ uniform mat4 uMV;
 uniform mat4 uP;
 uniform mat4 uMV_nrm;
 uniform mat4 uAtlas;
-uniform mat4 uMVPB;
+uniform mat4 uMVPB_other;
 
 void main()
 {
@@ -57,7 +57,7 @@ void main()
 	coordData.mvNormal = uMV_nrm * aNorm;
 	coordData.texCoord = (uAtlas * inTexCoord0).xy;
 
-	coordData.shadowCoord = uMVPB * aPosition;
+	coordData.shadowCoord = uMVPB_other * aPosition;
 
 	gl_Position = uP * coordData.mvPosition;
 }
