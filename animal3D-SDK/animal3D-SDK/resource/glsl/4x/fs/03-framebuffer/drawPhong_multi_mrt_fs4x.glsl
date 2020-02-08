@@ -128,8 +128,8 @@ void main()
 	rtViewPosition = coordData.mvPosition;
 	rtNormal =  vec4(mvNormal_normalized.xyz, 1.0);
 	rtTexCoord = vec4(coordData.texCoord, 0.0, 1.0);
-	rtDiffuseMap = vec4(shadowScreen.xyz, 1.0);
-	rtSpecularMap = vec4(!shadowTest, !shadowTest, !shadowTest, 1.0);
+	rtDiffuseMap = texture(mainTex, coordData.texCoord);
+	rtSpecularMap = texture(uTex_sm, coordData.texCoord);
 	rtDiffuseTotal = diffuse;
 	rtSpecularTotal = specular;
 }
