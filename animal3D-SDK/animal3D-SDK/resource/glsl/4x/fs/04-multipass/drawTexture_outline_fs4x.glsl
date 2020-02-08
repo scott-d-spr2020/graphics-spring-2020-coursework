@@ -28,10 +28,15 @@
 //	0) copy existing texturing shader
 //	1) implement outline algorithm - see render code for uniform hints
 
-out vec4 rtFragColor;
+layout (location = 0) out vec4 rtFragColor;
+layout (location = 3) out vec4 rtTexCoord;
+
+in vec2 outTexCoord;
+
+uniform sampler2D mainTex;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE DARK GREY
-	rtFragColor = vec4(0.2, 0.2, 0.2, 1.0);
+	rtFragColor = texture(mainTex, outTexCoord);
+	rtTexCoord = vec4(outTexCoord, 0.0, 1.0);
 }
