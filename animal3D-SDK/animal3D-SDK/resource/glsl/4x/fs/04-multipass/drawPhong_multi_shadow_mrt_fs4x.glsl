@@ -86,13 +86,20 @@ vec4 CalculateDiffuse(vec4 NVec, int index, out LambertData lambert)
 	return diffuseResult;
 }
 
+//calculates specular highlight.
 vec4 CalculateSpecular(vec4 NVec, int index, LambertData lambert, vec3 VVec3d, out float specValue)
 {
 	vec3 NVec3d = NVec.xyz;
 	vec3 LVec3d = lambert.LVec.xyz; //unsure if this is actually necessary
 	vec3 RVec3d = (2.0f * lambert.dotProd_LN * NVec3d) - LVec3d;
-	specValue = pow(max(0.0f, dot(VVec3d, RVec3d)), power);
-	return specValue * uLightCol[index];
+
+	//pow is 16
+	float tempSpecVal = max(0.0f, dot(VVec3d, RVec3d));
+	float powVal = tempSpecVal * tempSpecVal; //^2
+	powVal = powVal * powVal; //^4
+	powVal = powVal * powVal; //^8
+	powVal = powVal * powVal; //^16
+	return powVal * uLightCol[index];
 }
 
 
