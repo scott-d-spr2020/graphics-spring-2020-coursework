@@ -30,15 +30,18 @@
 
 out vec4 rtFragColor;
 
-uniform sampler2D mainTex;
+uniform sampler2D uTex_dm;
 
 in vec2 outTexCoord;
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE DARK GREY
-	vec2 scale = vec2(1.0f)/textureSize(mainTex, 0);
-	vec4 leftPix = texture(mainTex, outTexCoord - vec2(scale.x, 0));
-	vec4 rightPix = texture(mainTex, outTexCoord + vec2(scale.x, 0));
-	rtFragColor = vec4(0.2, 0.2, 0.2, 1.0);
+	//vec2 scale = vec2(1.0f)/textureSize(mainTex, 0);
+	//vec4 leftPix = texture(mainTex, outTexCoord - vec2(scale.x, 0));
+	//vec4 rightPix = texture(mainTex, outTexCoord + vec2(scale.x, 0));
+	vec4 tex = texture(uTex_dm, outTexCoord);
+	rtFragColor = vec4(tex.rgb, 1.0f);
+	rtFragColor = vec4(outTexCoord, 0.0f, 1.0f);
+	//rtFragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
