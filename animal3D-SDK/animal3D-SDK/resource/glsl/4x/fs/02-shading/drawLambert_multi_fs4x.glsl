@@ -31,10 +31,49 @@
 //	4) implement Lambert shading model
 //	Note: test all data and inbound values before using them!
 
+const int maxLightCount = 4;
+
+in CoordData
+{
+	vec2 texCoord;
+	vec4 mvPosition;
+	vec4 mvNormal;
+} coordData;
+
 out vec4 rtFragColor;
+
+uniform sampler2D mainTex;
+uniform int uLightCt;
+uniform int uLightSz;
+uniform int uLightSzInvSq;
+uniform vec4 uLightPos[maxLightCount];
+uniform vec4 uLightCol[maxLightCount];
+uniform vec4 uColor;
+
+vec4 CalculateDiffuse(vec4 norm, int index)
+{
+	vec4 L_vector = normalize(uLightPos[index]- coordData.mvPosition);
+
+	float dotProd = max(0.0f, dot(norm, L_vector));
+
+	vec4 diffuseResult = uLightCol[index] * dotProd;
+
+	return diffuseResult;
+}
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE RED
-	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	//normalize normal vector
+	vec4 mvNormal_normalized = normalize(coordData.mvNormal);
+
+	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
+
+	for(int i = 0; i < uLightCt; i++)
+	{
+		vec4 tempDiff = CalculateDiffuse(mvNormal_normalized, i);
+
+		diffuse += tempDiff;
+	}
+
+	rtFragColor = texture(mainTex, coordData.texCoord) * diffuse;
 }
