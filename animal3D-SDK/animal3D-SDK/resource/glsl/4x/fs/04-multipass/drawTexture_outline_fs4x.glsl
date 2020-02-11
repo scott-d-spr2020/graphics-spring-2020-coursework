@@ -31,6 +31,8 @@
 out vec4 rtFragColor;
 
 uniform sampler2D mainTex;
+
+//we need to use sampler uImage1 or uImage2
 uniform vec2 uSize;
 uniform vec4 uColor;
 uniform vec2 uAxis;
@@ -57,6 +59,7 @@ void main()
 	{
 		for(int j = 0; j < 3; j++)
 		{
+			//switch to texture(sampler, texCoord)
 			vec3 samp = texelFetch(mainTex, ivec2(gl_FragCoord) + ivec2(i-1, j-1), 0).rgb;
 			I[i][j] = length(samp);
 		}
