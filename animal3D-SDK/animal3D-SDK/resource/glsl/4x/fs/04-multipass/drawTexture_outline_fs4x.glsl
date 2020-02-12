@@ -34,6 +34,7 @@ uniform sampler2D mainTex;
 
 //we need to use sampler uImage1 or uImage2
 uniform sampler2D uImage1;
+uniform sampler2D uImage2;
 uniform vec2 uSize;
 uniform vec4 uColor;
 uniform vec2 uAxis;
@@ -81,7 +82,9 @@ void main()
 	float g = sqrt((gx * gx) + (gy * gy));
 	vec4 mainSample = texture(mainTex, outTexCoord);
 	vec4 depthSample = texture(uImage1, outTexCoord);
+	vec4 normalSample = texture(uImage2, outTexCoord);
 
 	//rtFragColor = vec4(mainSample.rgb - vec3(g), 1.0);
 	rtFragColor = vec4(mainSample.rgb - vec3(g), 1.0);
+	//rtFragColor = vec4(normalSample.rgb, 1.0);
 }
