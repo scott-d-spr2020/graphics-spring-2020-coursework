@@ -60,6 +60,8 @@ void a3pipelines_render_controls(a3_DemoState const* demoState, a3_Demo_Pipeline
 	a3byte const* renderProgramName[pipelines_render_max] = {
 		"Phong shading",
 		"Phong shading with shadow mapping",
+		"Nonphoto Shading",
+		"Nonphoto Shading with shadow mapping"
 	};
 
 	// forward display names
@@ -222,6 +224,8 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		{
 			demoState->prog_drawPhong_multi_mrt,
 			demoState->prog_drawPhong_multi_shadow_mrt,
+			demoState->prog_drawNonphoto_multi_mrt,
+			demoState->prog_drawNP_multi_shadow_mrt
 		},
 	};
 

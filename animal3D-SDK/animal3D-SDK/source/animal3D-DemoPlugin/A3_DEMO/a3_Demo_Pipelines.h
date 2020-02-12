@@ -68,7 +68,8 @@ extern "C"
 	{
 		pipelines_renderPhong,			// Phong shading
 		pipelines_renderPhongShadow,	// Phong shading with shadows
-
+		pipelines_renderNP,
+		pipelines_renderNPShadow,
 		pipelines_render_max
 	};
 

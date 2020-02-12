@@ -439,7 +439,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 04-multipass
 			a3_DemoStateShader
 				drawTexture_outline_fs[1],
-				drawPhong_multi_shadow_mrt_fs[1];
+				drawPhong_multi_shadow_mrt_fs[1],
+				drawNP_multi_shadow_mrt_fs[1];
 		};
 	} shaderList = {
 		{
@@ -479,6 +480,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 04-multipass
 			{ { { 0 },	"shdr-fs:draw-tex-outline",			a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/drawTexture_outline_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Phong-multi-shadow",	a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/drawPhong_multi_shadow_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-NP-multi-shadow",	a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/drawNonphoto_multi_shadow_mrt_fs4x.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -597,6 +599,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-multi-shadow");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_shadowCoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_multi_shadow_mrt_fs->shader);
+
+	currentDemoProg = demoState->prog_drawNP_multi_shadow_mrt;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-NP-multi-shadow");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_shadowCoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawNP_multi_shadow_mrt_fs->shader);
+
 	// texturing program with outlines
 	currentDemoProg = demoState->prog_drawTexture_outline;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-outline");
