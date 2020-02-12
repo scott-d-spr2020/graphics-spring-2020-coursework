@@ -64,7 +64,7 @@ void main()
 			float x = (outTexCoord.x + (float(i-1) / uSize.x));
 			float y = (outTexCoord.y + (float(j-1) / uSize.y));
 			//switch to texture(sampler, texCoord)
-			vec3 samp = texelFetch(uImage1, ivec2(gl_FragCoord) + ivec2(i-1, j-1), 0).rgb;
+			vec3 samp = texelFetch(uImage2, ivec2(gl_FragCoord) + ivec2(i-1 + uAxis.x, j-1 + uAxis.y), 0).rgb;
 
 			//Does something cool but definitely not right
 			//vec3 samp = texture(uImage1, vec2(x, y)).rgb;
