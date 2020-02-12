@@ -61,8 +61,6 @@ void main()
 	{
 		for(int j = 0; j < 3; j++)
 		{
-			float x = (outTexCoord.x + (float(i-1) / uSize.x));
-			float y = (outTexCoord.y + (float(j-1) / uSize.y));
 			//switch to texture(sampler, texCoord)
 			vec3 samp = texelFetch(uImage2, ivec2(gl_FragCoord) + ivec2((i-1) * uAxis.x, (j-1) * uAxis.y), 0).rgb;
 
@@ -81,10 +79,8 @@ void main()
 
 	float g = sqrt((gx * gx) + (gy * gy));
 	vec4 mainSample = texture(mainTex, outTexCoord);
-	vec4 depthSample = texture(uImage1, outTexCoord);
-	vec4 normalSample = texture(uImage2, outTexCoord);
 
 	//rtFragColor = vec4(mainSample.rgb - vec3(g), 1.0);
-	rtFragColor = vec4(mainSample.rgb - vec3(g), 1.0);
+	rtFragColor = vec4(mainSample.rgb - (vec3(g) * (1.0 - uColor.rgb)), 1.0);
 	//rtFragColor = vec4(normalSample.rgb, 1.0);
 }
