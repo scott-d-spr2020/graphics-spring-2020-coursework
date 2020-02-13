@@ -30,8 +30,57 @@
 
 out vec4 rtFragColor;
 
+uniform sampler2D mainTex;
+
+//we need to use sampler uImage1 or uImage2
+uniform sampler2D uImage1;
+uniform sampler2D uImage2;
+uniform vec2 uSize;
+uniform vec4 uColor;
+uniform vec2 uAxis;
+
+mat3 sx = mat3(
+1.0, 2.0, 1.0,
+0.0, 0.0, 0.0,
+-1.0, -2.0, -1.0
+);
+
+mat3 sy = mat3(
+1.0, 0.0, -1.0,
+2.0, 0.0, -2.0,
+1.0, 0.0, -1.0
+);
+
+in vec2 outTexCoord;
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE DARK GREY
-	rtFragColor = vec4(0.2, 0.2, 0.2, 1.0);
+	mat3 I;
+
+	for(int i = 0; i < 3; i++)
+	{
+		for(int j = 0; j < 3; j++)
+		{
+			//switch to texture(sampler, texCoord)
+			vec3 samp = texelFetch(uImage2, ivec2(gl_FragCoord) + ivec2((i-1) * uAxis.x, (j-1) * uAxis.y), 0).rgb;
+
+			//Does something cool but definitely not right
+			//vec3 samp = texture(uImage1, vec2(x, y)).rgb;
+			I[i][j] = length(samp);
+		}
+	}
+
+	float gx = 0, gy = 0;
+	for(int i = 0; i < 3; i++)
+	{
+		gx += dot(sx[i], I[i]);
+		gy += dot(sy[i], I[i]);
+	}
+
+	float g = sqrt((gx * gx) + (gy * gy));
+	vec4 mainSample = texture(mainTex, outTexCoord);
+
+	//rtFragColor = vec4(mainSample.rgb - vec3(g), 1.0);
+	rtFragColor = vec4(mainSample.rgb - (vec3(g) * (1.0 - uColor.rgb)), 1.0);
+	//rtFragColor = vec4(normalSample.rgb, 1.0);
 }

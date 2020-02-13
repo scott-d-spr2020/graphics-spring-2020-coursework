@@ -304,7 +304,8 @@ extern "C"
 					prog_drawTexture_mrt[1];					// draw texture, MRT
 				a3_DemoStateShaderProgram
 					prog_drawTexture_outline[1],				// draw texture with outlines from prior pass
-					prog_drawPhong_multi_shadow_mrt[1];			// draw Phong shading with shadow mapping
+					prog_drawPhong_multi_shadow_mrt[1],			// draw Phong shading with shadow mapping
+					prog_drawNP_multi_shadow_mrt[1];
 				a3_DemoStateShaderProgram
 					prog_drawTexture_brightPass[1],				// draw texture with bright-pass or tone-mapping
 					prog_drawTexture_blurGaussian[1],			// draw texture with Gaussian blurring
