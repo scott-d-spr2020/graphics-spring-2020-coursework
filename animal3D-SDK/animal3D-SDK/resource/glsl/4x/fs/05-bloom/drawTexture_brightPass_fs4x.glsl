@@ -36,11 +36,19 @@ layout (location = 3) out vec4 rtTexCoord;
 
 in vec2 outTexCoord;
 
-uniform sampler2D mainTex;
+float relativeLuminance(vec3 color)
+{
+	return (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b);
+}
 
 void main()
 {
-	rtFragColor = texture(mainTex, outTexCoord);
+	vec3 texColor = texture(uImage00, outTexCoord).rgb;
+
+	//filtered with brightness
+	vec3 filtered = texColor * relativeLuminance(texColor);
+
+	rtFragColor = vec4(filtered, 1.0);
 	rtTexCoord = vec4(outTexCoord, 0.0, 1.0);
 }
 
