@@ -60,14 +60,14 @@ void main()
 	{
 		for(int j = 0; j < 3; j++)
 		{
-			//float x = outTexCoord.x + (float(j-1) / uSize.x);
-			//float y = outTexCoord.y + (float(i-1) / uSize.y);
+			float x = outTexCoord.x + i * uSize.x * uAxis.x;
+			float y = outTexCoord.y + j * uSize.y * uAxis.y;
 
 			//switch to texture(sampler, texCoord)
-			vec3 samp = texelFetch(uImage02, ivec2(gl_FragCoord) + ivec2((i-1) * uAxis.x, (j-1) * uAxis.y), 0).rgb;
+			//vec3 samp = texelFetch(uImage02, ivec2(gl_FragCoord) + ivec2((i-1) * uAxis.x, (j-1) * uAxis.y), 0).rgb;
 
 			//Does something cool but definitely not right
-			//vec3 samp = texture(uImage02, vec2(x, y)).rgb;
+			vec3 samp = texture(uImage02, vec2(x, y)).rgb;
 			I[i][j] = length(samp);
 		}
 	}
