@@ -43,14 +43,14 @@ const float weights[] = float[](1,4,6,4,1);
 
 void main()
 {
-	rtFragColor = texture(uImage00, outTexCoord);
 	vec4 totalSamp;
 	for (int i = 0; i < 5; i++)
 	{
 		float xCoord = outTexCoord.x + (i-2) * (uAxis.x) * uSize.x;
 		float yCoord = outTexCoord.y + (i-2) * (uAxis.y) * uSize.y;
-		totalSamp += texture(uImage00, vec2(xCoord, yCoord));
+		totalSamp += texture(uImage00, vec2(xCoord, yCoord)) * weights[i];
 	}
 	totalSamp /= (1+4+6+4+1);
 	rtFragColor = totalSamp;
+	rtTexCoord = vec4(outTexCoord, 0.0, 1.0);
 }
