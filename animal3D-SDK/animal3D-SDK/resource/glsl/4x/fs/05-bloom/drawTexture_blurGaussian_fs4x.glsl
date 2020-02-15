@@ -47,11 +47,10 @@ void main()
 	vec4 totalSamp;
 	for (int i = 0; i < 5; i++)
 	{
-		float xCoord = outTexCoord.x + (i-2) * (1.0f/uAxis.x) * uSize.x;
-		float yCoord = outTexCoord.y + (i-2) * (1.0f/uAxis.y) * uSize.y;
+		float xCoord = outTexCoord.x + (i-2) * (uAxis.x) * uSize.x;
+		float yCoord = outTexCoord.y + (i-2) * (uAxis.y) * uSize.y;
 		totalSamp += texture(uImage00, vec2(xCoord, yCoord));
 	}
 	totalSamp /= (1+4+6+4+1);
-	rtTexCoord = totalSamp;
-	rtTexCoord = vec4(1.0f,0.0f,0.0f,1.0f);
+	rtFragColor = totalSamp;
 }

@@ -558,7 +558,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
 
-	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
+	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00 + 2, 0);
 	
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
 	
