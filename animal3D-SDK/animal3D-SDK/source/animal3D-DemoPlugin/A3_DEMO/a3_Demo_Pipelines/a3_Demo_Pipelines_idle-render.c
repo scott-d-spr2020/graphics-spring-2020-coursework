@@ -558,27 +558,29 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
 
-	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00 + 2, 0);
+	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
 	
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
 	
-
 	a3vertexDrawableRenderActive();
 
 	
 
 	// ****TO-DO: 
 	//	-> 3.1c: repeat previous pass but using vertical axis
-	sampleAxisV = a3vec2_y;	// delete this line; variable is already initialized
-	/*
+	//sampleAxisV = a3vec2_y;	// delete this line; variable is already initialized
+	
 	currentPass = pipelines_passBlurV_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
-	???
-	???
-	???
-	???
-	*/
+	a3framebufferActivate(currentWriteFBO);
+
+	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
+
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisV.v);
+
+	a3vertexDrawableRenderActive();
+	
 
 	// ****TO-DO: 
 	//	-> 4.1f: repeat bright pass and blur passes on smaller FBOs
