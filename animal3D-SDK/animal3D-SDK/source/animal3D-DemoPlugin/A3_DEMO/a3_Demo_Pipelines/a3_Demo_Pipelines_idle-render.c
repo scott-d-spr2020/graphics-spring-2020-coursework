@@ -543,7 +543,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	currentDemoProgram = demoState->prog_drawTexture_blurGaussian;
 	a3shaderProgramActivate(currentDemoProgram->program);
 	a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
-	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v);
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v); //sets uSize to pixel size
 
 	// ****TO-DO: 
 	//	-> 3.1b: perform 1D blur pass, horizontal axis (4 lines): 
