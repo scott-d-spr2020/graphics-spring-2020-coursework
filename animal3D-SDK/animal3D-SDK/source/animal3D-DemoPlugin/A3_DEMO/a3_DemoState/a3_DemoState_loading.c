@@ -890,7 +890,7 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 		
 		// ****TO-DO: 
 		//	-> 4.1b: set up smaller framebuffers
-		/*
+		
 		fbo = demoState->fbo_post_c16_4fr + i;
 		a3framebufferCreate(fbo, "fbo:post",
 			targets_post, colorType_post, a3fbo_depthDisable,
@@ -900,7 +900,7 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 		a3framebufferCreate(fbo, "fbo:post",
 			targets_post, colorType_post, a3fbo_depthDisable,
 			frameWidth8, frameHeight8);
-		*/
+		
 	}
 
 
