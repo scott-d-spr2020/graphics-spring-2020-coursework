@@ -45,8 +45,8 @@ void main()
 {
 	vec3 texColor = texture(uImage00, outTexCoord).rgb;
 
-	//filtered with brightness
-	vec3 filtered = texColor * relativeLuminance(texColor);
+	//filtered reinhard with brightness
+	vec3 filtered = (texColor / (vec3(1.0) / texColor)) * relativeLuminance(texColor);
 
 	rtFragColor = vec4(filtered, 1.0);
 	rtTexCoord = vec4(outTexCoord, 0.0, 1.0);
