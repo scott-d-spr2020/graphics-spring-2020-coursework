@@ -130,7 +130,7 @@ void main()
 
 	bool shadowTest = (shadowScreen.z > (shadowSample + 0.0025));
 
-	vec4 shadowColor = textureProj(uTex_shadow, coordData.shadowCoord) * vec4(1.0);
+	vec4 shadowColor = vec4(0.0, 0.0, 0.0, 1.0);
 
 	if(!shadowTest)
 		rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.05f * ambientColor), 1.0) * rampSample;
