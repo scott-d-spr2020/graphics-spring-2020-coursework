@@ -39,9 +39,16 @@ layout (location = 0) out vec4 rtFragColor;
 
 in vec2 outTexCoord;
 
-vec3 screen()
+vec4 screen()
 {
-	return vec3(1.0);
+	vec4 a = texture(uImage00, outTexCoord);
+	vec4 b = texture(uImage01, outTexCoord);
+	vec4 c = texture(uImage02, outTexCoord);
+	vec4 d = texture(uImage03, outTexCoord);
+
+	vec4 blended = vec4(1.0) - (((vec4(1.0) - a) * (vec4(1.0) - b)) * ((vec4(1.0) - c) * (vec4(1.0) - d)));
+
+	return blended;
 }
 
 vec4 multiply()
@@ -52,5 +59,5 @@ vec4 multiply()
 
 void main()
 {	
-	rtFragColor = multiply();
+	rtFragColor = screen();
 }
