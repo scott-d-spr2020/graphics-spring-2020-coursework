@@ -260,19 +260,19 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		//	-> 4.1c: add smaller framebuffers for writing additional passes (6 lines)
 		
 		//Line 348 in DemoState.h to find these framebuffers
-		demoState->fbo_post_c16_2fr + 0,
-		demoState->fbo_post_c16_2fr + 1,
-		demoState->fbo_post_c16_2fr + 2,
+		demoState->fbo_post_c16_2fr + 0, //Bright2 writes here
+		demoState->fbo_post_c16_2fr + 1, //HBlur2 writes here
+		demoState->fbo_post_c16_2fr + 2, //VBlur2 writes here
 
-		demoState->fbo_post_c16_4fr + 0,
-		demoState->fbo_post_c16_4fr + 1,
-		demoState->fbo_post_c16_4fr + 2,
+		demoState->fbo_post_c16_4fr + 0, //Bright4 writes here
+		demoState->fbo_post_c16_4fr + 1, //HBlur4 writes here
+		demoState->fbo_post_c16_4fr + 2, //VBlur4 writes here
 
-		demoState->fbo_post_c16_8fr + 0,
-		demoState->fbo_post_c16_8fr + 1,
-		demoState->fbo_post_c16_8fr + 2,
+		demoState->fbo_post_c16_8fr + 0, //Bright8 writes here
+		demoState->fbo_post_c16_8fr + 1, //HBlur8 writes here
+		demoState->fbo_post_c16_8fr + 2, //VBlur8 writes here
 		
-		demoState->fbo_composite_c16 + 0,
+		demoState->fbo_composite_c16 + 0, //Bloom writes here
 	};
 
 	// framebuffers from which to read based on pipeline mode
@@ -280,23 +280,22 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		{ 0, },
 		{ 0, demoState->fbo_shadow_d32, 0, },
 		{ demoState->fbo_scene_c16d24s8_mrt, 0, },
-		{ demoState->fbo_composite_c16 + 2, 0, },
+		{ demoState->fbo_composite_c16 + 2, 0, }, //Bright2 reads from Composite
 		// ****TO-DO: 
 		//	-> 2.1e: uncomment half-size framebuffers
 		//	-> 4.1d: add smaller framebuffers for reading additional passes (6 lines)
 		
-		{ demoState->fbo_post_c16_2fr + 0, 0, },
-		{ demoState->fbo_post_c16_2fr + 1, 0, },
+		{ demoState->fbo_post_c16_2fr + 0, 0, }, //HBlur2 reads from here (Bright2 write loc)
+		{ demoState->fbo_post_c16_2fr + 1, 0, }, //VBlur2 reads from here (HBlur2 write loc)
+		{ demoState->fbo_post_c16_2fr + 2, 0, }, //Bright4 reads from here (VBlur2 write loc)
+		
+		{ demoState->fbo_post_c16_4fr + 0, 0, }, //HBlur4 reads from here (Bright4 write loc)
+		{ demoState->fbo_post_c16_4fr + 1, 0, }, //VBlur4 reads from here (HBlur4 write loc)
+		{ demoState->fbo_post_c16_4fr + 2, 0, }, //Bright8 reads from here (VBlur4 write loc)
 
-		{ demoState->fbo_post_c16_4fr + 0, 0, },
-		{ demoState->fbo_post_c16_4fr + 1, 0, },
+		{ demoState->fbo_post_c16_8fr + 0, 0, }, //HBlur8 reads from here (Bright8 write loc)
+		{ demoState->fbo_post_c16_8fr + 1, 0, }, //VBlur8 reads from here (HBlur8 write loc)
 
-		{ demoState->fbo_post_c16_8fr + 0, 0, },
-		{ demoState->fbo_post_c16_8fr + 1, 0, },
-
-		//this may be entirely wrong.
-		{ demoState->fbo_composite_c16 + 0, 0, },
-		{ demoState->fbo_composite_c16 + 1, 0, },
 
 		
 		// ****TO-DO: 
@@ -304,7 +303,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		//{ demoState->fbo_post_c16_2fr + 2, demoState->fbo_composite_c16 + 2, 0, 0, },
 		// ****TO-DO: 
 		//	-> 4.1e: replace above blend pass read list with extended read list below
-		{ demoState->fbo_post_c16_8fr + 2, demoState->fbo_post_c16_4fr + 2, demoState->fbo_post_c16_2fr + 2, demoState->fbo_composite_c16 + 2, },
+		{ demoState->fbo_post_c16_8fr + 2, demoState->fbo_post_c16_4fr + 2, demoState->fbo_post_c16_2fr + 2, demoState->fbo_composite_c16 + 2, }, //I think bloom reads ALL of these
 	};
 
 	// target info
@@ -601,7 +600,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 	currentPass = pipelines_passBright_4;
 	currentWriteFBO = writeFBO[currentPass];
-	currentReadFBO = readFBO[currentPass][1];
+	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit01, 0);
 	a3vertexDrawableRenderActive();
@@ -614,7 +613,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 	currentPass = pipelines_passBlurH_4;
 	currentWriteFBO = writeFBO[currentPass];
-	currentReadFBO = readFBO[currentPass][1];
+	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit01, 0);
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
@@ -623,7 +622,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	//V blur pass
 	currentPass = pipelines_passBlurV_4;
 	currentWriteFBO = writeFBO[currentPass];
-	currentReadFBO = readFBO[currentPass][1];
+	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit01, 0);
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisV.v);
@@ -636,7 +635,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 	currentPass = pipelines_passBright_8;
 	currentWriteFBO = writeFBO[currentPass];
-	currentReadFBO = readFBO[currentPass][2];
+	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, 0);
 	a3vertexDrawableRenderActive();
@@ -649,7 +648,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 	currentPass = pipelines_passBlurH_8;
 	currentWriteFBO = writeFBO[currentPass];
-	currentReadFBO = readFBO[currentPass][2];
+	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, 0);
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
@@ -658,7 +657,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	//V blur pass
 	currentPass = pipelines_passBlurV_8;
 	currentWriteFBO = writeFBO[currentPass];
-	currentReadFBO = readFBO[currentPass][2];
+	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, 0);
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisV.v);
