@@ -46,7 +46,7 @@ vec4 screen()
 	vec4 c = texture(uImage02, outTexCoord);
 	vec4 d = texture(uImage03, outTexCoord);
 
-	vec4 blended = vec4(1.0) - (((vec4(1.0) - a) * (vec4(1.0) - b)) * ((vec4(1.0) - c) * (vec4(1.0) - d)));
+	vec4 blended = vec4(1.0) - ((vec4(1.0) - a) * (vec4(1.0) - b) * (vec4(1.0) - c) * (vec4(1.0) - d));
 
 	return blended;
 }
