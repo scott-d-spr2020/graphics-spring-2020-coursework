@@ -40,13 +40,34 @@
 
 layout(location = 8)in vec4 vTexcoord;
 
-uniform sampler2D uImage00; //g-buffer depth texture
-uniform sampler2D uImage01; //g-buffer position texture
-uniform sampler2D uImage02; //g-buffer normal texture
-uniform sampler2D uImage03; //g-buffer texcoord texture
+const vec3 ambientColor = vec3(0.1f);
 
-uniform sampler2D uImage04; //diffuse texture atlas
-uniform sampler2D uImage05; //spec texture atlas
+uniform sampler2D uImage00; // g-buffer depth texture
+uniform sampler2D uImage01; // g-buffer position texture
+uniform sampler2D uImage02; // g-buffer normal texture
+uniform sampler2D uImage03; // g-buffer texcoord texture
+							   
+uniform sampler2D uImage04; // diffuse texture atlas
+uniform sampler2D uImage05; // spec texture atlas
+
+
+uniform int uLightCt;
+uniform int uLightSz;
+uniform int uLightSzInvSq;
+uniform vec4 uLightPos[MAX_LIGHTS];
+uniform vec4 uLightCol[MAX_LIGHTS];
+uniform vec4 uColor;
+
+
+uniform mat4 uPB_inv;
+
+
+struct LambertData
+{
+	vec4 LVec;
+	float dotProd_LN;
+};
+
 
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 4) out vec4 rtDiffuseMapSample;
@@ -54,13 +75,80 @@ layout (location = 5) out vec4 rtSpecularMapSample;
 layout (location = 6) out vec4 rtDiffuseLightTotal;
 layout (location = 7) out vec4 rtSpecularLightTotal;
 
+
+vec4 CalculateDiffuse(vec4 NVec, int index, vec4 position, out LambertData lambert)
+{
+	vec4 LVec = normalize(uLightPos[index] - position); //w coord is zero, probably
+	float dotProd_LN = dot(NVec, LVec);
+	lambert = LambertData(LVec, dotProd_LN);
+	float dotProd = max(0.0f, dotProd_LN);
+
+	vec4 diffuseResult = uLightCol[index] * dotProd;
+
+	return diffuseResult;
+}
+
+
+//calculates specular highlight.
+vec4 CalculateSpecular(vec4 NVec, int index, LambertData lambert, vec3 VVec3d, out float specValue)
+{
+	vec3 NVec3d = NVec.xyz;
+	vec3 LVec3d = lambert.LVec.xyz; //unsure if this is actually necessary
+	vec3 RVec3d = (2.0f * lambert.dotProd_LN * NVec3d) - LVec3d;
+
+	//pow is 16
+	float tempSpecVal = max(0.0f, dot(VVec3d, RVec3d));
+	float powVal = tempSpecVal * tempSpecVal; //^2
+	powVal = powVal * powVal; //^4
+	powVal = powVal * powVal; //^8
+	powVal = powVal * powVal; //^16
+	return powVal * uLightCol[index];
+}
+
+
+vec4 CalculatePosition()
+{
+	vec4 sampledPos = texture(uImage01, vTexcoord.xy);
+	vec4 sampledDepth = texture(uImage00, vTexcoord.xy);
+
+	vec4 recalculatedPos = vec4(sampledPos.x, sampledPos.y, sampledDepth.x, 1.0);
+	recalculatedPos.z = 2.0 * recalculatedPos.z - 1.0;
+	recalculatedPos = uPB_inv * recalculatedPos;
+
+	return recalculatedPos / recalculatedPos.w;
+}
+
+
 void main()
 {
-	vec2 texCoord = texture(uImage03, vTexcoord.xy).rg;
+	vec2 texCoord = texture(uImage03, vTexcoord.xy).rg; // Indidivual texture coords are stored in this texture's rg channels
+	vec4 position = CalculatePosition();;	// The old mvPosition should be stored here
+	vec4 normal = normalize(texture(uImage02, vTexcoord.xy));
 
-	rtFragColor = vec4(0.0, 1.0, 1.0, 1.0);
-	rtDiffuseMapSample = texture(uImage04, texCoord);
-	rtSpecularMapSample = texture(uImage05, texCoord);
-	rtDiffuseLightTotal = vec4(1.0, 0.0, 1.0, 1.0);
-	rtSpecularLightTotal = vec4(1.0, 1.0, 0.0, 1.0);
+
+	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
+	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
+	float specVal = 0.0f;
+	vec3 VVec3d = normalize(-position.xyz);
+	for(int i = 0; i < uLightCt; i++)
+	{
+		LambertData lambert;
+		vec4 tempDiff = CalculateDiffuse(normal, i, position, lambert);
+		vec4 tempSpec = CalculateSpecular(normal, i, lambert, VVec3d, specVal);
+		specular += tempSpec;
+		diffuse += tempDiff;
+	}
+
+	vec4 diffuseSample = texture(uImage04, texCoord);
+	vec4 specularSample =  texture(uImage05, texCoord);
+
+	vec4 diffColor = diffuseSample * diffuse;
+	vec4 specularColor = specularSample * specular;
+
+
+	rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.3f * ambientColor), 1.0);
+	rtDiffuseMapSample = diffuseSample;
+	rtSpecularMapSample = specularSample;
+	rtDiffuseLightTotal = diffColor;
+	rtSpecularLightTotal = specularColor;
 }
