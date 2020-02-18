@@ -70,6 +70,9 @@ struct LambertData
 
 
 layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtPosition;
+layout (location = 2) out vec4 rtNormal;
+layout (location = 3) out vec4 rtTexcoord;
 layout (location = 4) out vec4 rtDiffuseMapSample;
 layout (location = 5) out vec4 rtSpecularMapSample;
 layout (location = 6) out vec4 rtDiffuseLightTotal;
@@ -90,7 +93,7 @@ vec4 CalculateDiffuse(vec4 NVec, int index, vec4 position, out LambertData lambe
 
 
 //calculates specular highlight.
-vec4 CalculateSpecular(vec4 NVec, int index, LambertData lambert, vec3 VVec3d, out float specValue)
+vec4 CalculateSpecular(vec4 NVec, int index, LambertData lambert, vec3 VVec3d)
 {
 	vec3 NVec3d = NVec.xyz;
 	vec3 LVec3d = lambert.LVec.xyz; //unsure if this is actually necessary
@@ -106,35 +109,34 @@ vec4 CalculateSpecular(vec4 NVec, int index, LambertData lambert, vec3 VVec3d, o
 }
 
 
-vec4 CalculatePosition()
+vec3 CalculatePosition()
 {
-	vec4 sampledPos = texture(uImage01, vTexcoord.xy);
+	vec3 sampledPos = texture(uImage01, vTexcoord.xy).rgb;
 	vec4 sampledDepth = texture(uImage00, vTexcoord.xy);
 
 	vec4 recalculatedPos = vec4(sampledPos.x, sampledPos.y, sampledDepth.x, 1.0);
-	recalculatedPos.z = 2.0 * recalculatedPos.z - 1.0;
+	recalculatedPos.z = 2.0 * recalculatedPos.z - 1.0;	//reset depth value to [-1, 1]
 	recalculatedPos = uPB_inv * recalculatedPos;
 
-	return recalculatedPos / recalculatedPos.w;
+	return (recalculatedPos / recalculatedPos.w).xyz;
 }
 
 
 void main()
 {
 	vec2 texCoord = texture(uImage03, vTexcoord.xy).rg; // Indidivual texture coords are stored in this texture's rg channels
-	vec4 position = CalculatePosition();;	// The old mvPosition should be stored here
-	vec4 normal = normalize(texture(uImage02, vTexcoord.xy));
-
+	vec3 position = CalculatePosition();;	// The old mvPosition should be stored here
+	vec4 normal = vec4(normalize(texture(uImage02, vTexcoord.xy)).xyz, 1.0);
 
 	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
 	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
-	float specVal = 0.0f;
 	vec3 VVec3d = normalize(-position.xyz);
+
 	for(int i = 0; i < uLightCt; i++)
 	{
 		LambertData lambert;
-		vec4 tempDiff = CalculateDiffuse(normal, i, position, lambert);
-		vec4 tempSpec = CalculateSpecular(normal, i, lambert, VVec3d, specVal);
+		vec4 tempDiff = CalculateDiffuse(normal, i, vec4(position, 1.0), lambert);
+		vec4 tempSpec = CalculateSpecular(normal, i, lambert, VVec3d);
 		specular += tempSpec;
 		diffuse += tempDiff;
 	}
@@ -145,6 +147,9 @@ void main()
 	vec4 diffColor = diffuseSample * diffuse;
 	vec4 specularColor = specularSample * specular;
 
+	rtTexcoord = vec4(texCoord, 0.0, 1.0);
+	rtNormal = normal;
+	rtPosition = vec4(position, 1.0);
 
 	rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.3f * ambientColor), 1.0);
 	rtDiffuseMapSample = diffuseSample;
