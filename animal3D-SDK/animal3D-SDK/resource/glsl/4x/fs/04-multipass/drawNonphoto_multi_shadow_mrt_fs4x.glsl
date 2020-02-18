@@ -40,6 +40,7 @@ in CoordData
 	vec2 texCoord;
 	vec4 mvPosition;
 	vec4 mvNormal;
+	vec4 shadowCoord;
 } coordData;
 
 struct LambertData
@@ -52,8 +53,8 @@ layout (location = 0) out vec4 rtFragColor;
 layout (location = 1) out vec4 rtViewPosition;
 layout (location = 2) out vec4 rtNormal;
 layout (location = 3) out vec4 rtTexCoord;
-layout (location = 4) out vec4 rtDiffuseMap;
-layout (location = 5) out vec4 rtSpecularMap;
+layout (location = 4) out vec4 rtShadowCoord;
+layout (location = 5) out vec4 rtShadowTest;
 layout (location = 6) out vec4 rtDiffuseTotal;
 layout (location = 7) out vec4 rtSpecularTotal;
 
@@ -66,6 +67,7 @@ uniform vec4 uLightCol[maxLightCount];
 //General uniforms (GLSL forces sampler2D to be outside of blocks).
 uniform sampler2D uTex_dm_ramp;	//Ramp texture for cell shading, only sample X coord
 uniform sampler2D uTex_sm;
+uniform sampler2D uTex_shadow;
 uniform sampler2D mainTex;
 uniform vec4 uColor;
 
@@ -123,12 +125,23 @@ void main()
 	vec4 diffColor = mainSample * diffuseLighting;
 	vec4 specularColor = specularSample * specularLighting;
 
-	rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.05f * ambientColor), 1.0) * rampSample;
+	vec4 shadowScreen = coordData.shadowCoord / coordData.shadowCoord.w;
+	float shadowSample = texture(uTex_shadow, shadowScreen.xy).r;
+
+	bool shadowTest = (shadowScreen.z > (shadowSample + 0.0025));
+
+	vec4 shadowColor = vec4(0.0, 0.0, 0.0, 1.0);
+
+	if(!shadowTest)
+		rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.05f * ambientColor), 1.0) * rampSample;
+	else
+		rtFragColor = shadowColor;
+
 	rtViewPosition = coordData.mvPosition;
 	rtNormal = vec4(outNormal_normalized.xyz, 1.0);
 	rtTexCoord = vec4(coordData.texCoord, 0.0, 1.0);
-	rtDiffuseMap = mainSample;
-	rtSpecularMap = specularSample;
+	rtShadowCoord = vec4(shadowScreen.xyz, 1.0);
+	rtShadowTest = vec4(!shadowTest, !shadowTest, !shadowTest, 1.0);
 	rtDiffuseTotal = diffuseLighting;
 	rtSpecularTotal = specularColor;
 }

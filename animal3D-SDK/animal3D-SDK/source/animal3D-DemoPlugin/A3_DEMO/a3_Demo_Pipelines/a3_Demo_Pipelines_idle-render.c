@@ -62,6 +62,8 @@ void a3pipelines_render_controls(a3_DemoState const* demoState, a3_Demo_Pipeline
 	a3byte const* renderProgramName[pipelines_render_max] = {
 		"Phong shading",
 		"Phong shading with shadow mapping",
+		"Nonphoto Shading",
+		"Nonphoto Shading with shadow mapping"
 	};
 
 	// forward display names
@@ -255,6 +257,8 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		{
 			demoState->prog_drawPhong_multi_mrt,
 			demoState->prog_drawPhong_multi_shadow_mrt,
+			demoState->prog_drawNonphoto_multi_mrt,
+			demoState->prog_drawNP_multi_shadow_mrt
 		}, {
 			demoState->prog_drawLightingData,
 			demoState->prog_drawLightingData,
@@ -689,8 +693,16 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	currentDemoProgram = demoState->prog_drawTexture_blurGaussian;
 	a3shaderProgramActivate(currentDemoProgram->program);
 	a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
-	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v);
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v); //sets uSize to screen size
 
+	// ****TO-DO: 
+	//	-> 3.1b: perform 1D blur pass, horizontal axis (4 lines): 
+	//		-> 1) activate framebuffer for writing
+	//		-> 2) bind first color texture from framebuffer used in previous pass
+	//		-> 3) send blur axis as uniform (2D vector)
+	//		-> 4) draw full-screen quad (already active
+	//sampleAxisH = a3vec2_x;	// delete this line; variable is already initialized
+	
 	currentPass = pipelines_passBlurH_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
@@ -718,7 +730,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
 	a3vertexDrawableRenderActive();
 
-	// blur quarter-size
+	// blur quarter-size (H Blur pass)
 	currentDemoProgram = demoState->prog_drawTexture_blurGaussian;
 	a3shaderProgramActivate(currentDemoProgram->program);
 	a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
@@ -732,6 +744,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
 	a3vertexDrawableRenderActive();
 
+	//V blur pass
 	currentPass = pipelines_passBlurV_4;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
@@ -751,7 +764,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
 	a3vertexDrawableRenderActive();
 
-	// blur eighth-size
+	// blur eighth-size (H blur)
 	currentDemoProgram = demoState->prog_drawTexture_blurGaussian;
 	a3shaderProgramActivate(currentDemoProgram->program);
 	a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
@@ -765,6 +778,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
 	a3vertexDrawableRenderActive();
 
+	//V blur pass
 	currentPass = pipelines_passBlurV_8;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
@@ -781,7 +795,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	currentWriteFBO = writeFBO[currentPass];
 	a3framebufferActivate(currentWriteFBO);
 	for (i = 0, j = 4; i < j; ++i)
-		a3framebufferBindColorTexture(readFBO[currentPass][i], a3tex_unit00 + i, 0);
+		a3framebufferBindColorTexture(readFBO[currentPass][i], a3tex_unit00 + i, 0); //binds left INTO right
 	a3vertexDrawableRenderActive();
 
 

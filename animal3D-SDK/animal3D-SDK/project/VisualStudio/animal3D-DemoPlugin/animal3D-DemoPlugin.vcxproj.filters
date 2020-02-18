@@ -253,6 +253,9 @@
     <None Include="..\..\..\resource\glsl\4x\fs\05-bloom\drawTexture_blendScreen4_fs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\fs\05-bloom</Filter>
     </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\04-multipass\drawNonphoto_multi_shadow_mrt_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\04-multipass</Filter>
+    </None>
     <None Include="..\..\..\resource\glsl\4x\fs\06-deferred\drawPhong_multi_deferred_fs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\fs\06-deferred</Filter>
     </None>
