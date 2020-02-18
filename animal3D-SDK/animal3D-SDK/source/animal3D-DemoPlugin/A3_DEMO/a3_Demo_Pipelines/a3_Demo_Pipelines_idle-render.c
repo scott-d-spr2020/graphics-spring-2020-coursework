@@ -601,7 +601,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	case pipelines_deferred_shading:
 		// ****TO-DO: 
 		//	-> 3.1a: uncomment deferred shading composite
-		/*
+		
 		// use deferred shading program
 		currentDemoProgram = demoState->prog_drawPhong_multi_deferred;
 		a3shaderProgramActivate(currentDemoProgram->program);
@@ -622,7 +622,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightSzInvSq, demoState->forwardLightCount, lightSzInvSq);
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightPos, demoState->forwardLightCount, lightPos->v);
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightCol, demoState->forwardLightCount, lightCol->v);
-		*/
+		
 		break;
 
 	case pipelines_deferred_lighting:
@@ -694,14 +694,6 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	a3shaderProgramActivate(currentDemoProgram->program);
 	a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v); //sets uSize to screen size
-
-	// ****TO-DO: 
-	//	-> 3.1b: perform 1D blur pass, horizontal axis (4 lines): 
-	//		-> 1) activate framebuffer for writing
-	//		-> 2) bind first color texture from framebuffer used in previous pass
-	//		-> 3) send blur axis as uniform (2D vector)
-	//		-> 4) draw full-screen quad (already active
-	//sampleAxisH = a3vec2_x;	// delete this line; variable is already initialized
 	
 	currentPass = pipelines_passBlurH_2;
 	currentWriteFBO = writeFBO[currentPass];
