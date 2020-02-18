@@ -38,7 +38,7 @@
 //			-> normal calculated by expanding range of normal sample
 //			-> surface texture coordinate is used as-is once sampled
 
-in vec4 vTexcoord;
+layout(location = 8)in vec4 vTexcoord;
 
 uniform sampler2D uImage00; //g-buffer depth texture
 uniform sampler2D uImage01; //g-buffer position texture
@@ -56,10 +56,11 @@ layout (location = 7) out vec4 rtSpecularLightTotal;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE CYAN (and others)
+	vec2 texCoord = texture(uImage03, vTexcoord.xy).rg;
+
 	rtFragColor = vec4(0.0, 1.0, 1.0, 1.0);
-	rtDiffuseMapSample = texture(uImage03, vTexcoord.xy);
-	rtSpecularMapSample = texture(uImage00, vTexcoord.xy);
+	rtDiffuseMapSample = texture(uImage04, texCoord);
+	rtSpecularMapSample = texture(uImage05, texCoord);
 	rtDiffuseLightTotal = vec4(1.0, 0.0, 1.0, 1.0);
 	rtSpecularLightTotal = vec4(1.0, 1.0, 0.0, 1.0);
 }
