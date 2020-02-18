@@ -125,8 +125,8 @@ vec3 CalculatePosition()
 void main()
 {
 	vec2 texCoord = texture(uImage03, vTexcoord.xy).rg; // Indidivual texture coords are stored in this texture's rg channels
-	vec3 position = CalculatePosition();;	// The old mvPosition should be stored here
-	vec4 normal = vec4(normalize(texture(uImage02, vTexcoord.xy)).xyz, 1.0);
+	vec3 position = CalculatePosition();
+	vec4 normal = vec4(texture(uImage02, vTexcoord.xy).xyz, 1.0);
 
 	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
 	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
@@ -154,6 +154,6 @@ void main()
 	rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.3f * ambientColor), 1.0);
 	rtDiffuseMapSample = diffuseSample;
 	rtSpecularMapSample = specularSample;
-	rtDiffuseLightTotal = diffColor;
-	rtSpecularLightTotal = specularColor;
+	rtDiffuseLightTotal = diffuse;
+	rtSpecularLightTotal = specular;
 }
