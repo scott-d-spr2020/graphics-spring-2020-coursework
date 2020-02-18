@@ -45,6 +45,6 @@ void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE RED, GREEN AND BLUE
 	rtViewPosition = vbData.vViewPosition;
-	rtViewNormal = vbData.vViewNormal;
+	rtViewNormal = normalize(vbData.vViewNormal);
 	rtAtlasTexcoord = vbData.vTexcoord;
 }

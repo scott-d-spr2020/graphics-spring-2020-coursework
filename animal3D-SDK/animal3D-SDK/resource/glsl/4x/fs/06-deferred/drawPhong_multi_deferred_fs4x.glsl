@@ -40,6 +40,14 @@
 
 in vec4 vTexcoord;
 
+uniform sampler2D uImage00; //g-buffer depth texture
+uniform sampler2D uImage01; //g-buffer position texture
+uniform sampler2D uImage02; //g-buffer normal texture
+uniform sampler2D uImage03; //g-buffer texcoord texture
+
+uniform sampler2D uImage04; //diffuse texture atlas
+uniform sampler2D uImage05; //spec texture atlas
+
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 4) out vec4 rtDiffuseMapSample;
 layout (location = 5) out vec4 rtSpecularMapSample;
@@ -50,8 +58,8 @@ void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE CYAN (and others)
 	rtFragColor = vec4(0.0, 1.0, 1.0, 1.0);
-	rtDiffuseMapSample = vec4(0.0, 0.0, 1.0, 1.0);
-	rtSpecularMapSample = vec4(0.0, 1.0, 0.0, 1.0);
+	rtDiffuseMapSample = texture(uImage03, vTexcoord.xy);
+	rtSpecularMapSample = texture(uImage00, vTexcoord.xy);
 	rtDiffuseLightTotal = vec4(1.0, 0.0, 1.0, 1.0);
 	rtSpecularLightTotal = vec4(1.0, 1.0, 0.0, 1.0);
 }
