@@ -44,7 +44,7 @@ in vbLightingData {
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE RED, GREEN AND BLUE
-	rtViewPosition = vbData.vViewPosition;
+	rtViewPosition = vbData.vBiasedClipCoord/vbData.vBiasedClipCoord.w; //this is color target 4 (2225)
 	rtViewNormal = normalize(vbData.vViewNormal);
 	rtAtlasTexcoord = vbData.vTexcoord;
 }

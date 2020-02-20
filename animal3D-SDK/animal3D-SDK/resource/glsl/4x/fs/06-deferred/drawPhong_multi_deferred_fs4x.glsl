@@ -38,7 +38,7 @@
 //			-> normal calculated by expanding range of normal sample
 //			-> surface texture coordinate is used as-is once sampled
 
-layout(location = 8)in vec4 vTexcoord;
+in vec4 vTexcoord;
 
 const vec3 ambientColor = vec3(0.1f);
 
@@ -111,11 +111,12 @@ vec4 CalculateSpecular(vec4 NVec, int index, LambertData lambert, vec3 VVec3d)
 
 vec3 CalculatePosition()
 {
-	vec3 sampledPos = texture(uImage01, vTexcoord.xy).rgb;
+	vec3 sampledPos = texture(uImage01, vTexcoord.xy).rgb; //gives us position previously saved
+	//that data's [0,1], when we need [-x,x]
 	vec4 sampledDepth = texture(uImage00, vTexcoord.xy);
 
-	vec4 recalculatedPos = vec4(sampledPos.x, sampledPos.y, sampledDepth.x, 1.0);
-	recalculatedPos.z = 2.0 * recalculatedPos.z - 1.0;	//reset depth value to [-1, 1]
+	vec4 recalculatedPos = vec4(sampledPos.x, sampledPos.y, sampledDepth.z, 1.0);
+	//recalculatedPos.z = 2.0 * recalculatedPos.z - 1.0;	//reset depth value to [-1, 1]
 	recalculatedPos = uPB_inv * recalculatedPos;
 
 	return (recalculatedPos / recalculatedPos.w).xyz;
