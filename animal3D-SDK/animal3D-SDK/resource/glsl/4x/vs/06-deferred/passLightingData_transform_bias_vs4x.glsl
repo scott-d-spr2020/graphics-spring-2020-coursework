@@ -47,5 +47,6 @@ void main()
 	vViewNormal = uMV_nrm * aNormal;
 	vTexcoord = uAtlas * aTexcoord;
 	vBiasedClipCoord = uPB * vViewPosition;
+	vBiasedClipCoord /= vBiasedClipCoord.w;
 	gl_Position = uP * vViewPosition;
 }
