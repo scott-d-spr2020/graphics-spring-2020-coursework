@@ -153,7 +153,7 @@ void main()
 	rtPosition = vec4(position, 1.0);
 
 	rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.3f * ambientColor), 1.0);
-	rtDiffuseMapSample = diffuseSample;
+	rtDiffuseMapSample = vec4(diffuseSample.rgb, 1.0f);
 	rtSpecularMapSample = specularSample;
 	rtDiffuseLightTotal = diffuse;
 	rtSpecularLightTotal = specular;

@@ -43,6 +43,21 @@ layout (location = 0) in vec4 depthBuffer;
 layout (location = 1) in vec4 position;
 layout (location = 2) in vec4 normal;
 
+struct pointLight
+{
+	vec4 worldPos;		// position in world space
+	vec4 viewPos;		// position in viewer space
+	vec4 color;			// RGB color with padding
+	float radius;		// radius (distance of effect from center)
+	float radiusInvSq;	// radius inverse squared (attenuation factor)
+	float pad[2];		// padding
+};
+
+uniform ubPointLight
+{
+	pointLight[] lights;
+};
+
 layout (location = 6) out vec4 rtDiffuseLight;
 layout (location = 7) out vec4 rtSpecularLight;
 
