@@ -127,7 +127,7 @@ void main()
 {
 	vec2 texCoord = texture(uImage03, vTexcoord.xy).rg; // Indidivual texture coords are stored in this texture's rg channels
 	vec3 position = CalculatePosition();
-	vec4 normal = vec4(texture(uImage02, vTexcoord.xy).xyz, 1.0);
+	vec4 normal = vec4(texture(uImage02, vTexcoord.xy).xyz, 1.0) * 2.0f - vec4(1.0f); //uncompress
 
 	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
 	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
