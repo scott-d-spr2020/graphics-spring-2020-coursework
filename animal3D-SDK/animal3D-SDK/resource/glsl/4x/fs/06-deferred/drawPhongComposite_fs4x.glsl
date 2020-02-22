@@ -38,6 +38,12 @@
 
 in vec4 vTexcoord;
 
+uniform sampler2D uImage01; // Diffuse light texture
+uniform sampler2D uImage02;	// Specular light texture
+uniform sampler2D uImage03; // Texcoord texture
+uniform sampler2D uImage04; // Diffuse map
+uniform sampler2D uImage05; // Specular map
+
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 4) out vec4 rtDiffuseMapSample;
 layout (location = 5) out vec4 rtSpecularMapSample;
