@@ -129,7 +129,7 @@ void main()
 
 	vec3 position = CalculatePosition(sampleCoord);
 	vec4 normal = vec4(texture(uImage02, sampleCoord.xy).xyz, 1.0);
-
+	normal = 2.0f * normal - 1.0f;
 	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
 	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
 	vec3 VVec3d = normalize(-position.xyz);
