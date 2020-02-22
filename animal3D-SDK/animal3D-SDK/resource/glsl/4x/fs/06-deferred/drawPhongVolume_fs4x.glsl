@@ -59,7 +59,7 @@ struct pointLight
 
 uniform ubPointLight
 {
-	pointLight[] lights;
+	pointLight[MAX_LIGHTS] lights;
 };
 
 layout (location = 6) out vec4 rtDiffuseLight;

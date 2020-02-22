@@ -49,17 +49,21 @@ uniform vec4 uColor; // New ambient color
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 4) out vec4 rtDiffuseMapSample;
 layout (location = 5) out vec4 rtSpecularMapSample;
+layout (location = 6) out vec4 rtDiffuseTotal;
+layout (location = 7) out vec4 rtSpecularTotal;
 
 void main()
 {
 	vec2 sampleTexCoord = texture(uImage03, vTexcoord.xy).rg;
 
-	vec4 diffuseLight = texture(uImage01, sampleTexCoord);
-	vec4 specularLight = texture(uImage02, sampleTexCoord);
-	vec4 diffuseSample = texture(uImage04, sampleTexCoord);
-	vec4 specularSample = texture(uImage05, sampleTexCoord);
+	vec4 diffuseLight = texture(uImage01, vTexcoord.xy);
+	vec4 specularLight = texture(uImage02, vTexcoord.xy);
+	vec4 diffuseSample = texture(uImage04, sampleTexCoord.xy);
+	vec4 specularSample = texture(uImage05, sampleTexCoord.xy);
 
-	rtFragColor = uColor + (diffuseLight * diffuseSample) + (specularLight * specularSample);
+	rtFragColor = uColor * 0.03f + (diffuseLight * diffuseSample) + (specularLight * specularSample);
 	rtDiffuseMapSample = diffuseSample;
 	rtSpecularMapSample = specularSample;
+	rtDiffuseTotal = diffuseLight;
+	rtSpecularTotal = specularLight;
 }
