@@ -628,7 +628,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	case pipelines_deferred_lighting:
 		// ****TO-DO: 
 		//	-> 5.1a: uncomment deferred lighting composite
-		/*
+		
 		// use deferred lighting composite program
 		currentDemoProgram = demoState->prog_drawPhongComposite;
 		a3shaderProgramActivate(currentDemoProgram->program);
@@ -644,7 +644,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		a3textureActivate(demoState->tex_atlas_sm, a3tex_unit05);
 		// uniforms
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
-		*/
+		
 		break;
 	}
 	// reset other uniforms
