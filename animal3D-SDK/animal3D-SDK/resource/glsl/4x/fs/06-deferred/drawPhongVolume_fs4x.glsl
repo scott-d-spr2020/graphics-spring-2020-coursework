@@ -130,15 +130,13 @@ void main()
 	vec3 position = CalculatePosition(sampleCoord);
 	vec4 normal = vec4(texture(uImage02, sampleCoord.xy).xyz, 1.0);
 	normal = 2.0f * normal - 1.0f;
-	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
-	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
+	vec4 diffuse;
+	vec4 specular;
 	vec3 VVec3d = normalize(-position.xyz);
 
 	LambertData lambert;
-	vec4 tempDiff = CalculateDiffuse(normal, vec4(position, 1.0), lambert);
-	vec4 tempSpec = CalculateSpecular(normal, lambert, VVec3d);
-	specular += tempSpec;
-	diffuse += tempDiff;
+	diffuse = CalculateDiffuse(normal, vec4(position, 1.0), lambert);
+	specular = CalculateSpecular(normal, lambert, VVec3d);
 
 
 	rtDiffuseLight = diffuse;
