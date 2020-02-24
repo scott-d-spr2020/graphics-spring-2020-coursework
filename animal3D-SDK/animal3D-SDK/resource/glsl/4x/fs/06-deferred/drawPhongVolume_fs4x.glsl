@@ -79,7 +79,7 @@ struct LambertData
 vec4 CalculateDiffuse(vec4 NVec, vec4 position, out LambertData lambert)
 {
 	vec4 LVec = normalize(lights[vInstanceID].worldPos - position); //w coord is zero, probably
-	float dotProd_LN = dot(NVec, LVec);
+	float dotProd_LN = dot(NVec.xyz, LVec.xyz);
 	lambert = LambertData(LVec, dotProd_LN);
 	float dotProd = max(0.0f, dotProd_LN);
 
@@ -127,12 +127,13 @@ void main()
 	vec4 screenCoord = vBiasedClipCoord / vBiasedClipCoord.w;
 	vec4 position_view = uPB_inv * screenCoord;
 	position_view = position_view / position_view.w;
-//	vec3 position = CalculatePosition(position_view);
+	//normal is weird but right.
 	vec4 normal = vec4(texture(uImage02, screenCoord.xy).xyz, 1.0);
 	normal = 2.0f * normal - 1.0f;
+	normal = normalize(normal);
 	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
 	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
-	vec3 VVec3d = normalize(-screenCoord.xyz);
+	vec3 VVec3d = normalize(-position_view.xyz);
 
 	LambertData lambert;
 	vec4 tempDiff = CalculateDiffuse(normal, vec4(position_view.xyz, 1.0), lambert);
@@ -145,6 +146,7 @@ void main()
 	//rtViewPosition = normalize(vBiasedClipCoord/vBiasedClipCoord.w);
 
 	//our samplecoord IS a position
+	rtColor = vec4(screenCoord.rg, 0.0f, 1.0f);
 	rtViewPosition = vec4(position_view.rgb, 1.0f);
 	rtDiffuseLight = diffuse;
 	rtSpecularLight = specular;
