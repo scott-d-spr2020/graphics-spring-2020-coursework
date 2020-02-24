@@ -64,6 +64,6 @@ void main()
 	rtFragColor = uColor * 0.03f + (diffuseLight * diffuseSample) + (specularLight * specularSample);
 	rtDiffuseMapSample = diffuseSample;
 	rtSpecularMapSample = specularSample;
-	rtDiffuseTotal = diffuseLight;
+	rtDiffuseTotal = vec4(diffuseLight.rgb, 1.0f);
 	rtSpecularTotal = specularLight;
 }
