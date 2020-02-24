@@ -62,7 +62,9 @@ uniform ubPointLight
 	pointLight[MAX_LIGHTS] lights;
 };
 
-layout (location = 0) out vec4 rtViewPosition;
+layout (location = 0) out vec4 rtColor;
+layout (location = 1) out vec4 rtViewPosition;
+layout (location = 2) out vec4 rtNormal;
 layout (location = 6) out vec4 rtDiffuseLight;
 layout (location = 7) out vec4 rtSpecularLight;
 
@@ -124,7 +126,9 @@ vec3 CalculatePosition(out vec4 sampleCoord)
 
 	sampleCoord = uPB_inv * vBiasedClipCoord;
 	sampleCoord = sampleCoord / sampleCoord.w;
-
+	vec4 v = vBiasedClipCoord / vBiasedClipCoord.w;
+	v = uPB_inv * v;
+	v = v / v.w;
 	vec3 sampledPos = texture(uImage01, sampleCoord.xy).rgb; //gives us position previously saved
 
 	//that data's [0,1], when we need [-x,x]
@@ -140,7 +144,6 @@ vec3 CalculatePosition(out vec4 sampleCoord)
 
 void main()
 {
-	normalize(vBiasedClipCoord/vBiasedClipCoord.w);
 	vec4 sampleCoord;
 
 	vec3 position = CalculatePosition(sampleCoord);
@@ -158,7 +161,8 @@ void main()
 
 	//rtViewPosition = vec4(position, 1.0f);
 	//rtViewPosition = vBiasedClipCoord;
-	rtViewPosition = normalize(vBiasedClipCoord/vBiasedClipCoord.w);
+	//rtViewPosition = normalize(vBiasedClipCoord/vBiasedClipCoord.w);
+	rtViewPosition = vec4(sampleCoord.rgb, 1.0f);
 	rtDiffuseLight = diffuse;
 	rtSpecularLight = specular;
 }
