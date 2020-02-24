@@ -61,9 +61,9 @@ void main()
 	vec4 diffuseSample = texture(uImage04, sampleTexCoord.xy);
 	vec4 specularSample = texture(uImage05, sampleTexCoord.xy);
 
-	rtFragColor = uColor * 0.03f + (diffuseLight * diffuseSample) + (specularLight * specularSample);
+	rtFragColor = vec4((uColor * 0.03).rgb + (diffuseLight * diffuseSample).rgb + (specularLight * specularSample).rgb, 1.0);
 	rtDiffuseMapSample = diffuseSample;
 	rtSpecularMapSample = specularSample;
 	rtDiffuseTotal = vec4(diffuseLight.rgb, 1.0f);
-	rtSpecularTotal = specularLight;
+	rtSpecularTotal = vec4(specularLight.rgb, 1.0);
 }

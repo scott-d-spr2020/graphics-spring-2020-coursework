@@ -116,7 +116,7 @@ vec3 CalculatePosition(vec2 sampleCoord)
 	
 	recalculatedPos = uPB_inv * recalculatedPos;
 
-	return recalculatedPos / recalculatedPos.w;
+	return (recalculatedPos / recalculatedPos.w).xyz;
 }
 
 
