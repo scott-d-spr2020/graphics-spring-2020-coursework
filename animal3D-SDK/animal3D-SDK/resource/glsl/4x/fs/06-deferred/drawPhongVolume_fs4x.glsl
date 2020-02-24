@@ -105,50 +105,30 @@ vec4 CalculateSpecular(vec4 NVec, LambertData lambert, vec3 VVec3d)
 	return powVal * lights[vInstanceID].color;
 }
 
-/*
-vec3 CalculatePosition()
-{
-	vec3 sampledPos = texture(uImage01, vTexcoord.xy).rgb; //gives us position previously saved
-	//that data's [0,1], when we need [-x,x]
-	vec4 sampledDepth = texture(uImage00, vTexcoord.xy);
 
-	vec4 recalculatedPos = vec4(sampledPos.x, sampledPos.y, sampledDepth.z, 1.0);
-	//recalculatedPos.z = 2.0 * recalculatedPos.z - 1.0;	//reset depth value to [-1, 1]
-	recalculatedPos = uPB_inv * recalculatedPos;
-
-	return (recalculatedPos / recalculatedPos.w).xyz;
-}*/
-
-
-vec3 CalculatePosition(out vec4 sampleCoord)
+vec3 CalculatePosition(vec2 sampleCoord)
 {
 	//TODO: Perspective divide on vbiasedClipCoord
-
-	sampleCoord = uPB_inv * vBiasedClipCoord;
-	sampleCoord = sampleCoord / sampleCoord.w;
-	vec4 v = vBiasedClipCoord / vBiasedClipCoord.w;
-	v = uPB_inv * v;
-	v = v / v.w;
-	vec3 sampledPos = texture(uImage01, sampleCoord.xy).rgb; //gives us position previously saved
-
-	//that data's [0,1], when we need [-x,x]
-	vec4 sampledDepth = texture(uImage00, sampleCoord.xy);
-
-	vec4 recalculatedPos = vec4(sampledPos.x, sampledPos.y, sampledDepth.z, 1.0);
-
+	
+	vec4 sampledPos = texture(uImage01, sampleCoord); //gives us position previously saved
+	
+	vec4 recalculatedPos = sampledPos;
+	
 	recalculatedPos = uPB_inv * recalculatedPos;
 
-	return (recalculatedPos / recalculatedPos.w).xyz;
+	return recalculatedPos / recalculatedPos.w;
 }
 
 
 void main()
 {
-	vec4 sampleCoord;
+	vec4 screenCoord = vBiasedClipCoord / vBiasedClipCoord.w;
 
-	vec3 position = CalculatePosition(sampleCoord);
-	vec4 normal = vec4(texture(uImage02, position.xy).xyz, 1.0);
+	vec3 position = CalculatePosition(screenCoord.xy);
+
+	vec4 normal = texture(uImage02, screenCoord.xy);
 	normal = 2.0f * normal - 1.0f;
+
 	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
 	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
 	vec3 VVec3d = normalize(-position.xyz);
@@ -162,7 +142,8 @@ void main()
 	//rtViewPosition = vec4(position, 1.0f);
 	//rtViewPosition = vBiasedClipCoord;
 	//rtViewPosition = normalize(vBiasedClipCoord/vBiasedClipCoord.w);
-	rtViewPosition = vec4(sampleCoord.rgb, 1.0f);
+	rtViewPosition = vec4(position.rgb, 1.0f);
+	rtNormal = normal;
 	rtDiffuseLight = diffuse;
 	rtSpecularLight = specular;
 }
