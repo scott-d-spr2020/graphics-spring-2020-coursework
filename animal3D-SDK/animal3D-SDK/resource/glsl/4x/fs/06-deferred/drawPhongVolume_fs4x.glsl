@@ -108,8 +108,6 @@ vec4 CalculateSpecular(vec4 NVec, LambertData lambert, vec3 VVec3d)
 
 vec3 CalculatePosition(vec2 sampleCoord)
 {
-	//TODO: Perspective divide on vbiasedClipCoord
-	
 	vec4 sampledPos = texture(uImage01, sampleCoord); //gives us position previously saved
 	
 	vec4 recalculatedPos = sampledPos;
@@ -129,19 +127,14 @@ void main()
 	vec4 normal = texture(uImage02, screenCoord.xy);
 	normal = 2.0f * normal - 1.0f;
 
-	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
-	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
+	vec4 diffuse;
+	vec4 specular;
 	vec3 VVec3d = normalize(-position.xyz);
 
 	LambertData lambert;
-	vec4 tempDiff = CalculateDiffuse(normal, vec4(position, 1.0), lambert);
-	vec4 tempSpec = CalculateSpecular(normal, lambert, VVec3d);
-	specular += tempSpec;
-	diffuse += tempDiff;
+	diffuse = CalculateDiffuse(normal, vec4(position, 1.0), lambert);
+	specular = CalculateSpecular(normal, lambert, VVec3d);
 
-	//rtViewPosition = vec4(position, 1.0f);
-	//rtViewPosition = vBiasedClipCoord;
-	//rtViewPosition = normalize(vBiasedClipCoord/vBiasedClipCoord.w);
 	rtViewPosition = vec4(position.rgb, 1.0f);
 	rtNormal = normal;
 	rtDiffuseLight = diffuse;
