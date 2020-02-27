@@ -224,7 +224,7 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 		a3_ProceduralGeometryDescriptor hiddenShapes[1] = { a3geomShape_none };
 		a3_ProceduralGeometryDescriptor proceduralShapes[4] = { a3geomShape_none };
 		const a3_DemoStateLoadedModel loadedShapes[1] = {
-			{ A3_DEMO_OBJ"teapot/teapot.obj", downscale20x.mm, a3model_calculateVertexNormals_loadTexcoords }
+			{ A3_DEMO_OBJ"Crate_OBJ.obj", downscale20x.mm, a3model_calculateVertexNormals_loadTexcoords }
 		};
 
 		const a3ubyte lightVolumeSlices = 8, lightVolumeStacks = 6;
@@ -857,7 +857,7 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			{ demoState->tex_stone_dm,		"tex:stone-dm",		"../../../../resource/tex/stone/stone_dm.png" },
 			{ demoState->tex_ramp_dm,		"tex:ramp-dm",		"../../../../resource/tex/sprite/celRamp_dm.png" },
 			{ demoState->tex_ramp_sm,		"tex:ramp-sm",		"../../../../resource/tex/sprite/celRamp_sm.png" },
-			{ demoState->tex_checker,		"tex:checker",		"../../../../resource/tex/sprite/checker.png" },
+			{ demoState->tex_checker,		"tex:checker",		"../../../../resource/tex/crate/crate4_low_lambert1_BaseColor.tga" },
 		}
 	};
 	const a3ui32 numTextures = sizeof(textureList) / sizeof(a3_DemoStateTexture);
