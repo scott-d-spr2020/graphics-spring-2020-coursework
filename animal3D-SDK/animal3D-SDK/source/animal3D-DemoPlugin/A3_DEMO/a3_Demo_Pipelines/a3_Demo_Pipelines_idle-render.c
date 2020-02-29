@@ -276,10 +276,10 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 	// framebuffers to which to write based on pipeline mode
 	const a3_Framebuffer* writeFBO[pipelines_pass_max] = {
-		demoState->fbo_shadow_d32,
-		demoState->fbo_scene_c16d24s8_mrt,
+		demoState->fbo_shadow_d32,	//passScene write FBO
+		demoState->fbo_scene_c16d24s8_mrt,	//passComposite is reading from here...? It's passScene's write FBO
 		demoState->fbo_composite_c16 + 1,
-		demoState->fbo_composite_c16 + 2,
+		demoState->fbo_composite_c16 + 2,	//passComposite write FBO
 		demoState->fbo_post_c16_2fr + 0,
 		demoState->fbo_post_c16_2fr + 1,
 		demoState->fbo_post_c16_2fr + 2,
@@ -297,7 +297,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		{ 0, },
 		{ 0, demoState->fbo_shadow_d32, 0, },
 		{ demoState->fbo_scene_c16d24s8_mrt, 0, },
-		{ demoState->fbo_scene_c16d24s8_mrt, demoState->fbo_composite_c16 + 1, 0, },
+		{ demoState->fbo_scene_c16d24s8_mrt, demoState->fbo_composite_c16 + 1, 0, },	//passComposite read FBO
 		{ demoState->fbo_composite_c16 + 2, 0, },
 		{ demoState->fbo_post_c16_2fr + 0, 0, },
 		{ demoState->fbo_post_c16_2fr + 1, 0, },
