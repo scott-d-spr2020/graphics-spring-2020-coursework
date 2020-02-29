@@ -462,6 +462,10 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				drawPhong_multi_deferred_fs[1],
 				drawPhongVolume_fs[1],
 				drawPhongComposite_fs[1];
+			// MIDTERM
+			a3_DemoStateShader
+				drawPhongCross_fs[1],
+				drawSSAO_fs[1];
 		};
 	} shaderList = {
 		{
@@ -515,6 +519,10 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-Phong-multi-def",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/drawPhong_multi_deferred_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Phong-volume",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/drawPhongVolume_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Phong-composite",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/drawPhongComposite_fs4x.glsl" } } },
+			//MIDTERM SSAO, Crosshatch
+			{ { { 0 },	"shdr-fs:draw-Phong-cross-def",		a3shader_fragment,	1,{ A3_DEMO_FS"midterm-SSAO-Cross/drawPhong_cross_deferred_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-SSAO-def",			a3shader_fragment,	1,{ A3_DEMO_FS"midterm-SSAO-Cross/drawSSAO_multi_deferred_fs4x.glsl" } } },
+
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -699,6 +707,19 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passAtlasTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhongComposite_fs->shader);
 	
+
+	//MIDTERM
+	//draw SSAO
+	currentDemoProg = demoState->prog_drawSSAO_deferred;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-SSAO");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passAtlasTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawSSAO_fs->shader);
+
+	//draw Phong with cross-hatch lighting
+	currentDemoProg = demoState->prog_drawPhongCross_deferred;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-cross");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passAtlasTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhongCross_fs->shader);
 
 
 	// activate a primitive for validation
