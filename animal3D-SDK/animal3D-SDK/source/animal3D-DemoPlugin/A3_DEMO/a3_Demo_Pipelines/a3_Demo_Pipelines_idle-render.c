@@ -284,7 +284,10 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		demoState->fbo_scene_c16d24s8_mrt,	//passComposite is reading from here...? It's passScene's write FBO
 		demoState->fbo_composite_c16 + 1,
 		demoState->fbo_composite_c16 + 2,	//passComposite write FBO
-		demoState->fbo_post_c16_2fr + 0,
+		demoState->fbo_ssao_c16 + 0,
+		demoState->fbo_ssao_c16 + 1,
+		demoState->fbo_ssao_c16 + 2,
+		demoState->fbo_post_c16_2fr + 0,	//bright2 write FBO
 		demoState->fbo_post_c16_2fr + 1,
 		demoState->fbo_post_c16_2fr + 2,
 		demoState->fbo_post_c16_4fr + 0,
@@ -303,6 +306,9 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		{ demoState->fbo_scene_c16d24s8_mrt, 0, },
 		{ demoState->fbo_scene_c16d24s8_mrt, demoState->fbo_composite_c16 + 1, 0, },	//passComposite read FBO
 		{ demoState->fbo_composite_c16 + 2, 0, },
+		{ demoState->fbo_ssao_c16 + 0, 0, },
+		{ demoState->fbo_ssao_c16 + 1, 0, },
+		{ demoState->fbo_ssao_c16 + 2, 0, },
 		{ demoState->fbo_post_c16_2fr + 0, 0, },
 		{ demoState->fbo_post_c16_2fr + 1, 0, },
 		{ demoState->fbo_post_c16_2fr + 2, 0, },
@@ -457,6 +463,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	a3textureActivate(demoState->tex_ramp_sm, a3tex_unit05);
 
 
+	//Switch case for SCENE pass
 	// select pipeline algorithm
 	glDisable(GL_BLEND);
 	switch (pipeline)
@@ -564,6 +571,17 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		
 	}	break;
 		// end deferred lighting scene pass
+	case pipelines_deferred_ssao: {
+		//starts the same as the others
+		for (k = 0,
+			currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject;
+			currentSceneObject <= endSceneObject;
+			++k, ++currentSceneObject)
+		{
+			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, atlas[k]->mm);
+			a3demo_drawModelLighting(modelViewProjectionMat.m, modelViewMat.m, viewProjectionMat.m, viewMat.m, currentSceneObject->modelMat.m, currentDemoProgram, drawable[k], rgba4[k + 3].v);
+		}
+	}	break;
 	}
 
 

@@ -376,6 +376,7 @@ extern "C"
 				a3_Framebuffer
 					fbo_shadow_d32[1];							// framebuffer for capturing shadow map
 				a3_Framebuffer
+					fbo_ssao_c16[3],							// framebuffers for handling SSAO. Preprocessing?
 					fbo_post_c16_2fr[3],						// framebuffers for post-processing, half frame size
 					fbo_post_c16_4fr[3],						// framebuffers for post-processing, quarter frame size
 					fbo_post_c16_8fr[3],						// framebuffers for post-processing, eighth frame size
