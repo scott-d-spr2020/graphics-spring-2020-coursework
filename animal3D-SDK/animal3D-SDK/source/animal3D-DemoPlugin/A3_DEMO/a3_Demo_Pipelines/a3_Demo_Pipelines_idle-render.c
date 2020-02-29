@@ -56,6 +56,7 @@ void a3pipelines_render_controls(a3_DemoState const* demoState, a3_Demo_Pipeline
 		"Forward rendering",
 		"Deferred shading",
 		"Deferred lighting",
+		"Deferred SSAO"
 	};
 
 	// forward pipeline names
@@ -83,6 +84,9 @@ void a3pipelines_render_controls(a3_DemoState const* demoState, a3_Demo_Pipeline
 		"Pass: Capture shadow map",
 		"Pass: Render scene objects",
 		"Pass: Render light volumes",
+		"Pass: Pass SSAO",
+		"Pass: Blur SSAO (Horizontal)",
+		"Pass: Blur SSAO (Vertical)",
 		"Pass: Composite scene",
 		"Pass: Bright pass (1/2 frame)",
 		"Pass: Horizontal blur (1/2 frame)",
