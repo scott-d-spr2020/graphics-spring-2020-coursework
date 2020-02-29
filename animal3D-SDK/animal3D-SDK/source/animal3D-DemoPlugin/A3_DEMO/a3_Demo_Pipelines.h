@@ -88,7 +88,7 @@ extern "C"
 		pipelines_forward,				// forward lighting pipeline
 		pipelines_deferred_shading,		// deferred shading pipeline
 		pipelines_deferred_lighting,	// deferred lighting pipeline
-
+		pipelines_deferred_ssao,
 		pipelines_pipeline_max
 	};
 
