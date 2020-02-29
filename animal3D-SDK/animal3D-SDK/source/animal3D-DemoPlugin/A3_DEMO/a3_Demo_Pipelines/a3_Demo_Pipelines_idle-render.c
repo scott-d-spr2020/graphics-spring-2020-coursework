@@ -266,10 +266,19 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		}, {
 			demoState->prog_drawLightingData,
 			demoState->prog_drawLightingData,
+			demoState->prog_drawLightingData,
+			demoState->prog_drawLightingData
 		}, {
 			demoState->prog_drawLightingData,
 			demoState->prog_drawLightingData,
-		},
+			demoState->prog_drawLightingData,
+			demoState->prog_drawLightingData
+		}, {
+			demoState->prog_drawPhongCross_deferred,
+			demoState->prog_drawPhongCross_deferred,
+			demoState->prog_drawPhongCross_deferred,
+			demoState->prog_drawPhongCross_deferred
+		}
 	};
 
 	// display shader programs
@@ -419,6 +428,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	case pipelines_forward:
 	case pipelines_deferred_shading:
 	case pipelines_deferred_lighting:
+	case pipelines_deferred_ssao:
 		// target scene framebuffer
 		a3demo_setSceneState(currentWriteFBO, demoState->displaySkybox);
 		break;
