@@ -88,7 +88,8 @@ extern "C"
 		pipelines_forward,				// forward lighting pipeline
 		pipelines_deferred_shading,		// deferred shading pipeline
 		pipelines_deferred_lighting,	// deferred lighting pipeline
-		pipelines_deferred_ssao,
+		pipelines_deferred_ssao,			// deferred with SSAO pipeline
+
 		pipelines_pipeline_max
 	};
 
@@ -100,6 +101,10 @@ extern "C"
 		pipelines_passScene,			// render scene objects
 
 		pipelines_passLighting,			// light pre-pass for deferred lighting
+
+		pipelines_passSSAO,				// SSAO pre-pass for new lighting
+		pipelines_blurSSAOH,			// Horizontal SSAO blur pass, full screen
+		pipelines_blurSSAOV,			// Vertical SSAO blur pass, full screen
 
 		pipelines_passComposite,		// composite for post-processing stage
 
