@@ -46,8 +46,6 @@ float lerp(float a, float b, float t)
 */
 void genKernel(a3real3 *kern, int kernelSize)
 {
-	a3randomSetSeed((a3integer)12308327180);
-
 	for (int i = 0; i < kernelSize; i++)
 	{
 		a3real3 temp;

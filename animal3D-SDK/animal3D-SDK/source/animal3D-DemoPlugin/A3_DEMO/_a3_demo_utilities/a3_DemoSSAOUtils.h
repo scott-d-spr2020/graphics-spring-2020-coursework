@@ -22,10 +22,6 @@
 	Drawing utilities for demo state.
 */
 
-#ifndef __ANIMAL3D_DEMORENDERUTILS_H
-#define __ANIMAL3D_DEMORENDERUTILS_H
-
-
 //-----------------------------------------------------------------------------
 // animal3D framework includes
 
@@ -60,6 +56,3 @@ void genNoise(a3real3* arr, int arrSize);
 }
 #endif	// __cplusplus
 
-
-
-#endif	// !__ANIMAL3D_DEMORENDERUTILS_H

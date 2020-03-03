@@ -34,13 +34,14 @@
 
 #include "../_a3_demo_utilities/a3_DemoRenderUtils.h"
 
-
+#include "..//_a3_demo_utilities/a3_DemoSSAOUtils.h"
 
 
 // OpenGL
 #ifdef _WIN32
 #include <gl/glew.h>
 #include <Windows.h>
+#include <time.h>
 #include <GL/GL.h>
 #else	// !_WIN32
 #include <OpenGL/gl3.h>
@@ -593,6 +594,34 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, atlas[k]->mm);
 			a3demo_drawModelLighting(modelViewProjectionMat.m, modelViewMat.m, viewProjectionMat.m, viewMat.m, currentSceneObject->modelMat.m, currentDemoProgram, drawable[k], rgba4[k + 3].v);
 		}
+
+		a3randomSetSeed((a3integer)time(0));
+
+		a3real3 kernel[64];
+		genKernel(kernel, 64);
+
+		a3real3 noise[16];
+		genNoise(noise, 16);
+
+		currentPass = pipelines_passSSAO;
+		currentWriteFBO = writeFBO[currentPass];
+		a3framebufferActivate(currentWriteFBO);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		unsigned int noiseTex;
+		glGenTextures(1, &noiseTex);
+		glBindTexture(GL_TEXTURE_2D, noiseTex);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 4, 4, 0, GL_RGB, GL_FLOAT, &noise[0]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		// noise needs to go into a 4x4 texture
+		// kernel gets passed as a uniform
+
+		a3shaderUniformSendFloat(a3unif_vec3, 0, currentDemoProgram->uSSAOKernel, kernel);
+
 	}	break;
 	}
 
