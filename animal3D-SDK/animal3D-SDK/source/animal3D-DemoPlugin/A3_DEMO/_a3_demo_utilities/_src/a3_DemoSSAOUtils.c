@@ -1,6 +1,4 @@
 /*
-	Copyright 2011-2020 Daniel S. Buckstein
-
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
@@ -15,16 +13,14 @@
 */
 
 /*
-	animal3D SDK: Minimal 3D Animation Framework
-	By Daniel S. Buckstein
+	animal3D SDK: Minimal 3D Animation Framework, SSAO Plugin
+	By Cameron Schneider
 	
 	a3_DemoSSAOUtils.c
 	Generate randomosity for SSAO
 */
 
-#include <stdlib.h>
-#include <math.h>
-#include "animal3D/animal3D.h"
+#include "..//a3_DemoSSAOUtils.h"
 
 //-----------------------------------------------------------------------------
 
@@ -53,20 +49,20 @@ void genKernel(a3real3 *kern, int kernelSize)
 	for (int i = 0; i < kernelSize; i++)
 	{
 		a3real3 temp;
-		temp[0] = (float)rand() / (float)(RAND_MAX / 1.0) * 2.0 - 1.0;
-		temp[1] = (float)rand() / (float)(RAND_MAX / 1.0) * 2.0 - 1.0;
-		temp[2] = (float)rand() / (float)(RAND_MAX / 1.0);
+		temp[0] = a3randomSymmetric();
+		temp[1] = a3randomSymmetric();
+		temp[2] = a3randomNormalized();
 
 		//Normalize sample
-		double mag = sqrt(((double)((double)temp[0] * temp[0])) + (double)((double)temp[1] * temp[1]) + (double)((double)temp[2] * temp[2]));
+		a3real mag = a3sqrtf(((temp[0] * temp[0])) + (temp[1] * temp[1]) + (temp[2] * temp[2]));
 		temp[0] /= mag;
 		temp[1] /= mag;
 		temp[2] /= mag;
 
 		//multiply by a new random float between 0.0, 1.0
-		temp[0] = (float)rand() / (float)(RAND_MAX / 1.0);
-		temp[1] = (float)rand() / (float)(RAND_MAX / 1.0);
-		temp[2] = (float)rand() / (float)(RAND_MAX / 1.0);
+		temp[0] = a3randomNormalized();
+		temp[1] = a3randomNormalized();
+		temp[2] = a3randomNormalized();
 		
 		float scale = (float)i / (float)kernelSize;
 
@@ -81,9 +77,23 @@ void genKernel(a3real3 *kern, int kernelSize)
 	}
 }
 
-void genNoise()
-{
 
+/*
+	A length 16 is best, must be power of 2
+*/
+void genNoise(a3real3 *arr, int arrSize)
+{
+	for (int i = 0; i < arrSize; i++)
+	{
+		a3real3 temp;
+		temp[0] = a3randomSymmetric();
+		temp[1] = a3randomSymmetric();
+		temp[2] = 0.0f;
+
+		arr[i][0] = temp[0];
+		arr[i][1] = temp[1];
+		arr[i][2] = temp[2];
+	}
 }
 
 
