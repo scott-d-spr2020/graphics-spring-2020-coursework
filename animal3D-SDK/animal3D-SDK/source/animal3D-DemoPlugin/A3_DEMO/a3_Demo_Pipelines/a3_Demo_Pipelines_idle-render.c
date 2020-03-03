@@ -290,12 +290,12 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	// framebuffers to which to write based on pipeline mode
 	const a3_Framebuffer* writeFBO[pipelines_pass_max] = {
 		demoState->fbo_shadow_d32,	//passShadow write FBO
-		demoState->fbo_scene_c16d24s8_mrt,	//passComposite is reading from here...? It's passScene's write FBO
-		demoState->fbo_composite_c16 + 1,	//passLighting writeFBO
-		demoState->fbo_composite_c16 + 2,	//passComposite write FBO
+		demoState->fbo_scene_c16d24s8_mrt,	//passScene write FBO
+		demoState->fbo_composite_c16 + 1,	//passLighting (Deferred Lighting) write FBO
 		demoState->fbo_ssao_c16 + 0,		//ssao write 1
 		demoState->fbo_ssao_c16 + 1,		//ssao write 2
 		demoState->fbo_ssao_c16 + 2,		//ssao write 3
+		demoState->fbo_composite_c16 + 2,	//passComposite write FBO
 		demoState->fbo_post_c16_2fr + 0,	//bright2 write FBO
 		demoState->fbo_post_c16_2fr + 1,
 		demoState->fbo_post_c16_2fr + 2,
@@ -312,12 +312,12 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	const a3_Framebuffer* readFBO[pipelines_pass_max][4] = {
 		{ 0, },
 		{ 0, demoState->fbo_shadow_d32, 0, }, //passScene read FBO
-		{ demoState->fbo_scene_c16d24s8_mrt, 0, }, //passLighting writeFBO
-		{ demoState->fbo_scene_c16d24s8_mrt, demoState->fbo_composite_c16 + 1, 0, },	//passComposite read FBO
-		{ demoState->fbo_composite_c16 + 2, 0, },
+		{ demoState->fbo_scene_c16d24s8_mrt, 0, }, //deferred lighting read FBO
 		{ demoState->fbo_ssao_c16 + 0, 0, },
 		{ demoState->fbo_ssao_c16 + 1, 0, },
 		{ demoState->fbo_ssao_c16 + 2, 0, },
+		{ demoState->fbo_scene_c16d24s8_mrt, demoState->fbo_composite_c16 + 1, demoState->fbo_ssao_c16 + 2, 0,},	//passComposite read FBO (for everything but SSAO)
+		{ demoState->fbo_composite_c16 + 2, 0, }, //post processing starts here
 		{ demoState->fbo_post_c16_2fr + 0, 0, },
 		{ demoState->fbo_post_c16_2fr + 1, 0, },
 		{ demoState->fbo_post_c16_2fr + 2, 0, },
