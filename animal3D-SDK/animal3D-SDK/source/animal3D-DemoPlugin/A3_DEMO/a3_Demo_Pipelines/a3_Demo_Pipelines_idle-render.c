@@ -608,6 +608,10 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		a3framebufferActivate(currentWriteFBO);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		currentDemoProgram = demoState->prog_drawSSAO_deferred;
+		a3shaderProgramActivate(currentDemoProgram->program);
+
+		// noise needs to go into a 4x4 texture, not sure how to do this w/ animal
 		unsigned int noiseTex;
 		glGenTextures(1, &noiseTex);
 		glBindTexture(GL_TEXTURE_2D, noiseTex);
@@ -617,10 +621,12 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-		// noise needs to go into a 4x4 texture
-		// kernel gets passed as a uniform
+		// need to assign this to a new texture uniform here
 
+		// kernel gets passed as a uniform
 		a3shaderUniformSendFloat(a3unif_vec3, 0, currentDemoProgram->uSSAOKernel, kernel);
+
+		a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, pipelines_deferred_ssao); // Need to check this target is ok for blur
 
 	}	break;
 	}
