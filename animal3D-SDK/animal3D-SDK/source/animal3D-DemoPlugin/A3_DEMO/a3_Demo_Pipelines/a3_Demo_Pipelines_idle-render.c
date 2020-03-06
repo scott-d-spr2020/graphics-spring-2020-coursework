@@ -597,6 +597,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 		a3randomSetSeed((a3integer)time(0));
 
+		//begin SSAO prepass
 		a3real3 kernel[64];
 		genKernel(kernel, 64);
 
@@ -715,6 +716,28 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
 		
 		break;
+
+	case pipelines_deferred_ssao:
+		//ssao composite: crosshatch shader
+
+		currentDemoProgram = demoState->prog_drawPhongCross_deferred;
+		a3shaderProgramActivate(currentDemoProgram->program);
+
+		currentReadFBO = readFBO[currentPass][2]; //ssao blur 2 output
+
+		//uImage00 is currently depthbuffer, don't change this
+
+		//ssao prepass
+		a3frameBufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_finalcolor);
+		//gbuffer data
+		currentReadFBO = readFBO[currentPass][0]; //lighting data/gbuffers
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_position);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, pipelines_scene_normal);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit03, pipelines_scene_texcoord);
+		//need crosshatch texture from SOMEWHERE????
+		//a3textureActivate(demoState->tex_noise, a3tex_unit04);
+
+		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, grey);		//sets ambient color
 	}
 	// reset other uniforms
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, a3mat4_identity.mm);
