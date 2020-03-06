@@ -96,17 +96,17 @@ extern "C"
 	// render passes
 	enum a3_Demo_Pipelines_PassName
 	{
-		pipelines_passShadow,			// capture shadow map
+		pipelines_passShadow,			// capture shadow map (0)
 
-		pipelines_passScene,			// render scene objects
+		pipelines_passScene,			// render scene objects (1)
 
-		pipelines_passLighting,			// light pre-pass for deferred lighting
+		pipelines_passLighting,			// light pre-pass for deferred lighting (2)
 
-		pipelines_passSSAO,				// SSAO pre-pass for new lighting
-		pipelines_blurSSAOH,			// Horizontal SSAO blur pass, full screen
-		pipelines_blurSSAOV,			// Vertical SSAO blur pass, full screen
+		pipelines_passSSAO,				// SSAO pre-pass for new lighting (3)
+		pipelines_blurSSAOH,			// Horizontal SSAO blur pass, full screen (4)
+		pipelines_blurSSAOV,			// Vertical SSAO blur pass, full screen (5)
 
-		pipelines_passComposite,		// composite for post-processing stage
+		pipelines_passComposite,		// composite for post-processing stage (6)
 
 		pipelines_passBright_2,			// bright pass for bloom (half screen size)
 		pipelines_passBlurH_2,			// horizontal blur for bloom (half screen size)

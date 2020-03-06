@@ -292,13 +292,13 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 	// framebuffers to which to write based on pipeline mode
 	const a3_Framebuffer* writeFBO[pipelines_pass_max] = {
-		demoState->fbo_shadow_d32,	//passScene write FBO
-		demoState->fbo_scene_c16d24s8_mrt,	//passComposite is reading from here...? It's passScene's write FBO
-		demoState->fbo_composite_c16 + 1,
+		demoState->fbo_shadow_d32,	//passShadow write FBO
+		demoState->fbo_scene_c16d24s8_mrt,	//passScene write FBO
+		demoState->fbo_composite_c16 + 1,	//passLighting (Deferred Lighting) write FBO
+		demoState->fbo_ssao_c16 + 0,		//ssao write 1
+		demoState->fbo_ssao_c16 + 1,		//ssao write 2
+		demoState->fbo_ssao_c16 + 2,		//ssao write 3
 		demoState->fbo_composite_c16 + 2,	//passComposite write FBO
-		demoState->fbo_ssao_c16 + 0,
-		demoState->fbo_ssao_c16 + 1,
-		demoState->fbo_ssao_c16 + 2,
 		demoState->fbo_post_c16_2fr + 0,	//bright2 write FBO
 		demoState->fbo_post_c16_2fr + 1,
 		demoState->fbo_post_c16_2fr + 2,
@@ -314,13 +314,13 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	// framebuffers from which to read based on pipeline mode
 	const a3_Framebuffer* readFBO[pipelines_pass_max][4] = {
 		{ 0, },
-		{ 0, demoState->fbo_shadow_d32, 0, },
-		{ demoState->fbo_scene_c16d24s8_mrt, 0, },
-		{ demoState->fbo_scene_c16d24s8_mrt, demoState->fbo_composite_c16 + 1, 0, },	//passComposite read FBO
-		{ demoState->fbo_composite_c16 + 2, 0, },
+		{ 0, demoState->fbo_shadow_d32, 0, }, //passScene read FBO
+		{ demoState->fbo_scene_c16d24s8_mrt, 0, }, //deferred lighting read FBO
 		{ demoState->fbo_ssao_c16 + 0, 0, },
 		{ demoState->fbo_ssao_c16 + 1, 0, },
 		{ demoState->fbo_ssao_c16 + 2, 0, },
+		{ demoState->fbo_scene_c16d24s8_mrt, demoState->fbo_composite_c16 + 1, demoState->fbo_ssao_c16 + 2, 0,},	//passComposite read FBO (for everything but SSAO)
+		{ demoState->fbo_composite_c16 + 2, 0, }, //post processing starts here
 		{ demoState->fbo_post_c16_2fr + 0, 0, },
 		{ demoState->fbo_post_c16_2fr + 1, 0, },
 		{ demoState->fbo_post_c16_2fr + 2, 0, },
@@ -597,6 +597,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 		a3randomSetSeed((a3integer)time(0));
 
+		//begin SSAO prepass
 		a3real3 kernel[64];
 		genKernel(kernel, 64);	// Generate kernel of random samples
 
@@ -709,6 +710,28 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
 		
 		break;
+
+	case pipelines_deferred_ssao:
+		//ssao composite: crosshatch shader
+
+		currentDemoProgram = demoState->prog_drawPhongCross_deferred;
+		a3shaderProgramActivate(currentDemoProgram->program);
+
+		currentReadFBO = readFBO[currentPass][2]; //ssao blur 2 output
+
+		//uImage00 is currently depthbuffer, don't change this
+
+		//ssao prepass
+		a3frameBufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_finalcolor);
+		//gbuffer data
+		currentReadFBO = readFBO[currentPass][0]; //lighting data/gbuffers
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_position);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, pipelines_scene_normal);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit03, pipelines_scene_texcoord);
+		//need crosshatch texture from SOMEWHERE????
+		//a3textureActivate(demoState->tex_noise, a3tex_unit04);
+
+		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, grey);		//sets ambient color
 	}
 	// reset other uniforms
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, a3mat4_identity.mm);

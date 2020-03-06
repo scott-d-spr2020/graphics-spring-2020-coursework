@@ -992,13 +992,13 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 		//	-> compositing, color only
 		fbo = demoState->fbo_composite_c16 + i;
 		a3framebufferCreate(fbo, "fbo:composite",
-			targets_composite, colorType_composite, a3fbo_depthDisable,
+			targets_composite, colorType_scene, a3fbo_depthDisable,
 			frameWidth1, frameHeight1);
 
 		//	-> ssao goes here, we think. DEBUG SEARCH WAYPOINT
 		fbo = demoState->fbo_ssao_c16 + i;
 		a3framebufferCreate(fbo, "fbo:ssao",
-			targets_composite, colorType_composite, a3fbo_depthDisable,
+			targets_composite, colorType_scene, a3fbo_depthDisable,
 			frameWidth1, frameHeight1);
 
 		//	-> post-processing, color only
