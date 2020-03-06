@@ -925,7 +925,9 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 	a3real3 noise[16];
 	genNoise(noise, 16);
 
-	a3textureCreateFromData(demoState->tex_SSAONoise, "tex:SSAONoise", a3tex_rgba8, 4, 4, &noise, false);
+	a3_TexturePixelFormatDescriptor desc[1];
+	a3textureCreatePixelFormatDescriptor(desc, a3tex_rgba8);
+	a3textureCreateFromData(demoState->tex_SSAONoise, "tex:SSAONoise", desc, 4, 4, &noise, false);
 	a3textureActivate(demoState->tex_SSAONoise, a3tex_unit00);
 	a3textureChangeRepeatMode(a3tex_repeatNormal, a3tex_repeatNormal);
 	a3textureChangeFilterMode(a3tex_filterNearest);
