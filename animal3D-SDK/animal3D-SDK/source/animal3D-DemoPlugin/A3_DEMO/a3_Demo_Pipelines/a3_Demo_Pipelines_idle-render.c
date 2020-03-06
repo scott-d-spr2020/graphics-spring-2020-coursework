@@ -598,10 +598,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		a3randomSetSeed((a3integer)time(0));
 
 		a3real3 kernel[64];
-		genKernel(kernel, 64);
-
-		a3real3 noise[16];
-		genNoise(noise, 16);
+		genKernel(kernel, 64);	// Generate kernel of random samples
 
 		currentPass = pipelines_passSSAO;
 		currentWriteFBO = writeFBO[currentPass];
@@ -611,22 +608,19 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		currentDemoProgram = demoState->prog_drawSSAO_deferred;
 		a3shaderProgramActivate(currentDemoProgram->program);
 
-		// noise needs to go into a 4x4 texture, not sure how to do this w/ animal
-		unsigned int noiseTex;
-		glGenTextures(1, &noiseTex);
-		glBindTexture(GL_TEXTURE_2D, noiseTex);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 4, 4, 0, GL_RGB, GL_FLOAT, &noise[0]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		// g-buffers
+		currentReadFBO = readFBO[currentPass - 1][0];
+		a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit00);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_position);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, pipelines_scene_normal);
 
-		// need to assign this to a new texture uniform here
+		// activate noise texture
+		a3textureActivate(demoState->tex_SSAONoise, a3tex_unit03);
 
-		// kernel gets passed as a uniform
+		// send uniforms
 		a3shaderUniformSendFloat(a3unif_vec3, 0, currentDemoProgram->uSSAOKernel, kernel);
 
-		a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, pipelines_deferred_ssao); // Need to check this target is ok for blur
+		a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, pipelines_scene_finalcolor); // Need to check this target is ok for blur
 
 	}	break;
 	}
