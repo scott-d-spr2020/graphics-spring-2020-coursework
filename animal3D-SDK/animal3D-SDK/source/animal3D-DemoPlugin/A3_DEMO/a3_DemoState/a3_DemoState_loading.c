@@ -78,6 +78,8 @@
 
 #include <stdio.h>
 
+#include "..//_a3_demo_utilities/a3_DemoSSAOUtils.h"
+
 
 //-----------------------------------------------------------------------------
 // GENERAL UTILITIES
@@ -920,6 +922,13 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 		a3textureChangeRepeatMode(a3tex_repeatClamp, a3tex_repeatClamp);	// clamp both axes
 	}
 
+	a3real3 noise[16];
+	genNoise(noise, 16);
+
+	a3textureCreateFromData(demoState->tex_SSAONoise, "tex:SSAONoise", a3tex_rgba8, 4, 4, &noise, false);
+	a3textureActivate(demoState->tex_SSAONoise, a3tex_unit00);
+	a3textureChangeRepeatMode(a3tex_repeatNormal, a3tex_repeatNormal);
+	a3textureChangeFilterMode(a3tex_filterNearest);
 
 	// set up texture atlas transforms
 	a3demo_setAtlasTransform_internal(demoState->atlas_stone->m, atlasSceneWidth, atlasSceneHeight,
