@@ -277,7 +277,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 			demoState->prog_drawLightingData,
 			demoState->prog_drawLightingData
 		}, {
-			demoState->prog_drawPhongCross_deferred,
+			demoState->prog_drawPhongCross_deferred, //TODO this should be a lighting program, not phong
 			demoState->prog_drawPhongCross_deferred,
 			demoState->prog_drawPhongCross_deferred,
 			demoState->prog_drawPhongCross_deferred
@@ -722,14 +722,15 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		//uImage00 is currently depthbuffer, don't change this
 
 		//ssao prepass
-		a3frameBufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_finalcolor);
+		a3frameBufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_finalcolor); //ambient modifier
 		//gbuffer data
 		currentReadFBO = readFBO[currentPass][0]; //lighting data/gbuffers
 		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_position);
-		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, pipelines_scene_normal);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, pipelines_scene_normal); //should be COMPRESSED normal (I hope)
 		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit03, pipelines_scene_texcoord);
 		//need crosshatch texture from SOMEWHERE????
-		//a3textureActivate(demoState->tex_noise, a3tex_unit04);
+		//a3textureActivate(demoState->tex_crosshatch, a3tex_unit04);
+		//a3ActivateSuperiorityComplex(currentDemoProgram);
 
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, grey);		//sets ambient color
 	}
