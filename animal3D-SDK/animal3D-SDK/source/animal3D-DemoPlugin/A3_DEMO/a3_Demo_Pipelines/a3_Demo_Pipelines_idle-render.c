@@ -611,11 +611,12 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 		// g-buffers
 		currentReadFBO = readFBO[currentPass - 1][0];
-		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, pipelines_scene_position);
-		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_normal);
+		a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit00);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_position);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, pipelines_scene_normal);
 
 		// activate noise texture
-		a3textureActivate(demoState->tex_SSAONoise, a3tex_unit02);
+		a3textureActivate(demoState->tex_SSAONoise, a3tex_unit03);
 
 		// send uniforms
 		a3shaderUniformSendFloat(a3unif_vec3, 0, currentDemoProgram->uSSAOKernel, *kernel);
