@@ -47,9 +47,9 @@ uniform sampler2D uImage01; // g-buffer position texture
 uniform sampler2D uImage02; // g-buffer normal texture
 uniform sampler2D uImage03; // g-buffer texcoord texture
 							   
-uniform sampler2D uImage04; // diffuse texture atlas
-uniform sampler2D uImage05; // spec texture atlas
-
+uniform sampler2D uImage04; // diffuse something
+uniform sampler2D uImage05; // spec something
+uniform sampler2D uImage06; // ambient modifier
 
 uniform int uLightCt;
 uniform int uLightSz;

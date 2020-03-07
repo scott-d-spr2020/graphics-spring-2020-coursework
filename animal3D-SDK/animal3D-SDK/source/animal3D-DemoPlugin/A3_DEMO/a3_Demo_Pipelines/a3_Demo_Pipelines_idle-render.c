@@ -277,10 +277,10 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 			demoState->prog_drawLightingData,
 			demoState->prog_drawLightingData
 		}, {
-			demoState->prog_drawPhongCross_deferred, //TODO this should be a lighting program, not phong
-			demoState->prog_drawPhongCross_deferred,
-			demoState->prog_drawPhongCross_deferred,
-			demoState->prog_drawPhongCross_deferred
+			demoState->prog_drawLightingData, //TODO this should be a lighting program, not phong
+			demoState->prog_drawLightingData,
+			demoState->prog_drawLightingData,
+			demoState->prog_drawLightingData
 		}
 	};
 
@@ -719,10 +719,10 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		//uImage00 is currently depthbuffer, don't change this
 
 		//ssao prepass
-		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_finalcolor); //ambient modifier
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit06, pipelines_scene_finalcolor);	//ambient modifier
 		//gbuffer data
 		currentReadFBO = readFBO[currentPass][0]; //lighting data/gbuffers
-		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_position);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_position);		
 		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, pipelines_scene_normal); //should be COMPRESSED normal (I hope)
 		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit03, pipelines_scene_texcoord);
 		//need crosshatch texture from SOMEWHERE????
@@ -730,6 +730,12 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		//a3ActivateSuperiorityComplex(currentDemoProgram);
 
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, grey);		//sets ambient color
+		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMat_inv.mm);
+		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
+		a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightSz, demoState->forwardLightCount, lightSz);
+		a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightSzInvSq, demoState->forwardLightCount, lightSzInvSq);
+		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightPos, demoState->forwardLightCount, lightPos->v);
+		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightCol, demoState->forwardLightCount, lightCol->v);
 	}
 	// reset other uniforms
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, a3mat4_identity.mm);
