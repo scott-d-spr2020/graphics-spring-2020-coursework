@@ -631,7 +631,28 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 		// send uniforms
 		a3shaderUniformSendFloat(a3unif_vec3, 0, currentDemoProgram->uSSAOKernel, *kernel);
+		a3vertexDrawableRenderActive();
 
+		//Blur passes
+		currentDemoProgram = demoState->prog_drawTexture_blurGaussian;
+		a3shaderProgramActivate(currentDemoProgram->program);
+		a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
+		a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v); //sets uSize to screen size
+
+		currentPass = pipelines_blurSSAOH;
+		currentWriteFBO = writeFBO[currentPass];
+		currentReadFBO = readFBO[currentPass][0];
+		a3framebufferActivate(currentWriteFBO);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
+		a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
+		a3vertexDrawableRenderActive();
+
+		currentPass = pipelines_blurSSAOV;
+		currentWriteFBO = writeFBO[currentPass];
+		currentReadFBO = readFBO[currentPass][1];
+		a3framebufferActivate(currentWriteFBO);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
+		a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisV.v);
 		a3vertexDrawableRenderActive();
 
 	}	break;
