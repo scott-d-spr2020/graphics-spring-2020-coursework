@@ -116,6 +116,11 @@ void a3pipelines_render_controls(a3_DemoState const* demoState, a3_Demo_Pipeline
 		"Color target 7: Lighting: specular total",
 		"Depth buffer",
 	};
+
+	a3byte const* targetText_ssao[pipelines_target_ssao_max] = {
+		"Color target 0: FINAL DISPLAY COLOR"
+	};
+
 	a3byte const* targetText_composite[pipelines_target_composite_max] = {
 		"Color target 0: FINAL DISPLAY COLOR",
 		"Color target 1: Attrib data: view position",
@@ -137,6 +142,9 @@ void a3pipelines_render_controls(a3_DemoState const* demoState, a3_Demo_Pipeline
 		targetText_shadow,
 		targetText_scene,
 		targetText_composite,
+		targetText_ssao,
+		targetText_ssao,
+		targetText_ssao,
 		targetText_composite,
 		targetText_bright,
 		targetText_blur,
@@ -909,6 +917,9 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 			a3framebufferBindDepthTexture(currentDisplayFBO, a3tex_unit00);
 		break;
 	case pipelines_passLighting:
+	case pipelines_passSSAO:
+	case pipelines_blurSSAOH:
+	case pipelines_blurSSAOV:
 	case pipelines_passComposite:
 	case pipelines_passBright_2:
 	case pipelines_passBlurH_2:

@@ -137,7 +137,10 @@ extern "C"
 		pipelines_scene_diffuseLight,		// diffuse light total
 		pipelines_scene_specularLight,		// specular light total
 		pipelines_scene_fragdepth,			// fragment depth
-		pipelines_target_scene_max, 
+		pipelines_target_scene_max,
+
+		pipelines_ssao_finalcolor = 0,		// final display color
+		pipelines_target_ssao_max,
 
 		pipelines_composite_finalcolor = 0,	// final display color
 		pipelines_composite_position,		// position attribute

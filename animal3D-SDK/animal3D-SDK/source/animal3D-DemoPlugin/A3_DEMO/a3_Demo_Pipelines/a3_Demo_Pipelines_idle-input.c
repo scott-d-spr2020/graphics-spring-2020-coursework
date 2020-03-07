@@ -90,9 +90,20 @@ void a3pipelinesCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Pip
 	case ']':
 	case '[':
 	case ')':
-		if (demoMode->pass == pipelines_passLighting && demoMode->pipeline != pipelines_deferred_lighting)
-			demoMode->pass = pipelines_passComposite;
-		break;
+		if (demoMode->pass == pipelines_passLighting)
+		{
+			switch (demoMode->pipeline)
+			{
+			case pipelines_deferred_lighting:
+				demoMode->pass = pipelines_passScene + 1;
+				break;
+			case pipelines_deferred_ssao:
+				demoMode->pass = pipelines_passScene + 2;
+				break;
+			default:
+				demoMode->pass = pipelines_passComposite;
+			}
+		}
 	case '(':
 		if (demoMode->pass == pipelines_passLighting && demoMode->pipeline != pipelines_deferred_lighting)
 			demoMode->pass = pipelines_passScene;
