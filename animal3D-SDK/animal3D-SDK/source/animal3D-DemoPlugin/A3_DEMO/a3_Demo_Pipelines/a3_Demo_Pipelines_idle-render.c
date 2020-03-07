@@ -605,6 +605,9 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 		a3randomSetSeed((a3integer)time(0));
 
+		currentDrawable = demoState->draw_unitquad;
+		a3vertexDrawableActivate(currentDrawable);
+
 		//begin SSAO prepass
 		a3real3 kernel[64];
 		genKernel(kernel, 64);	// Generate kernel of random samples
@@ -628,6 +631,8 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 		// send uniforms
 		a3shaderUniformSendFloat(a3unif_vec3, 0, currentDemoProgram->uSSAOKernel, *kernel);
+
+		a3vertexDrawableRenderActive();
 
 	}	break;
 	}
