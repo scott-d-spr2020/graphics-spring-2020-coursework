@@ -76,10 +76,7 @@ void main()
 	vec3 position = CalculatePosition();
 	vec4 normal = vec4(texture(uImage02, vTexcoord.xy).xyz, 1.0) * 2.0f - vec4(1.0f); //uncompress
 
-
-
-	rtNormal = normal;
-	rtPosition = vec4(position, 1.0);
+	//Outputting a color to the screen now works
 
 	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }
