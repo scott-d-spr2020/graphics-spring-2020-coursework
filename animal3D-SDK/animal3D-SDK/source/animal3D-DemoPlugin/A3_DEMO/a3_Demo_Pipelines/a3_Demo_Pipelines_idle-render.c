@@ -47,6 +47,8 @@
 #include <OpenGL/gl3.h>
 #endif	// _WIN32
 
+#include <stdio.h>
+
 
 //-----------------------------------------------------------------------------
 
@@ -300,44 +302,44 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 	// framebuffers to which to write based on pipeline mode
 	const a3_Framebuffer* writeFBO[pipelines_pass_max] = {
-		demoState->fbo_shadow_d32,	//passShadow write FBO
-		demoState->fbo_scene_c16d24s8_mrt,	//passScene write FBO
-		demoState->fbo_composite_c16 + 1,	//passLighting (Deferred Lighting) write FBO
-		demoState->fbo_ssao_c16 + 0,		//ssao write 1
-		demoState->fbo_ssao_c16 + 1,		//ssao write 2
-		demoState->fbo_ssao_c16 + 2,		//ssao write 3
-		demoState->fbo_composite_c16 + 2,	//passComposite write FBO
-		demoState->fbo_post_c16_2fr + 0,	//bright2 write FBO
-		demoState->fbo_post_c16_2fr + 1,
-		demoState->fbo_post_c16_2fr + 2,
-		demoState->fbo_post_c16_4fr + 0,
-		demoState->fbo_post_c16_4fr + 1,
-		demoState->fbo_post_c16_4fr + 2,
-		demoState->fbo_post_c16_8fr + 0,
-		demoState->fbo_post_c16_8fr + 1,
-		demoState->fbo_post_c16_8fr + 2,
-		demoState->fbo_composite_c16 + 0,
+		demoState->fbo_shadow_d32,	//passShadow write FBO																													  //0	shadow
+		demoState->fbo_scene_c16d24s8_mrt,	//passScene write FBO																											  //1	scene
+		demoState->fbo_composite_c16 + 1,	//passLighting (Deferred Lighting) write FBO																					  //2	lighting
+		demoState->fbo_ssao_c16 + 0,		//ssao write 1																													  //3	ssao
+		demoState->fbo_ssao_c16 + 1,		//ssao write 2																													  //4	blurssaoH
+		demoState->fbo_ssao_c16 + 2,		//ssao write 3																													  //5	blurssaoV
+		demoState->fbo_composite_c16 + 2,	//passComposite write FBO																										  //6	composite
+		demoState->fbo_post_c16_2fr + 0,	//bright2 write FBO																												  //7
+		demoState->fbo_post_c16_2fr + 1,																																	  //8
+		demoState->fbo_post_c16_2fr + 2,																																	  //9
+		demoState->fbo_post_c16_4fr + 0,																																	  //10
+		demoState->fbo_post_c16_4fr + 1,																																	  //11
+		demoState->fbo_post_c16_4fr + 2,																																	  //12
+		demoState->fbo_post_c16_8fr + 0,																																	  //13
+		demoState->fbo_post_c16_8fr + 1,																																	  //14
+		demoState->fbo_post_c16_8fr + 2,																																	  //15
+		demoState->fbo_composite_c16 + 0,																																	  //16
 	};
 
 	// framebuffers from which to read based on pipeline mode
 	const a3_Framebuffer* readFBO[pipelines_pass_max][4] = {
-		{ 0, },
-		{ 0, demoState->fbo_shadow_d32, 0, }, //passScene read FBO
-		{ demoState->fbo_scene_c16d24s8_mrt, 0, }, //deferred lighting read FBO
-		{ demoState->fbo_ssao_c16 + 0, 0, },
-		{ demoState->fbo_ssao_c16 + 1, 0, },
-		{ demoState->fbo_ssao_c16 + 2, 0, },
-		{ demoState->fbo_scene_c16d24s8_mrt, demoState->fbo_composite_c16 + 1, demoState->fbo_ssao_c16 + 2, 0,},	//passComposite read FBO (for everything but SSAO)
-		{ demoState->fbo_composite_c16 + 2, 0, }, //post processing starts here
-		{ demoState->fbo_post_c16_2fr + 0, 0, },
-		{ demoState->fbo_post_c16_2fr + 1, 0, },
-		{ demoState->fbo_post_c16_2fr + 2, 0, },
-		{ demoState->fbo_post_c16_4fr + 0, 0, },
-		{ demoState->fbo_post_c16_4fr + 1, 0, },
-		{ demoState->fbo_post_c16_4fr + 2, 0, },
-		{ demoState->fbo_post_c16_8fr + 0, 0, },
-		{ demoState->fbo_post_c16_8fr + 1, 0, },
-		{ demoState->fbo_post_c16_8fr + 2, demoState->fbo_post_c16_4fr + 2, demoState->fbo_post_c16_2fr + 2, demoState->fbo_composite_c16 + 2, },
+		{ 0, },																																								  //0	shadow (no read)
+		{ 0, demoState->fbo_shadow_d32, 0, }, //passScene read FBO																											  //1	scene
+		{ demoState->fbo_scene_c16d24s8_mrt, 0, }, //deferred lighting read FBO																								  //2	lighting
+		{ demoState->fbo_scene_c16d24s8_mrt, 0, }, //ssao read																												  //3	ssao
+		{ demoState->fbo_ssao_c16 + 0, 0, },	//ssaoH read																												  //4	blurssaoH
+		{ demoState->fbo_ssao_c16 + 1, 0, },	//ssaoV read																												  //5	blurssaoV
+		{ demoState->fbo_scene_c16d24s8_mrt, demoState->fbo_composite_c16 + 1, demoState->fbo_ssao_c16 + 2, 0,},	//passComposite read FBO								  //6	composite
+		{ demoState->fbo_composite_c16 + 2, 0, }, //post processing starts here																								  //7
+		{ demoState->fbo_post_c16_2fr + 0, 0, },																															  //8
+		{ demoState->fbo_post_c16_2fr + 1, 0, },																															  //9
+		{ demoState->fbo_post_c16_2fr + 2, 0, },																															  //10
+		{ demoState->fbo_post_c16_4fr + 0, 0, },																															  //11
+		{ demoState->fbo_post_c16_4fr + 1, 0, },																															  //12
+		{ demoState->fbo_post_c16_4fr + 2, 0, },																															  //13
+		{ demoState->fbo_post_c16_8fr + 0, 0, },																															  //14
+		{ demoState->fbo_post_c16_8fr + 1, 0, },																															  //15
+		{ demoState->fbo_post_c16_8fr + 2, demoState->fbo_post_c16_4fr + 2, demoState->fbo_post_c16_2fr + 2, demoState->fbo_composite_c16 + 2, },							  //16
 	};
 
 	// target info
@@ -621,13 +623,13 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		a3shaderProgramActivate(currentDemoProgram->program);
 
 		// g-buffers
-		currentReadFBO = readFBO[currentPass - 1][0];
+		currentReadFBO = readFBO[currentPass][0];
 		a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit00);
 		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_position);
 		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, pipelines_scene_normal);
-
 		// activate noise texture
 		a3textureActivate(demoState->tex_SSAONoise, a3tex_unit03);
+		printf("%d\n", currentPass);
 
 		// send uniforms
 		a3shaderUniformSendFloat(a3unif_vec3, 0, currentDemoProgram->uSSAOKernel, *kernel);
@@ -643,15 +645,15 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		currentWriteFBO = writeFBO[currentPass];
 		currentReadFBO = readFBO[currentPass][0];
 		a3framebufferActivate(currentWriteFBO);
-		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, pipelines_ssao_finalcolor);
 		a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
 		a3vertexDrawableRenderActive();
 
 		currentPass = pipelines_passBlurSSAOV;
 		currentWriteFBO = writeFBO[currentPass];
-		currentReadFBO = readFBO[currentPass][1];
+		currentReadFBO = readFBO[currentPass][0];
 		a3framebufferActivate(currentWriteFBO);
-		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, pipelines_ssao_finalcolor);
 		a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisV.v);
 		a3vertexDrawableRenderActive();
 
