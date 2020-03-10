@@ -103,8 +103,8 @@ extern "C"
 		pipelines_passLighting,			// light pre-pass for deferred lighting (2)
 
 		pipelines_passSSAO,				// SSAO pre-pass for new lighting (3)
-		pipelines_blurSSAOH,			// Horizontal SSAO blur pass, full screen (4)
-		pipelines_blurSSAOV,			// Vertical SSAO blur pass, full screen (5)
+		pipelines_passBlurSSAOH,			// Horizontal SSAO blur pass, full screen (4)
+		pipelines_passBlurSSAOV,			// Vertical SSAO blur pass, full screen (5)
 
 		pipelines_passComposite,		// composite for post-processing stage (6)
 

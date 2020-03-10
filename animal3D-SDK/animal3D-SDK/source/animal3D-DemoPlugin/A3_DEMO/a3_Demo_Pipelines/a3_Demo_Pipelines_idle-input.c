@@ -94,19 +94,50 @@ void a3pipelinesCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Pip
 		{
 			switch (demoMode->pipeline)
 			{
-			case pipelines_deferred_lighting:
-				demoMode->pass = pipelines_passScene + 1;
+			case pipelines_deferred_lighting: //do nothing
 				break;
 			case pipelines_deferred_ssao:
-				demoMode->pass = pipelines_passScene + 2;
+				demoMode->pass = pipelines_passSSAO;
+				break;
+			default:
+				demoMode->pass = pipelines_passComposite;
+			}
+		}
+		else if (demoMode->pass == pipelines_passSSAO)
+		{
+			switch (demoMode->pipeline)
+			{
+			case pipelines_deferred_ssao: //do nothing
 				break;
 			default:
 				demoMode->pass = pipelines_passComposite;
 			}
 		}
 	case '(':
-		if (demoMode->pass == pipelines_passLighting && demoMode->pipeline != pipelines_deferred_lighting)
-			demoMode->pass = pipelines_passScene;
+
+		if (demoMode->pass == pipelines_passLighting)
+		{
+			switch (demoMode->pipeline)
+			{
+			case pipelines_deferred_lighting:
+				break;
+			default:
+				demoMode->pass = pipelines_passScene;
+			}
+		}
+		else if (demoMode->pass == pipelines_passBlurSSAOV)
+		{
+			switch (demoMode->pipeline)
+			{
+			case pipelines_deferred_lighting:
+				demoMode->pass = pipelines_passLighting;
+				break;
+			case pipelines_deferred_ssao:
+				break;
+			default:
+				demoMode->pass = pipelines_passScene;
+			}
+		}
 		break;
 	}
 }

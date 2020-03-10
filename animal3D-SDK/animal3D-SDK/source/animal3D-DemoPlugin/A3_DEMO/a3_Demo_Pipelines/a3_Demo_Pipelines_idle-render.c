@@ -918,8 +918,8 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		break;
 	case pipelines_passLighting:
 	case pipelines_passSSAO:
-	case pipelines_blurSSAOH:
-	case pipelines_blurSSAOV:
+	case pipelines_passBlurSSAOH:
+	case pipelines_passBlurSSAOV:
 	case pipelines_passComposite:
 	case pipelines_passBright_2:
 	case pipelines_passBlurH_2:
