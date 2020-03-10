@@ -639,7 +639,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
 		a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v); //sets uSize to screen size
 
-		currentPass = pipelines_blurSSAOH;
+		currentPass = pipelines_passBlurSSAOH;
 		currentWriteFBO = writeFBO[currentPass];
 		currentReadFBO = readFBO[currentPass][0];
 		a3framebufferActivate(currentWriteFBO);
@@ -647,7 +647,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
 		a3vertexDrawableRenderActive();
 
-		currentPass = pipelines_blurSSAOV;
+		currentPass = pipelines_passBlurSSAOV;
 		currentWriteFBO = writeFBO[currentPass];
 		currentReadFBO = readFBO[currentPass][1];
 		a3framebufferActivate(currentWriteFBO);
