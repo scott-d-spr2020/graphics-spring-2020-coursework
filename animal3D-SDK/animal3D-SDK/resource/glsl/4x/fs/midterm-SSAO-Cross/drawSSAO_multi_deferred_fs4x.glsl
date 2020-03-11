@@ -25,7 +25,6 @@
 
 #version 410
 
-#define MAX_LIGHTS 4
 
 // ****TO-DO: 
 //	0) copy original forward Phong shader
@@ -40,31 +39,35 @@
 
 in vec4 vTexcoord;
 
-const vec3 ambientColor = vec3(0.1f);
 
 uniform sampler2D uImage00; // g-buffer depth texture
 uniform sampler2D uImage01; // g-buffer position texture
 uniform sampler2D uImage02; // g-buffer normal texture
 							   
-uniform sampler2D uImage03; // SSAO noise
+uniform sampler2D uImage03;		// SSAO noise
+uniform vec3 uSSAOKernel[64];	// SSAO kernel
 
-uniform mat4 uP_inv;
+uniform mat4 uP;
 uniform mat4 uPB_inv;
-
+uniform vec2 uSize;
 
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 1) out vec4 rtPosition;
 layout (location = 2) out vec4 rtNormal;
 
 
+vec2 noiseScale = vec2(uSize.x / 4.0, uSize.y / 4.0);	// Used to tile the noise over the whole screen
+const float radius = 0.9;	//Used to tweak strength of SSAO calculations
+
+
 vec3 CalculatePosition()
 {
-	vec3 sampledPos = texture(uImage01, vTexcoord.xy).rgb; //gives us position previously saved
+	vec3 sampledPos = texture(uImage01, vTexcoord.xy).rgb; // gives us position previously saved
 	//that data's [0,1], when we need [-x,x]
 	vec4 sampledDepth = texture(uImage00, vTexcoord.xy);
 
 	vec4 recalculatedPos = vec4(sampledPos.x, sampledPos.y, sampledDepth.z, 1.0);
-	//recalculatedPos.z = 2.0 * recalculatedPos.z - 1.0;	//reset depth value to [-1, 1]
+	//recalculatedPos.z = 2.0 * recalculatedPos.z - 1.0;	// reset depth value to [-1, 1]
 	recalculatedPos = uPB_inv * recalculatedPos;
 
 	return (recalculatedPos / recalculatedPos.w).xyz;
@@ -75,8 +78,34 @@ void main()
 {
 	vec3 position = CalculatePosition();
 	vec4 normal = vec4(texture(uImage02, vTexcoord.xy).xyz, 1.0) * 2.0f - vec4(1.0f); //uncompress
+	vec3 randomVector = texture(uImage03, vTexcoord.xy * noiseScale).xyz;
+
+	vec3 tangent = normalize(randomVector - normal.xyz * dot(randomVector, normal.xyz));
+	vec3 bitangent = cross(normal.xyz, tangent);
+	mat3 TBN = mat3(tangent, bitangent, normal.xyz);	// tangent, bitangent, normal matrix to transform any vector into view space, with a slight random rotation
+
+	float occlusion = 0.0;
+	for(int i = 0; i < 64; ++i)
+	{
+		vec3 samp = TBN * uSSAOKernel[i];	// Tangent to view space
+		samp = position + samp * radius;
+
+		vec4 offset = vec4(samp, 1.0);	// the sample is the offset, just need to put it into NDC
+		offset = uP * offset;	// into clip space
+		offset.xyz /= offset.w;	// persp divide
+		offset.xyz = offset.xyz * 0.5 + 0.5;	// into range  0.0 - 1.0 (compressed)
+
+		float sampDepth = texture(uImage01, offset.xy).z;
+		float rangeCheck = smoothstep(0.0, 1.0, radius / abs(position.z - sampDepth));
+
+		occlusion += (sampDepth >= samp.z + 0.025 ? 1.0 : 0.0) * rangeCheck;	// see if the current sample's depth is larger than the stored value, plus bias
+	}
+
+	occlusion = 1.0 - (occlusion / 64.0);	// normalize by kernel size, subtract from 1 to use it in sclaing ambient lighting
 
 	//Outputting a color to the screen now works
-	rtFragColor = vec4(position, 1.0);
+	rtFragColor = vec4(occlusion, occlusion, occlusion, 1.0);
+	//rtFragColor = texture(uImage03, vTexcoord.xy);
+	//rtFragColor = texture(uImage03, vTexcoord.xy * noiseScale);
 	//rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }

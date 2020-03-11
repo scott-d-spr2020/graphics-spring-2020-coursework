@@ -77,6 +77,7 @@
 #include "../a3_DemoState.h"
 
 #include <stdio.h>
+#include <time.h>
 
 #include "..//_a3_demo_utilities/a3_DemoSSAOUtils.h"
 
@@ -922,6 +923,7 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 		a3textureChangeRepeatMode(a3tex_repeatClamp, a3tex_repeatClamp);	// clamp both axes
 	}
 
+	a3randomSetSeed((a3integer)time(0));
 	a3real3 noise[16];
 	genNoise(noise, 16);
 
