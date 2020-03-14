@@ -56,8 +56,8 @@ layout (location = 1) out vec4 rtPosition;
 layout (location = 2) out vec4 rtNormal;
 
 
-vec2 noiseScale = vec2(uSize.x / 4.0, uSize.y / 4.0);	// Used to tile the noise over the whole screen
-const float radius = 0.9;	//Used to tweak strength of SSAO calculations
+vec2 noiseScale = vec2((1.0f/uSize.x) / 4.0, (1.0f/uSize.y) / 4.0);	// Used to tile the noise over the whole screen
+const float radius = 0.8;	//Used to tweak strength of SSAO calculations
 
 
 vec3 CalculatePosition()
