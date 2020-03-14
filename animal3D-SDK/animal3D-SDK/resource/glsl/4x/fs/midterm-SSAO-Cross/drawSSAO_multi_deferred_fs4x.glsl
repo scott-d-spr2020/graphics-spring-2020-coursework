@@ -49,6 +49,7 @@ uniform vec3 uSSAOKernel[64];	// SSAO kernel
 
 uniform mat4 uP;
 uniform mat4 uPB_inv;
+uniform mat4 uPB;
 uniform vec2 uSize;
 
 layout (location = 0) out vec4 rtFragColor;
@@ -57,7 +58,7 @@ layout (location = 2) out vec4 rtNormal;
 
 
 vec2 noiseScale = vec2((1.0f/uSize.x) / 4.0, (1.0f/uSize.y) / 4.0);	// Used to tile the noise over the whole screen
-const float radius = 0.8;	//Used to tweak strength of SSAO calculations
+const float radius = 0.9;	//Used to tweak strength of SSAO calculations
 
 
 vec3 CalculatePosition()
@@ -85,15 +86,19 @@ void main()
 	mat3 TBN = mat3(tangent, bitangent, normal.xyz);	// tangent, bitangent, normal matrix to transform any vector into view space, with a slight random rotation
 
 	float occlusion = 0.0;
+
+	vec3 samp;
+	vec4 offset;
 	for(int i = 0; i < 64; ++i)
 	{
-		vec3 samp = TBN * uSSAOKernel[i];	// Tangent to view space
+		samp = TBN * uSSAOKernel[i];	// Tangent to view space
 		samp = position + samp * radius;
 
-		vec4 offset = vec4(samp, 1.0);	// the sample is the offset, just need to put it into NDC
-		offset = uP * offset;	// into clip space
+		offset = vec4(samp, 1.0);	// the sample is the offset, just need to put it into NDC
+		offset = uPB * offset;	// into clip space
 		offset.xyz /= offset.w;	// persp divide
 		offset.xyz = offset.xyz * 0.5 + 0.5;	// into range  0.0 - 1.0 (compressed)
+		//offset, at this point, is a value that you could find within uImage01. It's a sample from vBiasedClipCoord. What we need to do by sampDepth is translate it BACK to a texcoord
 
 		float sampDepth = texture(uImage01, offset.xy).z;
 		float rangeCheck = smoothstep(0.0, 1.0, radius / abs(position.z - sampDepth));
@@ -104,7 +109,7 @@ void main()
 	occlusion = 1.0 - (occlusion / 64.0);	// normalize by kernel size, subtract from 1 to use it in sclaing ambient lighting
 
 	//Outputting a color to the screen now works
-	rtFragColor = vec4(occlusion, occlusion, occlusion, 1.0);
+	rtFragColor = vec4(vec3(occlusion), 1.0f);
 	//rtFragColor = texture(uImage03, vTexcoord.xy);
 	//rtFragColor = texture(uImage03, vTexcoord.xy * noiseScale);
 	//rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
