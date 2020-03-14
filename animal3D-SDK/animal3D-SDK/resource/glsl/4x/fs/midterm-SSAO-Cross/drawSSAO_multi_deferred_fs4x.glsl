@@ -41,10 +41,11 @@ in vec4 vTexcoord;
 
 
 uniform sampler2D uImage00; // g-buffer depth texture
-uniform sampler2D uImage01; // g-buffer position texture
+uniform sampler2D uImage01; // g-buffer biased position texture
 uniform sampler2D uImage02; // g-buffer normal texture
 							   
 uniform sampler2D uImage03;		// SSAO noise
+uniform sampler2D uImage04;		// g-buffer position texture
 uniform vec3 uSSAOKernel[64];	// SSAO kernel
 
 uniform mat4 uP;
@@ -74,6 +75,18 @@ vec3 CalculatePosition()
 	return (recalculatedPos / recalculatedPos.w).xyz;
 }
 
+vec3 FindPosition(vec2 coord)
+{
+	vec3 sampledPos = texture(uImage01, coord).rgb; // gives us position previously saved
+	//that data's [0,1], when we need [-x,x]
+	vec4 sampledDepth = texture(uImage00, coord);
+
+	vec4 recalculatedPos = vec4(sampledPos.x, sampledPos.y, sampledDepth.z, 1.0);
+	//recalculatedPos.z = 2.0 * recalculatedPos.z - 1.0;	// reset depth value to [-1, 1]
+	recalculatedPos = uPB_inv * recalculatedPos;
+
+	return (recalculatedPos / recalculatedPos.w).xyz;
+}
 
 void main()
 {
@@ -89,18 +102,20 @@ void main()
 
 	vec3 samp;
 	vec4 offset;
+
+	vec4 newSamp;
 	for(int i = 0; i < 64; ++i)
 	{
 		samp = TBN * uSSAOKernel[i];	// Tangent to view space
 		samp = position + samp * radius;
 
 		offset = vec4(samp, 1.0);	// the sample is the offset, just need to put it into NDC
-		offset = uPB * offset;	// into clip space
+		offset = offset * uP;	// into clip space
 		offset.xyz /= offset.w;	// persp divide
 		offset.xyz = offset.xyz * 0.5 + 0.5;	// into range  0.0 - 1.0 (compressed)
 		//offset, at this point, is a value that you could find within uImage01. It's a sample from vBiasedClipCoord. What we need to do by sampDepth is translate it BACK to a texcoord
-
-		float sampDepth = texture(uImage01, offset.xy).z;
+		newSamp = vec4(FindPosition(offset.xy), 1.0f);
+		float sampDepth = newSamp.z;
 		float rangeCheck = smoothstep(0.0, 1.0, radius / abs(position.z - sampDepth));
 
 		occlusion += (sampDepth >= samp.z + 0.025 ? 1.0 : 0.0) * rangeCheck;	// see if the current sample's depth is larger than the stored value, plus bias
@@ -109,7 +124,7 @@ void main()
 	occlusion = 1.0 - (occlusion / 64.0);	// normalize by kernel size, subtract from 1 to use it in sclaing ambient lighting
 
 	//Outputting a color to the screen now works
-	rtFragColor = vec4(vec3(occlusion), 1.0f);
+	rtFragColor = vec4(TBN[2], 1.0f);
 	//rtFragColor = texture(uImage03, vTexcoord.xy);
 	//rtFragColor = texture(uImage03, vTexcoord.xy * noiseScale);
 	//rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);

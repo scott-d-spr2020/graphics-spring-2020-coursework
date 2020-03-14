@@ -629,6 +629,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, pipelines_scene_normal);
 		// activate noise texture
 		a3textureActivate(demoState->tex_SSAONoise, a3tex_unit03);
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit04, pipelines_scene_finalcolor);
 		//printf("%d\n", currentPass);
 
 		// send uniforms
