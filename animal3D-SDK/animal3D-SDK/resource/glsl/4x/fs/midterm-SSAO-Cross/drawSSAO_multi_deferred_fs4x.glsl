@@ -84,13 +84,14 @@ void main()
 	vec3 bitangent = cross(normal.xyz, tangent);
 	mat3 TBN = mat3(tangent, bitangent, normal.xyz);	// tangent, bitangent, normal matrix to transform any vector into view space, with a slight random rotation
 
-	float occlusion = 0.0;
+	float occlusion = 64;
+	vec4 offset;
 	for(int i = 0; i < 64; ++i)
 	{
 		vec3 samp = TBN * uSSAOKernel[i];	// Tangent to view space
 		samp = position + samp * radius;
 
-		vec4 offset = vec4(samp, 1.0);	// the sample is the offset, just need to put it into NDC
+		offset = vec4(samp, 1.0);	// the sample is the offset, just need to put it into NDC
 		offset = uP * offset;	// into clip space
 		offset.xyz /= offset.w;	// persp divide
 		offset.xyz = offset.xyz * 0.5 + 0.5;	// into range  0.0 - 1.0 (compressed)
@@ -98,13 +99,19 @@ void main()
 		float sampDepth = texture(uImage01, offset.xy).z;
 		float rangeCheck = smoothstep(0.0, 1.0, radius / abs(position.z - sampDepth));
 
-		occlusion += (sampDepth >= samp.z + 0.025 ? 1.0 : 0.0) * rangeCheck;	// see if the current sample's depth is larger than the stored value, plus bias
+		float occluded = 0;
+		occluded = (sampDepth >= samp.z + 0.025 ? 1.0 : 0.0);	// see if the current sample's depth is larger than the stored value, plus bias
+
+		occluded *= rangeCheck;
+		occlusion -= occluded;
 	}
 
-	occlusion = 1.0 - (occlusion / 64.0);	// normalize by kernel size, subtract from 1 to use it in sclaing ambient lighting
+	occlusion /= 64.0;
+	//occlusion = 1.0 - (occlusion / 64.0);	// normalize by kernel size, subtract from 1 to use it in sclaing ambient lighting
 
 	//Outputting a color to the screen now works
 	rtFragColor = vec4(occlusion, occlusion, occlusion, 1.0);
+	//rtFragColor = offset;
 	//rtFragColor = texture(uImage03, vTexcoord.xy);
 	//rtFragColor = texture(uImage03, vTexcoord.xy * noiseScale);
 	//rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
