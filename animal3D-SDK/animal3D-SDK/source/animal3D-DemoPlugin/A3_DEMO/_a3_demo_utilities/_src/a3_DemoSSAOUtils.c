@@ -59,10 +59,11 @@ void genKernel(a3real3 *kern, int kernelSize)
 		temp[1] /= mag;
 		temp[2] /= mag;
 
+		a3real randomScalar = a3randomNormalized();
 		//multiply by a new random float between 0.0, 1.0
-		temp[0] = a3randomNormalized();
-		temp[1] = a3randomNormalized();
-		temp[2] = a3randomNormalized();
+		temp[0] *= randomScalar;
+		temp[1] *= randomScalar;
+		temp[2] *= randomScalar;
 		
 		float scale = (float)i / (float)kernelSize;
 
