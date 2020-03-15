@@ -32,6 +32,8 @@
 #include <OpenGL/gl3.h>
 #endif	// _WIN32
 
+#include <stdio.h>
+
 
 //-----------------------------------------------------------------------------
 // SSAO Generation utilities
@@ -59,6 +61,7 @@ void genKernel(a3real3 *kern, int kernelSize)
 		temp[1] /= mag;
 		temp[2] /= mag;
 
+
 		a3real randomScalar = a3randomNormalized();
 		//multiply by a new random float between 0.0, 1.0
 		temp[0] *= randomScalar;
@@ -71,6 +74,8 @@ void genKernel(a3real3 *kern, int kernelSize)
 		temp[0] *= scale;
 		temp[1] *= scale;
 		temp[2] *= scale;
+
+		printf("Kernel: %f, %f, %f\n", temp[0], temp[1], temp[2]);
 
 		kern[i][0] = temp[0];
 		kern[i][1] = temp[1];
@@ -87,13 +92,15 @@ void genNoise(a3real3 *arr, int arrSize)
 	for (int i = 0; i < arrSize; i++)
 	{
 		a3real3 temp;
-		temp[0] = a3randomSymmetric();
-		temp[1] = a3randomSymmetric();
+		temp[0] = a3randomNormalized(); //[-0,1] so we can expand it in the FS
+		temp[1] = a3randomNormalized();
 		temp[2] = 0.0f;
 
 		arr[i][0] = temp[0];
 		arr[i][1] = temp[1];
 		arr[i][2] = temp[2];
+
+		printf("Noise: %f, %f, %f\n", temp[0], temp[1], temp[2]);
 	}
 }
 

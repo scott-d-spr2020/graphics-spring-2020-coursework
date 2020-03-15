@@ -79,7 +79,7 @@ void main()
 	vec3 position = CalculatePosition();
 	vec4 normal = vec4(texture(uImage02, vTexcoord.xy).xyz, 1.0) * 2.0f - vec4(1.0f); //uncompress
 	vec3 randomVector = texture(uImage03, vTexcoord.xy * noiseScale).xyz;
-
+	randomVector = randomVector * 2.0f - 1.0f;
 	vec3 tangent = normalize(randomVector - normal.xyz * dot(randomVector, normal.xyz));
 	vec3 bitangent = cross(normal.xyz, tangent);
 	mat3 TBN = mat3(tangent, bitangent, normal.xyz);	// tangent, bitangent, normal matrix to transform any vector into view space, with a slight random rotation
@@ -110,7 +110,7 @@ void main()
 	//occlusion = 1.0 - (occlusion / 64.0);	// normalize by kernel size, subtract from 1 to use it in sclaing ambient lighting
 
 	//Outputting a color to the screen now works
-	rtFragColor = vec4(occlusion, occlusion, occlusion, 1.0);
+	rtFragColor = vec4(vec3(occlusion), 1.0);
 	//rtFragColor = offset;
 	//rtFragColor = texture(uImage03, vTexcoord.xy);
 	//rtFragColor = texture(uImage03, vTexcoord.xy * noiseScale);
