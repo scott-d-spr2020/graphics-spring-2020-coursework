@@ -44,7 +44,7 @@ in vbLightingData {
 
 void main()
 {
-	rtNormal = normalize(vbData.vViewNormal); //dummy output, just so we don't get static.
+	rtNormal = vbData.vViewPosition;
 	// DUMMY OUTPUT: all fragments are OPAQUE RED, GREEN AND BLUE
 	rtViewPosition = vbData.vBiasedClipCoord/vbData.vBiasedClipCoord.w; //this is color target 4 (2225)
 	rtViewNormal = normalize(vbData.vViewNormal) * 0.5f + vec4(0.5f); //compress it!!
