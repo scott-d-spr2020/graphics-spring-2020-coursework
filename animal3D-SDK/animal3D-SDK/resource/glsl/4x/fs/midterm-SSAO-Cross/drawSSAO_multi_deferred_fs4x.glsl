@@ -110,7 +110,11 @@ void main()
 		offset = vec4(samp, 1.0);	// the sample is the offset, just need to put it into NDC
 		offset = uP * offset;	// into clip space
 		//offset.xyz /= offset.w;	// persp divide
-		//offset.xyz = offset.xyz * 2.0 - 1.0;	// into range  0.0 - 1.0 (compressed)
+		offset.xyz *= 0.25 + 0.25;
+		offset.y -= 0.25;
+		offset.y += 0.125;
+		offset.x += 0.125;
+		//offset.xyz = offset.xyz * 0.5 + 0.5;	// into range  0.0 - 1.0 (compressed)
 
 		newSamp = texture(uImage04, offset.xy);
 		float sampDepth = samp.z;
@@ -127,7 +131,7 @@ void main()
 	//occlusion = 1.0 - (occlusion / 64.0);	// normalize by kernel size, subtract from 1 to use it in sclaing ambient lighting
 
 	//Outputting a color to the screen now works
-	rtFragColor = vec4(newSamp.xyz, 1.0);
+	rtFragColor = vec4(occlusion, occlusion, occlusion, 1.0);
 	//rtFragColor = offset;
 	//rtFragColor = texture(uImage03, vTexcoord.xy);
 	//rtFragColor = texture(uImage03, vTexcoord.xy * noiseScale);
