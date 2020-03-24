@@ -49,7 +49,7 @@ uniform sampler2D uImage03; // g-buffer texcoord texture
 							   
 uniform sampler2D uImage04; // diffuse something
 uniform sampler2D uImage05; // spec something
-uniform sampler2D uImage06; // ambient modifier
+//uniform sampler2D uImage06; // ambient modifier
 
 uniform int uLightCt;
 uniform int uLightSz;
@@ -142,19 +142,13 @@ void main()
 		diffuse += tempDiff;
 	}
 
-	vec4 diffuseSample = texture(uImage04, texCoord);
-	vec4 specularSample =  texture(uImage05, texCoord);
-
-	vec4 diffColor = diffuseSample * diffuse;
-	vec4 specularColor = specularSample * specular;
-
 	rtTexcoord = vec4(texCoord, 0.0, 1.0);
 	rtNormal = normal;
 	rtPosition = vec4(position, 1.0);
 
-	rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.3f * ambientColor), 1.0);
-	rtDiffuseMapSample = vec4(diffuseSample.rgb, 1.0f);
-	rtSpecularMapSample = specularSample;
+	rtFragColor = vec4(diffuse.rgb + specular.rgb + (0.3f * ambientColor), 1.0);
+	rtDiffuseMapSample = vec4(vec3(0.0), 1.0);
+	rtSpecularMapSample = vec4(vec3(0.0), 1.0);
 	rtDiffuseLightTotal = diffuse;
 	rtSpecularLightTotal = specular;
 }
