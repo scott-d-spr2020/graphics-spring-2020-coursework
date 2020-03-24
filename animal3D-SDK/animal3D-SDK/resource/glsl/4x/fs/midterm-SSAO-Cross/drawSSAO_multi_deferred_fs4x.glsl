@@ -57,7 +57,7 @@ layout (location = 2) out vec4 rtNormal;
 
 
 vec2 noiseScale = vec2((1.0f/uSize.x) / 4.0, (1.0f/uSize.y) / 4.0);	// Used to tile the noise over the whole screen
-const float radius = 0.8;	//Used to tweak strength of SSAO calculations
+const float radius = 0.01;	//Used to tweak strength of SSAO calculations
 
 
 vec3 CalculatePosition()
@@ -65,6 +65,19 @@ vec3 CalculatePosition()
 	vec3 sampledPos = texture(uImage01, vTexcoord.xy).rgb; // gives us position previously saved
 	//that data's [0,1], when we need [-x,x]
 	vec4 sampledDepth = texture(uImage00, vTexcoord.xy);
+
+	vec4 recalculatedPos = vec4(sampledPos.x, sampledPos.y, sampledDepth.z, 1.0);
+	//recalculatedPos.z = 2.0 * recalculatedPos.z - 1.0;	// reset depth value to [-1, 1]
+	recalculatedPos = uPB_inv * recalculatedPos;
+
+	return (recalculatedPos / recalculatedPos.w).xyz;
+}
+
+vec3 CalculatePosition(vec2 coord)
+{
+	vec3 sampledPos = texture(uImage01, coord).rgb; // gives us position previously saved
+	//that data's [0,1], when we need [-x,x]
+	vec4 sampledDepth = texture(uImage00, coord);
 
 	vec4 recalculatedPos = vec4(sampledPos.x, sampledPos.y, sampledDepth.z, 1.0);
 	//recalculatedPos.z = 2.0 * recalculatedPos.z - 1.0;	// reset depth value to [-1, 1]
@@ -96,21 +109,22 @@ void main()
 		offset.xyz /= offset.w;	// persp divide
 		offset.xyz = offset.xyz * 0.5 + 0.5;	// into range  0.0 - 1.0 (compressed)
 
-		float sampDepth = texture(uImage01, offset.xy).z;
+		float sampDepth = CalculatePosition(offset.xy).z;
 		float rangeCheck = smoothstep(0.0, 1.0, radius / abs(position.z - sampDepth));
 
 		float occluded = 0;
-		occluded = (sampDepth >= samp.z + 0.025 ? 1.0 : 0.0);	// see if the current sample's depth is larger than the stored value, plus bias
+		occluded = (sampDepth >= samp.z ? 1.0 : 0.0);	// see if the current sample's depth is larger than the stored value, plus bias
 
 		occluded *= rangeCheck;
 		occlusion -= occluded;
 	}
 
-	occlusion /= 64.0;
-	//occlusion = 1.0 - (occlusion / 64.0);	// normalize by kernel size, subtract from 1 to use it in sclaing ambient lighting
+	//occlusion /= 64.0;
+	occlusion = 1.0 - (occlusion / 128.0);	// normalize by kernel size, subtract from 1 to use it in sclaing ambient lighting
 
 	//Outputting a color to the screen now works
 	rtFragColor = vec4(vec3(occlusion), 1.0);
+	//rtFragColor = offset;
 	//rtFragColor = offset;
 	//rtFragColor = texture(uImage03, vTexcoord.xy);
 	//rtFragColor = texture(uImage03, vTexcoord.xy * noiseScale);
