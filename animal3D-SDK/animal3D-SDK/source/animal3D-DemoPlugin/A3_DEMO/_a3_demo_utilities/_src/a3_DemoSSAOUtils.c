@@ -75,7 +75,7 @@ void genKernel(a3real3 *kern, int kernelSize)
 		temp[1] *= scale;
 		temp[2] *= scale;
 
-		printf("Kernel: %f, %f, %f\n", temp[0], temp[1], temp[2]);
+		//printf("Kernel: %f, %f, %f\n", temp[0], temp[1], temp[2]);
 
 		kern[i][0] = temp[0];
 		kern[i][1] = temp[1];
@@ -100,7 +100,7 @@ void genNoise(a3real3 *arr, int arrSize)
 		arr[i][1] = temp[1];
 		arr[i][2] = temp[2];
 
-		printf("Noise: %f, %f, %f\n", temp[0], temp[1], temp[2]);
+		//printf("Noise: %f, %f, %f\n", temp[0], temp[1], temp[2]);
 	}
 }
 
