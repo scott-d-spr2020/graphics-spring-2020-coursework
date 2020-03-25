@@ -48,19 +48,14 @@ float lerp(float a, float b, float t)
 */
 void genKernel(a3real3 *kern, int kernelSize)
 {
-	for (int i = 0; i < kernelSize; i++)
+	for (int i = 0; i < kernelSize; ++i)
 	{
 		a3real3 temp;
 		temp[0] = a3randomSymmetric();
 		temp[1] = a3randomSymmetric();
 		temp[2] = a3randomNormalized();
 
-		//Normalize sample
-		a3real mag = a3sqrtf(((temp[0] * temp[0])) + (temp[1] * temp[1]) + (temp[2] * temp[2]));
-		temp[0] /= mag;
-		temp[1] /= mag;
-		temp[2] /= mag;
-
+		a3real3Normalize(temp);
 
 		a3real randomScalar = a3randomNormalized();
 		//multiply by a new random float between 0.0, 1.0
