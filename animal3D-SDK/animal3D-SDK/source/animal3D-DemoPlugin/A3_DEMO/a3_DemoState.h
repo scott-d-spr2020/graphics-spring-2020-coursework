@@ -404,9 +404,13 @@ extern "C"
 
 		// managed objects, no touchie
 		a3_VertexDrawable dummyDrawable[1];
-
-		a3vec3 controlPoint1, controlPoint2, controlPoint3, controlPoint4;
-
+		union {
+			a3vec3 controlPoints[4];
+			struct {
+				a3vec3 controlPoint0, controlPoint1, controlPoint2, controlPoint3;
+			};
+		};
+		a3real lerpPos; //technically serves as time instead of an actual pos, which is calculated from this value
 		//---------------------------------------------------------------------
 	};
 

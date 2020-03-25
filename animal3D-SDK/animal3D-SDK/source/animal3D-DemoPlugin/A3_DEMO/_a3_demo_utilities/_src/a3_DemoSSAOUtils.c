@@ -99,5 +99,34 @@ void genNoise(a3real3 *arr, int arrSize)
 	}
 }
 
+a3vec3 vecLerp(a3vec3 a, a3vec3 b, float t)
+{
+	a3vec3 ret;
+	ret.x = a.x + t * (b.x - a.x);
+	ret.y = a.y + t * (b.y - a.y);
+	ret.z = a.z + t * (b.z - a.z);
+	return ret;
+}
+
+a3vec3 bezierN(a3vec3* arr, int length, float t)
+{
+	a3vec3 ret;
+	if (length == 2)
+	{
+		ret = vecLerp(arr[0], arr[1], t);
+	}
+	else
+	{
+		ret = vecLerp(bezierN(arr, length - 1, t), bezierN(arr + 1, length - 1, t), t);
+	}
+	return ret;
+}
+
+a3real mathMod(a3real num, a3real mod)
+{
+	a3real r = (a3real)fmod(num, mod);
+	return r < 0 ? r + mod : r;
+}
+
 
 //-----------------------------------------------------------------------------

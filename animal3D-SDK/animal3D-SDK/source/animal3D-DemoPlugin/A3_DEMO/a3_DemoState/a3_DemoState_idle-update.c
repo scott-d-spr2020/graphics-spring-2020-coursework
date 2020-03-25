@@ -31,6 +31,8 @@
 //-----------------------------------------------------------------------------
 
 #include "../a3_DemoState.h"
+#include "../_a3_demo_utilities/a3_DemoSSAOUtils.h"
+#include <stdio.h>
 
 
 //-----------------------------------------------------------------------------
@@ -114,6 +116,11 @@ void a3demo_update_scene(a3_DemoState *demoState, a3f64 dt)
 	a3_DemoPointLight* pointLight;
 
 
+	demoState->lerpPos += (a3real) dt / 5.0f;
+	//oscillation function. f(x) = 1 - abs(1 - mod(2-x, 2)). I've manually derived this function a few times (the zigzag function from googling is MUCH more complex and this works fine)
+	//demoState->lerpPos = (a3real) (1.0 - fabs(1.0 - fmod(2.0 - demoState->lerpPos, 2.0)));
+	float pos = (a3real)(1.0 - fabs(1.0 - mathMod((a3real)(2.0 - demoState->lerpPos), 2.0)));
+
 	// do simple animation
 	if (useVerticalY)
 	{
@@ -133,6 +140,11 @@ void a3demo_update_scene(a3_DemoState *demoState, a3f64 dt)
 			currentSceneObject->euler.z = a3trigValid_sind(currentSceneObject->euler.z);
 		}
 	}
+	demoState->teapotObject->position = bezierN(demoState->controlPoints, 4, pos);
+	//a3vec3 b = bezierN(demoState->controlPoints, 2, pos);
+	//printf("%f\n", pos);
+	//printf("%f, %f, %f\n", demoState->teapotObject->position.x, demoState->teapotObject->position.y, demoState->teapotObject->position.z);
+	//printf("%f, %f, %f\n", b.x, b.y, b.z);
 
 
 	// update scene objects

@@ -49,6 +49,12 @@ void genKernel(a3real3* kern, int kernelSize);
 
 void genNoise(a3real3* arr, int arrSize);
 
+a3vec3 vecLerp(a3vec3 a, a3vec3 b, float t);
+
+a3vec3 bezierN(a3vec3* arr, int length, float t);
+
+a3real mathMod(a3real num, a3real mod);
+
 //-----------------------------------------------------------------------------
 
 
