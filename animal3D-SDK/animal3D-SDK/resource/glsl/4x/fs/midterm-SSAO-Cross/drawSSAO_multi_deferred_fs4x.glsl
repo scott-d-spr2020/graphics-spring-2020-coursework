@@ -36,9 +36,7 @@
 //				inverse projection-bias matrix and the depth map
 //			-> normal calculated by expanding range of normal sample
 //			-> surface texture coordinate is used as-is once sampled
-
 in vec4 vTexcoord;
-
 
 uniform sampler2D uImage00; // g-buffer depth texture
 uniform sampler2D uImage01; // g-buffer position texture
@@ -56,8 +54,12 @@ layout (location = 1) out vec4 rtPosition;
 layout (location = 2) out vec4 rtNormal;
 
 
-vec2 noiseScale = vec2((1.0f/uSize.x) / 4.0, (1.0f/uSize.y) / 4.0);	// Used to tile the noise over the whole screen
+vec2 noiseScale = vec2(uSize.x / 4.0, uSize.y / 4.0);	// Used to tile the noise over the whole screen
+
 const float radius = 0.01;	//Used to tweak strength of SSAO calculations
+const float bias = 0.001;
+const float magnitude = 2.0; // lighten or darken map
+const float contrast = 1.5;
 
 
 vec3 CalculatePosition()
@@ -92,12 +94,13 @@ void main()
 	vec3 position = CalculatePosition();
 	vec4 normal = vec4(texture(uImage02, vTexcoord.xy).xyz, 1.0) * 2.0f - vec4(1.0f); //uncompress
 	vec3 randomVector = texture(uImage03, vTexcoord.xy * noiseScale).xyz;
-	randomVector = randomVector * 2.0f - 1.0f;
+	//randomVector = randomVector * 2.0f - 1.0f;
+
 	vec3 tangent = normalize(randomVector - normal.xyz * dot(randomVector, normal.xyz));
 	vec3 bitangent = cross(normal.xyz, tangent);
 	mat3 TBN = mat3(tangent, bitangent, normal.xyz);	// tangent, bitangent, normal matrix to transform any vector into view space, with a slight random rotation
 
-	float occlusion = 64;
+	float occlusion = 64.0;
 	vec4 offset;
 	for(int i = 0; i < 64; ++i)
 	{
@@ -113,19 +116,17 @@ void main()
 		float rangeCheck = smoothstep(0.0, 1.0, radius / abs(position.z - sampDepth));
 
 		float occluded = 0;
-		occluded = (sampDepth >= samp.z ? 1.0 : 0.0);	// see if the current sample's depth is larger than the stored value, plus bias
+		occluded = (sampDepth + bias >= samp.z ? 1.0 : 0.0);	// see if the current sample's depth is larger than the stored value, plus bias
 
 		occluded *= rangeCheck;
 		occlusion -= occluded;
 	}
 
-	//occlusion /= 64.0;
-	occlusion = 1.0 - (occlusion / 128.0);	// normalize by kernel size, subtract from 1 to use it in sclaing ambient lighting
+	occlusion = 1.0 - (occlusion / (64.0 * magnitude));	// normalize by kernel size, subtract from 1 to use it in scaling ambient lighting
 
 	//Outputting a color to the screen now works
 	rtFragColor = vec4(vec3(occlusion), 1.0);
-	//rtFragColor = offset;
-	//rtFragColor = offset;
+	//rtFragColor = vec4(randomVector, 1.0);
 	//rtFragColor = texture(uImage03, vTexcoord.xy);
 	//rtFragColor = texture(uImage03, vTexcoord.xy * noiseScale);
 	//rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
