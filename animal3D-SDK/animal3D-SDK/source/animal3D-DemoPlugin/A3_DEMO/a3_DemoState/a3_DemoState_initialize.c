@@ -31,6 +31,7 @@
 //-----------------------------------------------------------------------------
 
 #include "../a3_DemoState.h"
+#include <stdio.h>
 
 
 //-----------------------------------------------------------------------------
@@ -243,6 +244,16 @@ void a3demo_initScene(a3_DemoState *demoState)
 		demoState->cylinderObject->position.y = +6.0f;
 		demoState->teapotObject->position.y = -6.0f;
 	}
+
+	//initialize control points for bezier
+	demoState->controlPoint1 = demoState->teapotObject->position; //not a teapot, actually a crate
+	demoState->controlPoint2 = demoState->torusObject->position;
+	demoState->controlPoint3 = demoState->cylinderObject->position;
+	demoState->controlPoint4 = demoState->sphereObject->position;
+	printf("%f, %f, %f\n", demoState->controlPoint1.x, demoState->controlPoint1.y, demoState->controlPoint1.z);
+	printf("%f, %f, %f\n", demoState->controlPoint2.x, demoState->controlPoint2.y, demoState->controlPoint2.z);
+	printf("%f, %f, %f\n", demoState->controlPoint3.x, demoState->controlPoint3.y, demoState->controlPoint3.z);
+	printf("%f, %f, %f\n", demoState->controlPoint4.x, demoState->controlPoint4.y, demoState->controlPoint4.z);
 
 
 	// demo modes

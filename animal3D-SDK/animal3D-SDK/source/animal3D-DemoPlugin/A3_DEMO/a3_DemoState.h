@@ -405,6 +405,7 @@ extern "C"
 		// managed objects, no touchie
 		a3_VertexDrawable dummyDrawable[1];
 
+		a3vec3 controlPoint1, controlPoint2, controlPoint3, controlPoint4;
 
 		//---------------------------------------------------------------------
 	};
