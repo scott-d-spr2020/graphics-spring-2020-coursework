@@ -761,7 +761,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		//uImage00 is currently depthbuffer, don't change this
 
 		//ssao prepass
-		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit06, pipelines_scene_finalcolor);	//ambient modifier
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit04, pipelines_scene_finalcolor);	//ambient modifier
 		//gbuffer data
 		currentReadFBO = readFBO[currentPass][0]; //lighting data/gbuffers
 		a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit00);
