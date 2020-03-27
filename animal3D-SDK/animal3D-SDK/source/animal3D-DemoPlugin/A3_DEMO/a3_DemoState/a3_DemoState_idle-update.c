@@ -116,7 +116,7 @@ void a3demo_update_scene(a3_DemoState *demoState, a3f64 dt)
 	a3_DemoPointLight* pointLight;
 
 
-	demoState->lerpPos += (a3real) dt / 5.0f;
+	demoState->lerpPos += (a3real)(demoState->updateAnimation ? dt / 5.0f : 0.0f);
 	//oscillation function. f(x) = 1 - abs(1 - mod(2-x, 2)). I've manually derived this function a few times (the zigzag function from googling is MUCH more complex and this works fine)
 	//demoState->lerpPos = (a3real) (1.0 - fabs(1.0 - fmod(2.0 - demoState->lerpPos, 2.0)));
 	float pos = (a3real)(1.0 - fabs(1.0 - mathMod((a3real)(2.0 - demoState->lerpPos), 2.0)));

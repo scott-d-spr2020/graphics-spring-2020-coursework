@@ -122,6 +122,12 @@ vec3 CalculatePosition()
 	return (recalculatedPos / recalculatedPos.w).xyz;
 }
 
+//borrowed from bloom, used for brightness
+float relativeLuminance(vec3 color)
+{
+	return (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b);
+}
+
 
 void main()
 {
@@ -148,9 +154,49 @@ void main()
 	rtNormal = normal;
 	rtPosition = vec4(position, 1.0);
 
-	rtFragColor = vec4(0.4 * (diffuse.rgb + specular.rgb) + (0.5f * ambient.rgb), 1.0);
-	rtDiffuseMapSample = vec4(ambient.xyz, 1.0);
-	rtSpecularMapSample = vec4(vec3(texture(uImage05, vTexcoord.xy).r), 1.0f);
+	//rtDiffuseMapSample = vec4(0.4 * (diffuse.rgb + specular.rgb) + (0.5f * ambient.rgb), 1.0);
+	rtDiffuseMapSample = vec4(ambient.rgb, 1.0);
+
+	float lumin = relativeLuminance(rtDiffuseMapSample.rgb);
+
+	vec4 color0 = vec4(vec3(texture(uImage05, 16.0f * texCoord.xy).r), 1.0f);
+	vec4 color1 = vec4(vec3(texture(uImage05, 16.0f * texCoord.xy).g), 1.0f);
+	vec4 color2 = vec4(vec3(texture(uImage05, 16.0f * texCoord.xy).b), 1.0f);
+	vec4 color3 = vec4(vec3(texture(uImage06, 16.0f * texCoord.xy).r), 1.0f);
+	vec4 color4 = vec4(vec3(texture(uImage06, 16.0f * texCoord.xy).g), 1.0f);
+	vec4 color5 = vec4(vec3(texture(uImage06, 16.0f * texCoord.xy).b), 1.0f);
+
+	vec4 mergeColor;
+	if (lumin == 0.0)
+	{
+		mergeColor = color0;
+	}
+	else if (lumin > 0.0 && lumin < 0.2)
+	{
+		mergeColor = mix(color0, color1, mod(lumin, 0.2f) * 5f);
+	}
+	else if (lumin >= 0.2 && lumin < 0.4)
+	{
+		mergeColor = mix(color1, color2, mod(lumin, 0.2f) * 5f);
+	}
+	else if (lumin >= 0.4 && lumin < 0.6)
+	{
+		mergeColor = mix(color2, color3, mod(lumin, 0.2f) * 5f);
+	}
+	else if (lumin >= 0.6 && lumin < 0.8)
+	{
+		mergeColor = mix(color3, color4, mod(lumin, 0.2f) * 5f);
+	}
+	else if (lumin >= 0.8 && lumin < 1.0)
+	{
+		mergeColor = mix(color4, color5, mod(lumin, 0.2f) * 5f);
+	}
+	else if (lumin >= 1.0)
+	{
+		mergeColor = color5;
+	}
+	rtFragColor = vec4(mergeColor.xyz, 1.0);
+	rtSpecularMapSample = vec4(vec3(texture(uImage06, 4.0f * texCoord.xy).b), 1.0f);
 	rtDiffuseLightTotal = diffuse;
 	rtSpecularLightTotal = specular;
 }
