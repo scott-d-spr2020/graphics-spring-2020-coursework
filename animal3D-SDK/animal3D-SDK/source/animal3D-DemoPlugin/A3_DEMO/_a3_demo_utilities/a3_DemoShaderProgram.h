@@ -96,6 +96,9 @@ extern "C"
 
 			a3i32
 				// common general uniform handles
+				uIndex,						// generic index
+				uCount,						// generic count
+				uFlag,						// generic flag
 				uAxis,						// generic axis
 				uSize,						// generic size
 				uTime;						// time
@@ -105,12 +108,17 @@ extern "C"
 		struct {
 			a3i32
 				// transformation uniform block handles
+				ubTransformStack,	// matrix stack block
 				ubTransformMVPB,	// model-view-projection-bias matrix block
 				ubTransformMVP;		// model-view-projection matrix block
 
 			a3i32
 				// lighting uniform block handles
 				ubPointLight;		// point light structure block
+
+			a3i32
+				// animation uniform block handles
+				ubCurveWaypoint;	// waypoints for interpolation
 		};
 	};
 

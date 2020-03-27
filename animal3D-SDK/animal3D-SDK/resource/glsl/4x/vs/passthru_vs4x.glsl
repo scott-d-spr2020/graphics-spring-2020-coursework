@@ -26,7 +26,10 @@
 
 layout (location = 0) in vec4 aPosition;
 
+flat out int vInstanceID;
+
 void main()
 {
 	gl_Position = aPosition;
+	vInstanceID = gl_InstanceID;
 }

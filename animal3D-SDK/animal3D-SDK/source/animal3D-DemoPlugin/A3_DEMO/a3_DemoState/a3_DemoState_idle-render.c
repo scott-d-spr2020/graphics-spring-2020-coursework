@@ -52,6 +52,8 @@ void a3shading_render_controls(a3_DemoState const* demoState, a3_Demo_Shading co
 	a3f32 const textAlign, a3f32 const textDepth, a3f32 const textOffsetDelta, a3f32 textOffset);
 void a3pipelines_render_controls(a3_DemoState const* demoState, a3_Demo_Pipelines const* demoMode,
 	a3f32 const textAlign, a3f32 const textDepth, a3f32 const textOffsetDelta, a3f32 textOffset);
+void a3curves_render_controls(a3_DemoState const* demoState, a3_Demo_Curves const* demoMode,
+	a3f32 const textAlign, a3f32 const textDepth, a3f32 const textOffsetDelta, a3f32 textOffset);
 
 
 // display current mode controls
@@ -62,6 +64,7 @@ void a3demo_render_controls(a3_DemoState const* demoState,
 	a3byte const* modeText[demoState_mode_max] = {
 		"LIGHTING & SHADING",
 		"LIGHTING PIPELINES",
+		"CURVES & INTERPOLATION",
 	};
 
 	// text color
@@ -82,6 +85,9 @@ void a3demo_render_controls(a3_DemoState const* demoState,
 		break;
 	case demoState_pipelines:
 		a3pipelines_render_controls(demoState, demoState->demoMode_pipelines, textAlign, textDepth, textOffsetDelta, textOffset);
+		break;
+	case demoState_curves:
+		a3curves_render_controls(demoState, demoState->demoMode_curves, textAlign, textDepth, textOffsetDelta, textOffset);
 		break;
 	}
 
@@ -111,7 +117,9 @@ void a3demo_render_controls_gen(a3_DemoState const* demoState,
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
 		"GRID (toggle 'g') %s | SKYBOX ('b') %s | HIDDEN VOLUMES ('h') %s", boolText[demoState->displayGrid], boolText[demoState->displaySkybox], boolText[demoState->displayHiddenVolumes]);
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"WORLD AXES (toggle 'x') %s | OBJECT AXES ('z') %s | TANGENT BASES ('B') %s", boolText[demoState->displayWorldAxes], boolText[demoState->displayObjectAxes], boolText[demoState->displayTangentBases]);
+		"WORLD AXES (toggle 'x') %s | OBJECT AXES ('z') %s", boolText[demoState->displayWorldAxes], boolText[demoState->displayObjectAxes]);
+	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+		"TANGENT BASES ('B') %s | WIREFRAME ('F') %s", boolText[demoState->displayTangentBases], boolText[demoState->displayWireframe]);
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
 		"ANIMATION (toggle 'm') %s", boolText[demoState->updateAnimation]);
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
@@ -180,6 +188,7 @@ void a3demo_render_data(const a3_DemoState* demoState,
 
 void a3shading_render(a3_DemoState const* demoState, a3_Demo_Shading const* demoMode);
 void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* demoMode);
+void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMode);
 
 void a3demo_render(a3_DemoState const* demoState)
 {
@@ -203,6 +212,9 @@ void a3demo_render(a3_DemoState const* demoState)
 		break;
 	case demoState_pipelines:
 		a3pipelines_render(demoState, demoState->demoMode_pipelines);
+		break;
+	case demoState_curves:
+		a3curves_render(demoState, demoState->demoMode_curves);
 		break;
 	}
 

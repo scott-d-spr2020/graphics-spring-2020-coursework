@@ -196,6 +196,10 @@
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_DemoState\a3_DemoState_initialize.c" />
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_DemoState\a3_DemoState_loading.c" />
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_DemoState\a3_DemoState_unloading.c" />
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves\a3_Demo_Curves_idle-input.c" />
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves\a3_Demo_Curves_idle-render.c" />
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves\a3_Demo_Curves_idle-update.c" />
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves\a3_Demo_Curves_initialize.c" />
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Pipelines\a3_Demo_Pipelines_idle-input.c" />
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Pipelines\a3_Demo_Pipelines_idle-render.c" />
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Pipelines\a3_Demo_Pipelines_idle-update.c" />
@@ -210,6 +214,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_DemoState.h" />
+    <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves.h" />
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Pipelines.h" />
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Shading.h" />
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\a3_DemoMacros.h" />
@@ -238,14 +243,18 @@
     <None Include="..\..\..\resource\glsl\4x\fs\06-deferred\drawPhongComposite_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\06-deferred\drawPhongVolume_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\06-deferred\drawPhong_multi_deferred_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\fs\07-curves\drawPhong_multi_forward_mrt_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\drawColorAttrib_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\drawColorUnif_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\gs\07-curves\drawCurveSegment_gs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\gs\07-curves\drawOverlays_tangents_wireframe_gs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\02-shading\passLightingData_transform_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\02-shading\passTexcoord_transform_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\04-multipass\passLightingData_shadowCoord_transform_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\06-deferred\passAtlasTexcoord_transform_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\06-deferred\passBiasedClipCoord_transform_instanced_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\06-deferred\passLightingData_transform_bias_vs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\vs\07-curves\passTangentBasis_transform_instanced_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\passColor_transform_instanced_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\passColor_transform_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\passthru_transform_instanced_vs4x.glsl" />

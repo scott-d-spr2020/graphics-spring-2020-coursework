@@ -43,6 +43,7 @@ void a3demo_initSceneRefresh(a3_DemoState* demoState);
 
 void a3shading_init(a3_DemoState const* demoState, a3_Demo_Shading* demoMode);
 void a3pipelines_init(a3_DemoState const* demoState, a3_Demo_Pipelines* demoMode);
+void a3curves_init(a3_DemoState const* demoState, a3_Demo_Curves* demoMode);
 
 
 //-----------------------------------------------------------------------------
@@ -125,6 +126,7 @@ void a3demo_initScene(a3_DemoState *demoState)
 	demoState->displayWorldAxes = a3true;
 	demoState->displayObjectAxes = a3true;
 	demoState->displayTangentBases = a3false;
+	demoState->displayWireframe = a3false;
 	demoState->displaySkybox = a3true;
 	demoState->displayHiddenVolumes = a3true;
 	demoState->displayPipeline = a3false;
@@ -178,7 +180,9 @@ void a3demo_initScene(a3_DemoState *demoState)
 
 		// random radius
 		pointLight->radius = a3randomRange(10.0f, 50.0f);
-		pointLight->radiusInvSq = a3recip(pointLight->radius * pointLight->radius);
+		pointLight->radiusSq = pointLight->radius * pointLight->radius;
+		pointLight->radiusInvSq = a3recip(pointLight->radiusSq);
+		pointLight->radiusInv = a3recip(pointLight->radius);
 	}
 
 	// deferred lights
@@ -245,10 +249,31 @@ void a3demo_initScene(a3_DemoState *demoState)
 	}
 
 
+	// animation
+	demoState->segmentDuration = a3real_four;
+	demoState->segmentDurationInv = a3recip(demoState->segmentDuration);
+	demoState->segmentCount = 4;
+	a3real4SetReal3W(demoState->curveWaypoint[0].v, demoState->sphereObject->position.v, a3real_one);
+	a3real4SetReal3W(demoState->curveWaypoint[1].v, demoState->cylinderObject->position.v, a3real_one);
+	a3real4SetReal3W(demoState->curveWaypoint[2].v, demoState->torusObject->position.v, a3real_one);
+	a3real4SetReal3W(demoState->curveWaypoint[3].v, demoState->teapotObject->position.v, a3real_one);
+	for (i = 0; i < demoState->segmentCount; ++i)
+	{
+		// offset waypoints
+		demoState->curveWaypoint[i].z += a3real_two;
+		a3real3MulS(demoState->curveWaypoint[i].v, a3real_two);
+
+		// set the handle as a factor of the waypoint just for testing
+		demoState->curveHandle[i] = demoState->curveWaypoint[i];
+		a3real3ProductS(demoState->curveHandle[i].v, demoState->curveWaypoint[i].v, a3real_two);
+	}
+
+
 	// demo modes
 	a3shading_init(demoState, demoState->demoMode_shading);
 	a3pipelines_init(demoState, demoState->demoMode_pipelines);
-	demoState->demoMode = demoState_pipelines;
+	a3curves_init(demoState, demoState->demoMode_curves);
+	demoState->demoMode = demoState_curves;
 
 	// active camera params
 	demoState->activeCamera = demoState->demoMode_pipelines->activeCamera;

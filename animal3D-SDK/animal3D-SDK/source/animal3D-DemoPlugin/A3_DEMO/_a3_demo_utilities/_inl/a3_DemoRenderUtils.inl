@@ -56,7 +56,7 @@ inline a3real4x4r a3demo_quickInvertTranspose_internal(a3real4x4p m_inout)
 inline a3real4x4r a3demo_quickTransposedZeroBottomRow(a3real4x4p m_out, const a3real4x4p m_in)
 {
 	a3real4x4GetTransposed(m_out, m_in);
-	m_out[0][3] = m_out[1][3] = m_out[2][3] = a3real_zero;
+	m_out[0][3] = m_out[1][3] = m_out[2][3] = m_out[3][3] = a3real_zero;
 	return m_out;
 }
 

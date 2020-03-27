@@ -94,6 +94,18 @@
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\06-deferred">
       <UniqueIdentifier>{d15f0b22-54ec-4cc8-a550-1d7cb625c0b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\common\A3_DEMO\a3_Demo_Curves">
+      <UniqueIdentifier>{c18f34fd-b94d-4e57-b5bf-921b99d6c22f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\07-curves">
+      <UniqueIdentifier>{e4fd9b23-c5db-4b1f-ba0d-cccd4cc2e5e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\gs\07-curves">
+      <UniqueIdentifier>{9c6354ee-a366-4284-b933-145bcc58aa74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\fs\07-curves">
+      <UniqueIdentifier>{1540b83f-7619-43c7-94ac-ddab1b7c7c2b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_src_win\main_dll.c">
@@ -147,6 +159,18 @@
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Pipelines\a3_Demo_Pipelines_idle-update.c">
       <Filter>Source Files\common\A3_DEMO\a3_Demo_Pipelines</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves\a3_Demo_Curves_idle-update.c">
+      <Filter>Source Files\common\A3_DEMO\a3_Demo_Curves</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves\a3_Demo_Curves_initialize.c">
+      <Filter>Source Files\common\A3_DEMO\a3_Demo_Curves</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves\a3_Demo_Curves_idle-input.c">
+      <Filter>Source Files\common\A3_DEMO\a3_Demo_Curves</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves\a3_Demo_Curves_idle-render.c">
+      <Filter>Source Files\common\A3_DEMO\a3_Demo_Curves</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_DemoState.h">
@@ -171,6 +195,9 @@
       <Filter>Header Files\A3_DEMO</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Pipelines.h">
+      <Filter>Header Files\A3_DEMO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves.h">
       <Filter>Header Files\A3_DEMO</Filter>
     </ClInclude>
   </ItemGroup>
@@ -273,6 +300,18 @@
     </None>
     <None Include="..\..\..\resource\glsl\4x\fs\06-deferred\drawPhongComposite_fs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\fs\06-deferred</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\07-curves\passTangentBasis_transform_instanced_vs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\vs\07-curves</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\07-curves\drawPhong_multi_forward_mrt_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\07-curves</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\gs\07-curves\drawOverlays_tangents_wireframe_gs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\gs\07-curves</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\gs\07-curves\drawCurveSegment_gs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\gs\07-curves</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -50,12 +50,12 @@ extern "C"
 	struct a3_DemoModelMatrixStack
 	{
 		a3mat4 modelMat;						// model matrix (object -> world)
-		a3mat4 modelViewMat;					// model-view matrix (object -> viewer)
-		a3mat4 modelViewProjectionMat;			// model-view-projection matrix (object -> clip)
-		a3mat4 modelViewProjectionBiasMat;		// model-view-projection-bias matrix (object -> biased clip)
 		a3mat4 modelMatInverse;					// model inverse matrix (world -> object)
 		a3mat4 modelMatInverseTranspose;		// model inverse-transpose matrix (object -> world skewed)
+		a3mat4 modelViewMat;					// model-view matrix (object -> viewer)
+		a3mat4 modelViewMatInverse;				// model-view inverse matrix (viewer -> object)
 		a3mat4 modelViewMatInverseTranspose;	// model-view inverse transpose matrix (object -> viewer skewed)
+		a3mat4 modelViewProjectionMat;			// model-view-projection matrix (object -> clip)
 		a3mat4 atlasMat;						// atlas matrix (texture -> cell)
 	};
 
@@ -63,12 +63,12 @@ extern "C"
 	struct a3_DemoViewerMatrixStack
 	{
 		a3mat4 projectionMat;					// projection matrix (viewer -> clip)
-		a3mat4 projectionBiasMat;				// projection-bias matrix (viewer -> biased clip)
-		a3mat4 viewProjectionMat;				// view-projection matrix (world -> clip)
-		a3mat4 viewProjectionBiasMat;			// view projection-bias matrix (world -> biased clip)
 		a3mat4 projectionMatInverse;			// projection inverse matrix (clip -> viewer)
+		a3mat4 projectionBiasMat;				// projection-bias matrix (viewer -> biased clip)
 		a3mat4 projectionBiasMatInverse;		// projection-bias inverse matrix (biased clip -> viewer)
+		a3mat4 viewProjectionMat;				// view-projection matrix (world -> clip)
 		a3mat4 viewProjectionMatInverse;		// view-projection inverse matrix (clip -> world)
+		a3mat4 viewProjectionBiasMat;			// view projection-bias matrix (world -> biased clip)
 		a3mat4 viewProjectionBiasMatInverse;	// view-projection-bias inverse matrix (biased clip -> world)
 	};
 
@@ -107,7 +107,8 @@ extern "C"
 		a3vec4 color;						// RGB color with padding
 		a3real radius;						// radius (distance of effect from center)
 		a3real radiusInvSq;					// radius inverse squared (attenuation factor)
-		a3real pad[2];						// padding
+		a3real radiusInv;					// radius inverse (also used for attenuation sometimes)
+		a3real radiusSq;					// radius squared (if needed)
 	};
 
 
@@ -123,6 +124,11 @@ extern "C"
 	inline void a3demo_initProjector(a3_DemoProjector *projector);
 	inline void a3demo_updateProjectorProjectionMat(a3_DemoProjector *projector);
 	inline void a3demo_updateProjectorViewProjectionMat(a3_DemoProjector *projector);
+
+	inline void a3demo_resetModelMatrixStack(a3_DemoModelMatrixStack* model);
+	inline void a3demo_resetViewerMatrixStack(a3_DemoViewerMatrixStack* viewer);
+	inline void a3demo_updateModelMatrixStack(a3_DemoModelMatrixStack* model, a3real4x4p const projectionMat_viewer, a3real4x4p const modelMat_viewer, a3real4x4p const modelMatInv_viewer, a3real4x4p const modelMat, a3real4x4p const atlasMat);
+	inline void a3demo_updateViewerMatrixStack(a3_DemoViewerMatrixStack* viewer, a3real4x4p const modelMat_viewer, a3real4x4p const modelMatInv_viewer, a3real4x4p const projectionMat, a3real4x4p const projectionMatInv, a3real4x4p const biasMat, a3real4x4p const biasMatInv);
 
 
 //-----------------------------------------------------------------------------

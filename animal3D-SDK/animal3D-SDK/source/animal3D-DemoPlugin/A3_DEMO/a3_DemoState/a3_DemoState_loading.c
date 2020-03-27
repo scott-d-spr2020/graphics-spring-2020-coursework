@@ -224,7 +224,7 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 		a3_ProceduralGeometryDescriptor hiddenShapes[1] = { a3geomShape_none };
 		a3_ProceduralGeometryDescriptor proceduralShapes[4] = { a3geomShape_none };
 		const a3_DemoStateLoadedModel loadedShapes[1] = {
-			{ A3_DEMO_OBJ"teapot/teapot.obj", downscale20x.mm, a3model_calculateVertexNormals_loadTexcoords }
+			{ A3_DEMO_OBJ"teapot/teapot.obj", downscale20x.mm, a3model_calculateVertexTangents },
 		};
 
 		const a3ubyte lightVolumeSlices = 8, lightVolumeStacks = 6;
@@ -254,10 +254,10 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 		}
 
 		// other procedurally-generated objects
-		a3proceduralCreateDescriptorPlane(proceduralShapes + 0, a3geomFlag_texcoords_normals, a3geomAxis_default, 24.0f, 24.0f, 12, 12);
-		a3proceduralCreateDescriptorSphere(proceduralShapes + 1, a3geomFlag_texcoords_normals, a3geomAxis_default, 1.0f, 32, 24);
-		a3proceduralCreateDescriptorCylinder(proceduralShapes + 2, a3geomFlag_texcoords_normals, a3geomAxis_x, 1.0f, 2.0f, 32, 1, 1);
-		a3proceduralCreateDescriptorTorus(proceduralShapes + 3, a3geomFlag_texcoords_normals, a3geomAxis_x, 1.0f, 0.25f, 32, 24);
+		a3proceduralCreateDescriptorPlane(proceduralShapes + 0, a3geomFlag_tangents, a3geomAxis_default, 24.0f, 24.0f, 12, 12);
+		a3proceduralCreateDescriptorSphere(proceduralShapes + 1, a3geomFlag_tangents, a3geomAxis_default, 1.0f, 32, 24);
+		a3proceduralCreateDescriptorCylinder(proceduralShapes + 2, a3geomFlag_tangents, a3geomAxis_x, 1.0f, 2.0f, 32, 1, 1);
+		a3proceduralCreateDescriptorTorus(proceduralShapes + 3, a3geomFlag_tangents, a3geomAxis_x, 1.0f, 0.25f, 32, 24);
 		for (i = 0; i < proceduralShapesCount; ++i)
 		{
 			a3proceduralGenerateGeometryData(proceduralShapesData + i, proceduralShapes + i, 0);
@@ -348,8 +348,10 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 	sharedVertexStorage += a3geometryGenerateDrawable(currentDrawable, displayShapesData + 3, vao, vbo_ibo, sceneCommonIndexFormat, 0, 0);
 
 	// models: position, texture coordinates and normals
-	vao = demoState->vao_position_texcoord_normal;
-	a3geometryGenerateVertexArray(vao, "vao:pos+tex+nrm", proceduralShapesData + 0, vbo_ibo, sharedVertexStorage);
+//	vao = demoState->vao_position_texcoord_normal;
+//	a3geometryGenerateVertexArray(vao, "vao:pos+tex+nrm", proceduralShapesData + 0, vbo_ibo, sharedVertexStorage);
+	vao = demoState->vao_tangentbasis;
+	a3geometryGenerateVertexArray(vao, "vao:tangentbasis", proceduralShapesData + 0, vbo_ibo, sharedVertexStorage);
 	currentDrawable = demoState->draw_plane;
 	sharedVertexStorage += a3geometryGenerateDrawable(currentDrawable, proceduralShapesData + 0, vao, vbo_ibo, sceneCommonIndexFormat, 0, 0);
 	currentDrawable = demoState->draw_sphere;
@@ -426,6 +428,15 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				passAtlasTexcoord_transform_vs[1],
 				passLightingData_transform_bias_vs[1],
 				passBiasedClipCoord_transform_instanced_vs[1];
+			// 07-curves
+			a3_DemoStateShader
+				passTangentBasis_transform_instanced_vs[1];
+
+			// geometry shaders
+			// 07-curves
+			a3_DemoStateShader
+				drawCurveSegment_gs[1],
+				drawOverlays_tangents_wireframe_gs[1];
 
 			// fragment shaders
 			// base
@@ -461,6 +472,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				drawPhong_multi_deferred_fs[1],
 				drawPhongVolume_fs[1],
 				drawPhongComposite_fs[1];
+			// 07-curves
+			a3_DemoStateShader
+				drawPhong_multi_forward_mrt_fs[1];
 		};
 	} shaderList = {
 		{
@@ -470,11 +484,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 
 			// vs
 			// base
-			{ { { 0 },	"shdr-vs:passthru",					a3shader_vertex  ,	1,{ A3_DEMO_VS"e/passthru_vs4x.glsl" } } },
-			{ { { 0 },	"shdr-vs:passthru-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"e/passthru_transform_vs4x.glsl" } } },
-			{ { { 0 },	"shdr-vs:pass-col-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"e/passColor_transform_vs4x.glsl" } } },
-			{ { { 0 },	"shdr-vs:passthru-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"e/passthru_transform_instanced_vs4x.glsl" } } },
-			{ { { 0 },	"shdr-vs:pass-col-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"e/passColor_transform_instanced_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:passthru",					a3shader_vertex  ,	1,{ A3_DEMO_VS"passthru_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:passthru-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"passthru_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-col-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"passColor_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:passthru-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"passthru_transform_instanced_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-col-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"passColor_transform_instanced_vs4x.glsl" } } },
 			// 02-shading
 			{ { { 0 },	"shdr-vs:pass-tex-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/e/passTexcoord_transform_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-light-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/e/passLightingData_transform_vs4x.glsl" } } },
@@ -484,11 +498,18 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-vs:pass-atlas-tex-trans",		a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/e/passAtlasTexcoord_transform_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-light-trans-bias",	a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/e/passLightingData_transform_bias_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-biasedclip-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/e/passBiasedClipCoord_transform_instanced_vs4x.glsl" } } },
+			// 07-curves
+			{ { { 0 },	"shdr-vs:pass-tangent-trans-inst",	a3shader_vertex  ,	1,{ A3_DEMO_VS"07-curves/passTangentBasis_transform_instanced_vs4x.glsl" } } },
+
+			// gs
+			// 07-curves
+			{ { { 0 },	"shdr-gs:draw-curve-segment",		a3shader_geometry,	1,{ A3_DEMO_GS"07-curves/e/drawCurveSegment_gs4x.glsl" } } },
+			{ { { 0 },	"shdr-gs:draw-overlays-tb-wire",	a3shader_geometry,	1,{ A3_DEMO_GS"07-curves/e/drawOverlays_tangents_wireframe_gs4x.glsl" } } },
 
 			// fs
 			// base
-			{ { { 0 },	"shdr-fs:draw-col-unif",			a3shader_fragment,	1,{ A3_DEMO_FS"e/drawColorUnif_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-col-attr",			a3shader_fragment,	1,{ A3_DEMO_FS"e/drawColorAttrib_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-col-unif",			a3shader_fragment,	1,{ A3_DEMO_FS"drawColorUnif_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-col-attr",			a3shader_fragment,	1,{ A3_DEMO_FS"drawColorAttrib_fs4x.glsl" } } },
 			// 02-shading
 			{ { { 0 },	"shdr-fs:draw-tex",					a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/e/drawTexture_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Lambert-multi",		a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/e/drawLambert_multi_fs4x.glsl" } } },
@@ -513,6 +534,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-Phong-multi-def",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/e/drawPhong_multi_deferred_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Phong-volume",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/e/drawPhongVolume_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Phong-composite",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/e/drawPhongComposite_fs4x.glsl" } } },
+			// 07-curves
+			{ { { 0 },	"shdr-fs:draw-Phong-mul-fwd-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"07-curves/drawPhong_multi_forward_mrt_fs4x.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -655,42 +678,44 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_blendScreen4_fs->shader);
 
 	// 06-deferred programs: 
-	// ****TO-DO: 
-	//	-> 2.1a: uncomment g-buffer program
-	/*
 	// draw lighting data as g-buffers
 	currentDemoProg = demoState->prog_drawLightingData;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-lightingdata");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_bias_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawLightingData_fs->shader);
-	*/
-	// ****TO-DO: 
-	//	-> 3.1a: uncomment deferred shading composite program
-	/*
 	// draw Phong shading deferred
 	currentDemoProg = demoState->prog_drawPhong_multi_deferred;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-multi-def");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passAtlasTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_multi_deferred_fs->shader);
-	*/
-	// ****TO-DO: 
-	//	-> 4.1a: uncomment deferred light volume program
-	/*
 	// draw Phong light volume
 	currentDemoProg = demoState->prog_drawPhongVolume_instanced;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-volume-inst");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passBiasedClipCoord_transform_instanced_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhongVolume_fs->shader);
-	*/
-	// ****TO-DO: 
-	//	-> 5.1a: uncomment deferred lighting composite program
-	/*
 	// draw composited Phong shading model
 	currentDemoProg = demoState->prog_drawPhongComposite;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-composite");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passAtlasTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhongComposite_fs->shader);
-	*/
+
+	// 07-curves programs: 
+	// draw Phong forward MRT
+	currentDemoProg = demoState->prog_drawPhong_multi_forward_mrt;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-mul-fwd-mrt");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_transform_instanced_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_multi_forward_mrt_fs->shader);
+	// draw overlays (tangents & wireframe)
+	currentDemoProg = demoState->prog_drawOverlays_tangents_wireframe;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-overlays-tb-wire");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_transform_instanced_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawOverlays_tangents_wireframe_gs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
+	currentDemoProg = demoState->prog_drawCurveSegment;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-curve-segment");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passthru_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawCurveSegment_gs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
 
 
 	// activate a primitive for validation
@@ -769,22 +794,26 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		a3demo_setUniformDefaultInteger(currentDemoProg, uImage07, defaultTexUnits + 7);
 
 		// common general
+		a3demo_setUniformDefaultInteger(currentDemoProg, uIndex, defaultInt);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uCount, defaultInt);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uFlag, defaultInt);
 		a3demo_setUniformDefaultDouble(currentDemoProg, uAxis, defaultDouble);
 		a3demo_setUniformDefaultDouble(currentDemoProg, uSize, defaultDouble);
 		a3demo_setUniformDefaultDouble(currentDemoProg, uTime, defaultDouble);
 
 		// transformation uniform blocks
+		a3demo_setUniformDefaultBlock(currentDemoProg, ubTransformStack, 0);
 		a3demo_setUniformDefaultBlock(currentDemoProg, ubTransformMVP, 0);
 		a3demo_setUniformDefaultBlock(currentDemoProg, ubTransformMVPB, 1);
 
 		// lighting uniform blocks
 		a3demo_setUniformDefaultBlock(currentDemoProg, ubPointLight, 4);
+
+		// animation uniform blocks
+		a3demo_setUniformDefaultBlock(currentDemoProg, ubCurveWaypoint, 4);
 	}
 
 
-	// ****TO-DO: 
-	//	-> 4.1a: uncomment uniform buffer setup
-	/*
 	// set up lighting uniform buffers
 	for (i = 0; i < demoStateMaxCount_lightVolumeBlock; ++i)
 	{
@@ -792,7 +821,15 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		a3bufferCreate(demoState->ubo_transformMVPB_light + i, "ubo:transform-mvpb", a3buffer_uniform, a3index_countMaxShort, 0);
 		a3bufferCreate(demoState->ubo_pointLight + i, "ubo:pointlight", a3buffer_uniform, a3index_countMaxShort, 0);
 	}
-	*/
+
+	// set up transform uniform buffers
+	for (i = 0; i < demoStateMaxCount_transformUniformBuffer; ++i)
+	{
+		a3bufferCreate(demoState->ubo_transformStack_model + i, "ubo:transform-stack", a3buffer_uniform, a3index_countMaxShort, 0);
+	}
+
+	// set up miscellaneous uniform buffers
+	a3bufferCreate(demoState->ubo_curveWaypoint, "ubo:curvewaypoint", a3buffer_uniform, a3index_countMaxShort, 0);
 
 
 	printf("\n\n---------------- LOAD SHADERS FINISHED ---------------- \n");
@@ -1062,7 +1099,8 @@ void a3demo_refresh(a3_DemoState* demoState)
 	a3_refreshDrawable_internal(demoState->draw_skybox, currentVAO, currentBuff);
 	a3_refreshDrawable_internal(demoState->draw_unitquad, currentVAO, currentBuff);
 
-	currentVAO = demoState->vao_position_texcoord_normal;
+//	currentVAO = demoState->vao_position_texcoord_normal;
+	currentVAO = demoState->vao_tangentbasis;
 	currentVAO->vertexBuffer = currentBuff;
 	a3_refreshDrawable_internal(demoState->draw_plane, currentVAO, currentBuff);
 	a3_refreshDrawable_internal(demoState->draw_sphere, currentVAO, currentBuff);

@@ -24,6 +24,8 @@
 
 #include "../a3_DemoSceneObject.h"
 
+#include "../a3_DemoRenderUtils.h"
+
 
 //-----------------------------------------------------------------------------
 
@@ -112,6 +114,49 @@ extern inline void a3demo_updateProjectorProjectionMat(a3_DemoProjector *project
 extern inline void a3demo_updateProjectorViewProjectionMat(a3_DemoProjector *projector)
 {
 	a3real4x4Product(projector->viewProjectionMat.m, projector->projectionMat.m, projector->sceneObject->modelMatInv.m);
+}
+
+
+extern inline void a3demo_resetModelMatrixStack(a3_DemoModelMatrixStack* model)
+{
+	model->modelMat = model->modelMatInverse = model->modelMatInverseTranspose = a3mat4_identity;
+	model->modelViewMat = model->modelViewMatInverse = model->modelViewMatInverseTranspose = a3mat4_identity;
+	model->modelViewProjectionMat = a3mat4_identity;
+	model->atlasMat = a3mat4_identity;
+}
+
+extern inline void a3demo_resetViewerMatrixStack(a3_DemoViewerMatrixStack* viewer)
+{
+	viewer->projectionMat = viewer->projectionMatInverse = a3mat4_identity;
+	viewer->projectionBiasMat = viewer->projectionBiasMatInverse = a3mat4_identity;
+	viewer->viewProjectionMat = viewer->viewProjectionMatInverse = a3mat4_identity;
+	viewer->viewProjectionBiasMat = viewer->viewProjectionBiasMatInverse = a3mat4_identity;
+}
+
+extern inline void a3demo_updateModelMatrixStack(a3_DemoModelMatrixStack* model, a3real4x4p const projectionMat_viewer, a3real4x4p const modelMat_viewer, a3real4x4p const modelMatInv_viewer, a3real4x4p const modelMat, a3real4x4p const atlasMat)
+{
+	a3real4x4SetReal4x4(model->modelMat.m, modelMat);
+	a3real4x4TransformInverse(model->modelMatInverse.m, modelMat);
+	a3demo_quickTransposedZeroBottomRow(model->modelMatInverseTranspose.m, model->modelMatInverse.m);
+	
+	a3real4x4ProductTransform(model->modelViewMat.m, modelMatInv_viewer, modelMat);
+	a3real4x4ProductTransform(model->modelViewMatInverse.m, model->modelMatInverse.m, modelMat_viewer);
+	a3demo_quickTransposedZeroBottomRow(model->modelViewMatInverseTranspose.m, model->modelViewMatInverse.m);
+
+	a3real4x4Product(model->modelViewProjectionMat.m, projectionMat_viewer, model->modelViewMat.m);
+	a3real4x4SetReal4x4(model->atlasMat.m, atlasMat);
+}
+
+extern inline void a3demo_updateViewerMatrixStack(a3_DemoViewerMatrixStack* viewer, a3real4x4p const modelMat_viewer, a3real4x4p const modelMatInv_viewer, a3real4x4p const projectionMat, a3real4x4p const projectionMatInv, a3real4x4p const biasMat, a3real4x4p const biasMatInv)
+{
+	a3real4x4SetReal4x4(viewer->projectionMat.m, projectionMat);
+	a3real4x4SetReal4x4(viewer->projectionMatInverse.m, projectionMatInv);
+	a3real4x4Product(viewer->projectionBiasMat.m, biasMat, projectionMat);
+	a3real4x4Product(viewer->projectionBiasMatInverse.m, projectionMatInv, biasMatInv);
+	a3real4x4Product(viewer->viewProjectionMat.m, projectionMat, modelMatInv_viewer);
+	a3real4x4Product(viewer->viewProjectionMatInverse.m, modelMat_viewer, projectionMatInv);
+	a3real4x4Product(viewer->viewProjectionBiasMat.m, biasMat, viewer->viewProjectionMat.m);
+	a3real4x4Product(viewer->viewProjectionBiasMatInverse.m, viewer->viewProjectionMatInverse.m, biasMatInv);
 }
 
 
