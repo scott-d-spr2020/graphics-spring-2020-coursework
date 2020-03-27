@@ -867,6 +867,8 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			a3_DemoStateTexture texRampDM[1];
 			a3_DemoStateTexture texRampSM[1];
 			a3_DemoStateTexture texChecker[1];
+			a3_DemoStateTexture texCrossHatchLower[1];
+			a3_DemoStateTexture texCrossHatchUpper[1];
 		};
 	} textureList = {
 		{
@@ -882,6 +884,8 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			{ demoState->tex_ramp_dm,		"tex:ramp-dm",		"../../../../resource/tex/sprite/celRamp_dm.png" },
 			{ demoState->tex_ramp_sm,		"tex:ramp-sm",		"../../../../resource/tex/sprite/celRamp_sm.png" },
 			{ demoState->tex_checker,		"tex:checker",		"../../../../resource/tex/crate/crate4_low_lambert1_BaseColor.tga" },
+			{ demoState->tex_crossHatchLower,"tex:crossDown",	"../../../../resource/tex/sprite/hatchdarkest.png" },
+			{ demoState->tex_crossHatchUpper,"tex:crossUp",		"../../../../resource/tex/sprite/hatchbrightest.png" },
 		}
 	};
 	const a3ui32 numTextures = sizeof(textureList) / sizeof(a3_DemoStateTexture);

@@ -364,7 +364,9 @@ extern "C"
 					tex_ramp_dm[1],
 					tex_ramp_sm[1],
 					tex_checker[1],
-					tex_SSAONoise[1];
+					tex_SSAONoise[1],
+					tex_crossHatchLower[1],
+					tex_crossHatchUpper[1];
 			};
 		};
 

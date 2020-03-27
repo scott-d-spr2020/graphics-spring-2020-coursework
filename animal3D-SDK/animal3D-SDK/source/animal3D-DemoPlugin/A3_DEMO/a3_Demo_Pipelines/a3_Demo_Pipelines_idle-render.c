@@ -764,7 +764,8 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, pipelines_scene_normal); //should be COMPRESSED normal (I hope)
 		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit03, pipelines_scene_texcoord);
 		//need crosshatch texture from SOMEWHERE????
-		//a3textureActivate(demoState->tex_crosshatch, a3tex_unit04);
+		a3textureActivate(demoState->tex_crossHatchLower, a3tex_unit05);
+		a3textureActivate(demoState->tex_crossHatchUpper, a3tex_unit06);
 		//a3ActivateSuperiorityComplex(currentDemoProgram);
 
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, grey);		//sets ambient color

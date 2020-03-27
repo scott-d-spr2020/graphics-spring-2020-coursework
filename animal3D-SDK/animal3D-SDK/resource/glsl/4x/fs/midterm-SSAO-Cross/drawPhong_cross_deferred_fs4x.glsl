@@ -48,6 +48,8 @@ uniform sampler2D uImage02; // g-buffer normal texture
 uniform sampler2D uImage03; // g-buffer texcoord texture
 							   
 uniform sampler2D uImage04; // ambient modifier
+uniform sampler2D uImage05; // crosslower
+uniform sampler2D uImage06; // crossupper
 
 uniform int uLightCt;
 uniform int uLightSz;
@@ -148,7 +150,7 @@ void main()
 
 	rtFragColor = vec4(0.4 * (diffuse.rgb + specular.rgb) + (0.5f * ambient.rgb), 1.0);
 	rtDiffuseMapSample = vec4(ambient.xyz, 1.0);
-	rtSpecularMapSample = vec4(ambient.xyz, 1.0);
+	rtSpecularMapSample = vec4(vec3(texture(uImage05, vTexcoord.xy).r), 1.0f);
 	rtDiffuseLightTotal = diffuse;
 	rtSpecularLightTotal = specular;
 }
