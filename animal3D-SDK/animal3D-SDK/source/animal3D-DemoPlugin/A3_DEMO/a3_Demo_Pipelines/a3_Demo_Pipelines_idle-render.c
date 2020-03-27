@@ -605,15 +605,10 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 			a3demo_drawModelLighting(modelViewProjectionMat.m, modelViewMat.m, viewProjectionMat.m, viewMat.m, currentSceneObject->modelMat.m, currentDemoProgram, drawable[k], rgba4[k + 3].v);
 		}
 
-		a3randomSetSeed((a3integer)time(0));
-
 		currentDrawable = demoState->draw_unitquad;
 		a3vertexDrawableActivate(currentDrawable);
 
 		//begin SSAO prepass
-		a3real3 kernel[64];
-		genKernel(kernel, 64);	// Generate kernel of random samples
-
 		currentPass = pipelines_passSSAO;
 		currentWriteFBO = writeFBO[currentPass];
 		a3framebufferActivate(currentWriteFBO);
@@ -633,7 +628,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		//printf("%d\n", currentPass);
 
 		// send uniforms
-		a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uSSAOKernel, 64, *kernel);
+		a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uSSAOKernel, 64, *demoState->kernel);
 		a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
 		a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v); //sets uSize to 1/screen size
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, activeCamera->projectionMat.mm);

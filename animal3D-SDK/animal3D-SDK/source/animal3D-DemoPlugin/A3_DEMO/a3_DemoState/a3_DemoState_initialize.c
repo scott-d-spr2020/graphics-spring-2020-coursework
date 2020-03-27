@@ -255,6 +255,7 @@ void a3demo_initScene(a3_DemoState *demoState)
 	printf("%f, %f, %f\n", demoState->controlPoint2.x, demoState->controlPoint2.y, demoState->controlPoint2.z);
 	printf("%f, %f, %f\n", demoState->controlPoint3.x, demoState->controlPoint3.y, demoState->controlPoint3.z);
 
+	genKernel(demoState->kernel, 64);
 
 	// demo modes
 	a3shading_init(demoState, demoState->demoMode_shading);

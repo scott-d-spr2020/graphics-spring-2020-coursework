@@ -46,6 +46,7 @@
 #include "a3_Demo_Shading.h"
 #include "a3_Demo_Pipelines.h"
 
+#include "_a3_demo_utilities/a3_DemoSSAOUtils.h"
 
 //-----------------------------------------------------------------------------
 
@@ -411,6 +412,9 @@ extern "C"
 			};
 		};
 		a3real lerpPos; //technically serves as time instead of an actual pos, which is calculated from this value
+
+		a3real3 kernel[64];
+
 		//---------------------------------------------------------------------
 	};
 

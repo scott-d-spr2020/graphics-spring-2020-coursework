@@ -403,7 +403,6 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		a3tex_unit12, a3tex_unit13, a3tex_unit14, a3tex_unit15
 	};
 
-
 	// list of all unique shaders
 	// this is a good idea to avoid multi-loading 
 	//	those that are shared between programs
@@ -804,6 +803,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		a3demo_setUniformDefaultDouble(currentDemoProg, uAxis, defaultDouble);
 		a3demo_setUniformDefaultDouble(currentDemoProg, uSize, defaultDouble);
 		a3demo_setUniformDefaultDouble(currentDemoProg, uTime, defaultDouble);
+		a3demo_setUniformDefaultVec3(currentDemoProg, uSSAOKernel, defaultFloat);
 
 		// transformation uniform blocks
 		a3demo_setUniformDefaultBlock(currentDemoProg, ubTransformMVP, 0);

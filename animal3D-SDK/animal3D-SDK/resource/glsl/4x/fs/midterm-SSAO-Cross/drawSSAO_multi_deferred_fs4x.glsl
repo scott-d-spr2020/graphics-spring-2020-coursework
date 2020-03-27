@@ -56,8 +56,8 @@ layout (location = 2) out vec4 rtNormal;
 
 vec2 noiseScale = vec2(uSize.x / 4.0, uSize.y / 4.0);	// Used to tile the noise over the whole screen
 
-const float radius = 0.01;	//Used to tweak strength of SSAO calculations
-const float bias = 0.001;
+const float radius = 0.8;	//Used to tweak strength of SSAO calculations
+const float bias = 0.025;
 const float magnitude = 2.0; // lighten or darken map
 const float contrast = 1.0;
 
@@ -122,7 +122,7 @@ void main()
 		occlusion -= occluded;
 	}
 
-	occlusion = 1.0 - (occlusion / (64.0 * magnitude));	// normalize by kernel size, subtract from 1 to use it in scaling ambient lighting
+	occlusion = 0.5 + (occlusion / (64.0 * magnitude));	// normalize by kernel size, multiply a modifier, and do a half inversion
 
 	//Outputting a color to the screen now works
 	rtFragColor = vec4(vec3(occlusion), 1.0) * contrast;
