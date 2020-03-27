@@ -59,7 +59,7 @@ vec2 noiseScale = vec2(uSize.x / 4.0, uSize.y / 4.0);	// Used to tile the noise 
 const float radius = 0.01;	//Used to tweak strength of SSAO calculations
 const float bias = 0.001;
 const float magnitude = 2.0; // lighten or darken map
-const float contrast = 1.5;
+const float contrast = 1.0;
 
 
 vec3 CalculatePosition()
@@ -125,7 +125,7 @@ void main()
 	occlusion = 1.0 - (occlusion / (64.0 * magnitude));	// normalize by kernel size, subtract from 1 to use it in scaling ambient lighting
 
 	//Outputting a color to the screen now works
-	rtFragColor = vec4(vec3(occlusion), 1.0);
+	rtFragColor = vec4(vec3(occlusion), 1.0) * contrast;
 	//rtFragColor = vec4(randomVector, 1.0);
 	//rtFragColor = texture(uImage03, vTexcoord.xy);
 	//rtFragColor = texture(uImage03, vTexcoord.xy * noiseScale);
