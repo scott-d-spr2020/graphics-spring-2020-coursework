@@ -154,8 +154,8 @@ void main()
 	rtNormal = normal;
 	rtPosition = vec4(position, 1.0);
 
-	//rtDiffuseMapSample = vec4(0.4 * (diffuse.rgb + specular.rgb) + (0.5f * ambient.rgb), 1.0);
-	rtDiffuseMapSample = vec4(ambient.rgb, 1.0);
+	rtDiffuseMapSample = vec4(0.4 * (diffuse.rgb + specular.rgb) + (0.5f * ambient.rgb), 1.0);
+	//rtDiffuseMapSample = vec4(ambient.rgb, 1.0);
 
 	float lumin = relativeLuminance(rtDiffuseMapSample.rgb);
 
@@ -167,29 +167,29 @@ void main()
 	vec4 color5 = vec4(vec3(texture(uImage06, 16.0f * texCoord.xy).b), 1.0f);
 
 	vec4 mergeColor;
-	if (lumin == 0.0)
+	if (lumin <= (1.0f/6.0f))
 	{
 		mergeColor = color0;
 	}
-	else if (lumin > 0.0 && lumin < 0.2)
+	else if (lumin > (1.0f/6.0f) && lumin < (2.0f/6.0f))
 	{
-		mergeColor = mix(color0, color1, mod(lumin, 0.2f) * 5f);
+		mergeColor = mix(color0, color1, mod(lumin, (1.0f/6.0f)) * 6f);
 	}
-	else if (lumin >= 0.2 && lumin < 0.4)
+	else if (lumin >= (2.0f/6.0f) && lumin < 0.5)
 	{
-		mergeColor = mix(color1, color2, mod(lumin, 0.2f) * 5f);
+		mergeColor = mix(color1, color2, mod(lumin, (1.0f/6.0f)) * 6f);
 	}
-	else if (lumin >= 0.4 && lumin < 0.6)
+	else if (lumin >= 0.5 && lumin < (4.0f/6.0f))
 	{
-		mergeColor = mix(color2, color3, mod(lumin, 0.2f) * 5f);
+		mergeColor = mix(color2, color3, mod(lumin, (1.0f/6.0f)) * 6f);
 	}
-	else if (lumin >= 0.6 && lumin < 0.8)
+	else if (lumin >= (4.0f/6.0f) && lumin < (5.0f/6.0f))
 	{
-		mergeColor = mix(color3, color4, mod(lumin, 0.2f) * 5f);
+		mergeColor = mix(color3, color4, mod(lumin, (1.0f/6.0f)) * 6f);
 	}
-	else if (lumin >= 0.8 && lumin < 1.0)
+	else if (lumin >= (5.0f/6.0f) && lumin < 1.0)
 	{
-		mergeColor = mix(color4, color5, mod(lumin, 0.2f) * 5f);
+		mergeColor = mix(color4, color5, mod(lumin, (1.0f/6.0f)) * 6f);
 	}
 	else if (lumin >= 1.0)
 	{
