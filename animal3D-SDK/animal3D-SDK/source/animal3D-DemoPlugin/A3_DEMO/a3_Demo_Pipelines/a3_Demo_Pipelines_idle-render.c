@@ -120,7 +120,14 @@ void a3pipelines_render_controls(a3_DemoState const* demoState, a3_Demo_Pipeline
 	};
 
 	a3byte const* targetText_ssao[pipelines_target_ssao_max] = {
-		"Color target 0: FINAL DISPLAY COLOR"
+		"Color target 0: FINAL DISPLAY COLOR",
+		"Color target 1: POSITION",
+		"Color target 2: NORMAL",
+		"Color target 3: RANDOM VECTOR",
+		"Color target 4: TANGENT",
+		"Color target 5: BITANGENT",
+		"Color target 6: OFFSET TEXCOORD",
+		"Color target 7: NEW SAMPLE MINUS POSITION"
 	};
 
 	a3byte const* targetText_composite[pipelines_target_composite_max] = {

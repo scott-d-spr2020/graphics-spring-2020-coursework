@@ -140,6 +140,13 @@ extern "C"
 		pipelines_target_scene_max,
 
 		pipelines_ssao_finalcolor = 0,		// final display color
+		pipelines_ssao_position,			// position
+		pipelines_ssao_normal,				// normal
+		pipelines_ssao_randomVec,			// random vector
+		pipelines_ssao_tangent,				// tangent
+		pipelines_ssao_bitangent,			// bitangent
+		pipelines_ssao_offset,				// offset
+		pipelines_ssao_newSamp,				// new sample
 		pipelines_target_ssao_max,
 
 		pipelines_composite_finalcolor = 0,	// final display color

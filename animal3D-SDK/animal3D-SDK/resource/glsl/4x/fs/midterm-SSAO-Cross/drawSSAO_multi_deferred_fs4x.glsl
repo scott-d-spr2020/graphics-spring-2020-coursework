@@ -52,6 +52,11 @@ uniform vec2 uSize;
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 1) out vec4 rtPosition;
 layout (location = 2) out vec4 rtNormal;
+layout (location = 3) out vec4 rtRandomVec;
+layout (location = 4) out vec4 rtTangent;
+layout (location = 5) out vec4 rtBitangent;
+layout (location = 6) out vec4 rtOffset;
+layout (location = 7) out vec4 rtNewSamp;
 
 
 vec2 noiseScale = vec2(uSize.x / 4.0, uSize.y / 4.0);	// Used to tile the noise over the whole screen
@@ -102,6 +107,7 @@ void main()
 
 	float occlusion = 64.0;
 	vec4 offset;
+	vec4 newSamp;
 	for(int i = 0; i < 64; ++i)
 	{
 		vec3 samp = TBN * uSSAOKernel[i];	// Tangent to view space
@@ -112,7 +118,8 @@ void main()
 		offset.xyz /= offset.w;	// persp divide
 		offset.xyz = offset.xyz * 0.5 + 0.5;	// into range  0.0 - 1.0 (compressed)
 
-		float sampDepth = CalculatePosition(offset.xy).z;
+		newSamp = vec4(CalculatePosition(offset.xy), 1.0f);
+		float sampDepth = newSamp.z;
 		float rangeCheck = smoothstep(0.0, 1.0, radius / abs(position.z - sampDepth));
 
 		float occluded = 0;
@@ -126,6 +133,13 @@ void main()
 
 	//Outputting a color to the screen now works
 	rtFragColor = vec4(vec3(occlusion), 1.0) * contrast;
+	rtPosition = vec4(position, 1.0f);
+	rtNormal = vec4(normal.xyz, 1.0f);
+	rtRandomVec = vec4(normalize(randomVector), 1.0f);
+	rtTangent = vec4(tangent, 1.0f);
+	rtBitangent = vec4(bitangent, 1.0f);
+	rtOffset = vec4(offset.xy, 0.0f, 1.0f);
+	rtNewSamp = vec4(newSamp.xyz - position.xyz, 1.0f);
 	//rtFragColor = vec4(randomVector, 1.0);
 	//rtFragColor = texture(uImage03, vTexcoord.xy);
 	//rtFragColor = texture(uImage03, vTexcoord.xy * noiseScale);
