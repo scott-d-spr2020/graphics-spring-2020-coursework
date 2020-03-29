@@ -129,6 +129,47 @@ float relativeLuminance(vec3 color)
 }
 
 
+float hatch(vec2 coord, float lumin)
+{
+	vec4 color00 = texture(uImage05, coord.xy);
+	vec4 color01 = texture(uImage06, coord.xy);
+
+	float mergeColor;
+	if (lumin <= 0.0f)
+	{
+			mergeColor = color00.r;
+	}
+	if (lumin > 0.0f && lumin < (1.0f/6.0f))
+	{
+		mergeColor = mix(color00.r, color00.g, mod(lumin, (1.0f/6.0f)) * 6f);
+	}
+	else if (lumin > (1.0f/6.0f) && lumin < (2.0f/6.0f))
+	{
+		mergeColor = mix(color00.g, color00.b, mod(lumin, (1.0f/6.0f)) * 6f);
+	}
+	else if (lumin >= (2.0f/6.0f) && lumin < 0.5)
+	{
+		mergeColor = mix(color00.b, color01.r, mod(lumin, (1.0f/6.0f)) * 6f);
+	}
+	else if (lumin >= 0.5 && lumin < (4.0f/6.0f))
+	{
+		mergeColor = mix(color01.r, color01.g, mod(lumin, (1.0f/6.0f)) * 6f);
+	}
+	else if (lumin >= (4.0f/6.0f) && lumin < (5.0f/6.0f))
+	{
+		mergeColor = mix(color01.g, color01.b, mod(lumin, (1.0f/6.0f)) * 6f);
+	}
+	else if (lumin >= (5.0f/6.0f) && lumin < 1.0)
+	{
+		mergeColor = mix(color01.b, 1.0f, mod(lumin, (1.0f/6.0f)) * 6f);
+	}
+	else if (lumin >= 1.0)
+	{
+		mergeColor = 1.0f;
+	}
+	return mergeColor;
+}
+
 void main()
 {
 	vec2 texCoord = texture(uImage03, vTexcoord.xy).rg; // Indidivual texture coords are stored in this texture's rg channels
@@ -157,46 +198,10 @@ void main()
 	rtDiffuseMapSample = vec4(0.4 * (diffuse.rgb + specular.rgb) + (0.5f * ambient.rgb), 1.0);
 	//rtDiffuseMapSample = vec4(ambient.rgb, 1.0);
 
-	float lumin = relativeLuminance(rtDiffuseMapSample.rgb);
-
-	vec4 color0 = vec4(vec3(texture(uImage05, 16.0f * texCoord.xy).r), 1.0f);
-	vec4 color1 = vec4(vec3(texture(uImage05, 16.0f * texCoord.xy).g), 1.0f);
-	vec4 color2 = vec4(vec3(texture(uImage05, 16.0f * texCoord.xy).b), 1.0f);
-	vec4 color3 = vec4(vec3(texture(uImage06, 16.0f * texCoord.xy).r), 1.0f);
-	vec4 color4 = vec4(vec3(texture(uImage06, 16.0f * texCoord.xy).g), 1.0f);
-	vec4 color5 = vec4(vec3(texture(uImage06, 16.0f * texCoord.xy).b), 1.0f);
-
-	vec4 mergeColor;
-	if (lumin <= (1.0f/6.0f))
-	{
-		mergeColor = color0;
-	}
-	else if (lumin > (1.0f/6.0f) && lumin < (2.0f/6.0f))
-	{
-		mergeColor = mix(color0, color1, mod(lumin, (1.0f/6.0f)) * 6f);
-	}
-	else if (lumin >= (2.0f/6.0f) && lumin < 0.5)
-	{
-		mergeColor = mix(color1, color2, mod(lumin, (1.0f/6.0f)) * 6f);
-	}
-	else if (lumin >= 0.5 && lumin < (4.0f/6.0f))
-	{
-		mergeColor = mix(color2, color3, mod(lumin, (1.0f/6.0f)) * 6f);
-	}
-	else if (lumin >= (4.0f/6.0f) && lumin < (5.0f/6.0f))
-	{
-		mergeColor = mix(color3, color4, mod(lumin, (1.0f/6.0f)) * 6f);
-	}
-	else if (lumin >= (5.0f/6.0f) && lumin < 1.0)
-	{
-		mergeColor = mix(color4, color5, mod(lumin, (1.0f/6.0f)) * 6f);
-	}
-	else if (lumin >= 1.0)
-	{
-		mergeColor = color5;
-	}
-	rtFragColor = vec4(mergeColor.xyz, 1.0);
-	rtSpecularMapSample = vec4(vec3(texture(uImage06, 4.0f * texCoord.xy).b), 1.0f);
+	float mergeColor = hatch(16 * texCoord.xy, relativeLuminance(rtDiffuseMapSample.rgb));
+	rtFragColor = vec4(vec3(mergeColor), 1.0);
+	float merge2 = hatch(16 * texCoord.xy, relativeLuminance(ambient.rgb));
+	rtSpecularMapSample = vec4(vec3(merge2), 1.0f);
 	rtDiffuseLightTotal = diffuse;
 	rtSpecularLightTotal = specular;
 }
