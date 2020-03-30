@@ -927,6 +927,7 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 		a3textureChangeRepeatMode(a3tex_repeatClamp, a3tex_repeatClamp);	// clamp both axes
 	}
 
+	// Creates the random 4x4 noise texture and sets to repeat for tiling purposes
 	a3randomSetSeed((a3integer)time(0));
 	a3real3 noise[16];
 	genNoise(noise, 16);

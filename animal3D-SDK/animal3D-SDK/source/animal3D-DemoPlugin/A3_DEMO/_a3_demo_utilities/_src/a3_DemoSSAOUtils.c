@@ -50,6 +50,7 @@ void genKernel(a3real3 *kern, int kernelSize)
 {
 	for (int i = 0; i < kernelSize; ++i)
 	{
+		// Create random kernel vector in a hemispheric shape
 		a3real3 temp;
 		temp[0] = a3randomSymmetric();
 		temp[1] = a3randomSymmetric();
@@ -57,20 +58,20 @@ void genKernel(a3real3 *kern, int kernelSize)
 
 		a3real3Normalize(temp);
 
+		// multiply by a new random float between 0.0, 1.0
 		a3real randomScalar = a3randomNormalized();
-		//multiply by a new random float between 0.0, 1.0
 		temp[0] *= randomScalar;
 		temp[1] *= randomScalar;
 		temp[2] *= randomScalar;
 		
+		// scale by the kernel size to place more weight on samples closer to center
 		float scale = (float)i / (float)kernelSize;
-
 		scale = lerp(0.1f, 1.0f, scale * scale);
+
 		temp[0] *= scale;
 		temp[1] *= scale;
 		temp[2] *= scale;
 
-		//printf("Kernel: %f, %f, %f\n", temp[0], temp[1], temp[2]);
 
 		kern[i][0] = temp[0];
 		kern[i][1] = temp[1];
@@ -86,16 +87,15 @@ void genNoise(a3real3 *arr, int arrSize)
 {
 	for (int i = 0; i < arrSize; i++)
 	{
+		// Create random rotation noise vectors around z-axis
 		a3real3 temp;
-		temp[0] = a3randomNormalized(); //[-0,1] so we can expand it in the FS
+		temp[0] = a3randomNormalized();
 		temp[1] = a3randomNormalized();
 		temp[2] = 0.0f;
 
 		arr[i][0] = temp[0];
 		arr[i][1] = temp[1];
 		arr[i][2] = temp[2];
-
-		//printf("Noise: %f, %f, %f\n", temp[0], temp[1], temp[2]);
 	}
 }
 
