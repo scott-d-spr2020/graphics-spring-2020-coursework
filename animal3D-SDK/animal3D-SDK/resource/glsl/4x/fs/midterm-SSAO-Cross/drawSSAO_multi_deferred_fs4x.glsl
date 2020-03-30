@@ -96,7 +96,7 @@ vec3 CalculatePosition(vec2 coord)
 
 void main()
 {
-	vec3 position = CalculatePosition();
+	vec3 position = CalculatePosition(vTexcoord.xy);
 	vec4 normal = vec4(texture(uImage02, vTexcoord.xy).xyz, 1.0) * 2.0f - vec4(1.0f); //uncompress
 	vec3 randomVector = texture(uImage03, vTexcoord.xy * noiseScale).xyz;
 	//randomVector = randomVector * 2.0f - 1.0f;

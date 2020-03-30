@@ -137,7 +137,7 @@ float hatch(vec2 coord, float lumin)
 	float mergeColor;
 	if (lumin <= 0.0f)
 	{
-			mergeColor = color00.r;
+		mergeColor = color00.r;
 	}
 	if (lumin > 0.0f && lumin < (1.0f/6.0f))
 	{
