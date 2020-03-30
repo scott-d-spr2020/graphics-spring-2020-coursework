@@ -768,7 +768,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		currentReadFBO = readFBO[currentPass][0]; //lighting data/gbuffers
 		a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit00);
 		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit01, pipelines_scene_position);		
-		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, pipelines_scene_normal); //should be COMPRESSED normal (I hope)
+		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, pipelines_scene_normal); //compressed normal
 		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit03, pipelines_scene_texcoord);
 		//need crosshatch texture from SOMEWHERE????
 		a3textureActivate(demoState->tex_crossHatchLower, a3tex_unit05);

@@ -140,11 +140,9 @@ void a3demo_update_scene(a3_DemoState *demoState, a3f64 dt)
 			currentSceneObject->euler.z = a3trigValid_sind(currentSceneObject->euler.z);
 		}
 	}
+
+	//sets the position to a bezier curve
 	demoState->teapotObject->position = bezierN(demoState->controlPoints, 4, pos);
-	//a3vec3 b = bezierN(demoState->controlPoints, 2, pos);
-	//printf("%f\n", pos);
-	//printf("%f, %f, %f\n", demoState->teapotObject->position.x, demoState->teapotObject->position.y, demoState->teapotObject->position.z);
-	//printf("%f, %f, %f\n", b.x, b.y, b.z);
 
 
 	// update scene objects

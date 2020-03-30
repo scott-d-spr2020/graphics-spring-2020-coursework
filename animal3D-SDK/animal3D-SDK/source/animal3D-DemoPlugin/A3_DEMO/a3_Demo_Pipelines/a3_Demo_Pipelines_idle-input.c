@@ -89,8 +89,8 @@ void a3pipelinesCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Pip
 	{
 	case ']':
 	case '[':
-	case ')':
-		if (demoMode->pass == pipelines_passLighting)
+	case ')': //if the new pass is passLighting, check if the pipeline supports it. If not, move to the specified pass. The same logic applies for all other cases
+		if (demoMode->pass == pipelines_passLighting) 
 		{
 			switch (demoMode->pipeline)
 			{

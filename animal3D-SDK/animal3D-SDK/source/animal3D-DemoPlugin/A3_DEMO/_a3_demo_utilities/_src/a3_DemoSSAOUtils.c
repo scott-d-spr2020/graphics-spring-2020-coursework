@@ -99,6 +99,7 @@ void genNoise(a3real3 *arr, int arrSize)
 	}
 }
 
+//lerp between vecs a and b by a value t
 a3vec3 vecLerp(a3vec3 a, a3vec3 b, float t)
 {
 	a3vec3 ret;
@@ -108,6 +109,7 @@ a3vec3 vecLerp(a3vec3 a, a3vec3 b, float t)
 	return ret;
 }
 
+//recursive bezier function
 a3vec3 bezierN(a3vec3* arr, int length, float t)
 {
 	a3vec3 ret;
@@ -122,6 +124,7 @@ a3vec3 bezierN(a3vec3* arr, int length, float t)
 	return ret;
 }
 
+//proper modulus. Source: https://stackoverflow.com/questions/11720656/modulo-operation-with-negative-numbers/19288271#19288271
 a3real mathMod(a3real num, a3real mod)
 {
 	a3real r = (a3real)fmod(num, mod);

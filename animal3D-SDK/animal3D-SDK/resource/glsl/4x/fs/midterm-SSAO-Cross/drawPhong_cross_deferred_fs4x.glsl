@@ -114,7 +114,7 @@ vec3 CalculatePosition()
 	//that data's [0,1], when we need [-x,x]
 	vec4 sampledDepth = texture(uImage00, vTexcoord.xy);
 
-	vec4 recalculatedPos = vec4(sampledPos.x, sampledPos.y, sampledDepth.z, 1.0);
+	vec4 recalculatedPos = vec4(sampledPos.x, sampledPos.y, sampledDepth.z, 1.0f);
 	//recalculatedPos.z = 2.0 * recalculatedPos.z - 1.0;	//reset depth value to [-1, 1]
 	recalculatedPos = uPB_inv * recalculatedPos;
 
@@ -124,45 +124,47 @@ vec3 CalculatePosition()
 //borrowed from bloom, used for brightness
 float relativeLuminance(vec3 color)
 {
-	return (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b);
+	return (0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b);
 }
 
 
+//takes a coord for sampling and a luminance (brightness) value and outputs the intensity of the hatch pixel
 float hatch(vec2 coord, float lumin)
 {
-	vec4 color00 = texture(uImage05, coord.xy);
-	vec4 color01 = texture(uImage06, coord.xy);
+	vec4 color00 = texture(uImage05, coord.xy); //darker texture (r is darkest, then g, then b)
+	vec4 color01 = texture(uImage06, coord.xy); //lighter texture
 
 	float mergeColor;
-	if (lumin <= 0.0f)
+	//using interval notation to specify ranges
+	if (lumin <= 0.0f) //(-infinity, 0] = dark.r
 	{
 		mergeColor = color00.r;
 	}
-	if (lumin > 0.0f && lumin < (1.0f/6.0f))
+	if (lumin > 0.0f && lumin < (1.0f/6.0f)) // [0, 1/6) = lerp(dark.r, dark.g)
 	{
-		mergeColor = mix(color00.r, color00.g, mod(lumin, (1.0f/6.0f)) * 6f);
+		mergeColor = mix(color00.r, color00.g, mod(lumin, (1.0f/6.0f)) * 6.0f);
 	}
-	else if (lumin > (1.0f/6.0f) && lumin < (2.0f/6.0f))
+	else if (lumin > (1.0f/6.0f) && lumin < (2.0f/6.0f)) // [1/6, 2/6) = lerp(dark.g, dark.b)
 	{
-		mergeColor = mix(color00.g, color00.b, mod(lumin, (1.0f/6.0f)) * 6f);
+		mergeColor = mix(color00.g, color00.b, mod(lumin, (1.0f/6.0f)) * 6.0f);
 	}
-	else if (lumin >= (2.0f/6.0f) && lumin < 0.5)
+	else if (lumin >= (2.0f/6.0f) && lumin < 0.5f) // [2/6, 3/6) = lerp(dark.b, light.r)
 	{
-		mergeColor = mix(color00.b, color01.r, mod(lumin, (1.0f/6.0f)) * 6f);
+		mergeColor = mix(color00.b, color01.r, mod(lumin, (1.0f/6.0f)) * 6.0f);
 	}
-	else if (lumin >= 0.5 && lumin < (4.0f/6.0f))
+	else if (lumin >= 0.5f && lumin < (4.0f/6.0f)) // [3/6, 4/6) = lerp(light.r, light.g) 
 	{
-		mergeColor = mix(color01.r, color01.g, mod(lumin, (1.0f/6.0f)) * 6f);
+		mergeColor = mix(color01.r, color01.g, mod(lumin, (1.0f/6.0f)) * 6.0f);
 	}
-	else if (lumin >= (4.0f/6.0f) && lumin < (5.0f/6.0f))
+	else if (lumin >= (4.0f/6.0f) && lumin < (5.0f/6.0f)) // [4/6, 5/6) = lerp(light.g, light.b)
 	{
-		mergeColor = mix(color01.g, color01.b, mod(lumin, (1.0f/6.0f)) * 6f);
+		mergeColor = mix(color01.g, color01.b, mod(lumin, (1.0f/6.0f)) * 6.0f);
 	}
-	else if (lumin >= (5.0f/6.0f) && lumin < 1.0)
+	else if (lumin >= (5.0f/6.0f) && lumin < 1.0f) // [5/6, 1) = lerp(light.b, white)
 	{
-		mergeColor = mix(color01.b, 1.0f, mod(lumin, (1.0f/6.0f)) * 6f);
+		mergeColor = mix(color01.b, 1.0f, mod(lumin, (1.0f/6.0f)) * 6.0f);
 	}
-	else if (lumin >= 1.0)
+	else if (lumin >= 1.0f) // [1, infinity) = white
 	{
 		mergeColor = 1.0f;
 	}
@@ -171,34 +173,41 @@ float hatch(vec2 coord, float lumin)
 
 void main()
 {
+	//extract from G-buffers
 	vec2 texCoord = texture(uImage03, vTexcoord.xy).rg; // Indidivual texture coords are stored in this texture's rg channels
 	vec3 position = CalculatePosition();
-	vec4 normal = vec4(texture(uImage02, vTexcoord.xy).xyz, 1.0) * 2.0f - vec4(1.0f); //uncompress
+	vec4 normal = vec4(texture(uImage02, vTexcoord.xy).xyz, 1.0f) * 2.0f - vec4(1.0f); //uncompress
 
-	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
-	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
+	vec4 diffuse = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	vec4 specular = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
+	//sample ambient from SSAO
 	vec4 ambient = texture(uImage04, vTexcoord.xy);
 	vec3 VVec3d = normalize(-position.xyz);
 
 	for(int i = 0; i < uLightCt; i++)
 	{
 		LambertData lambert;
-		vec4 tempDiff = CalculateDiffuse(normal, i, vec4(position, 1.0), lambert);
+		vec4 tempDiff = CalculateDiffuse(normal, i, vec4(position, 1.0f), lambert);
 		vec4 tempSpec = CalculateSpecular(normal, i, lambert, VVec3d);
 		specular += tempSpec;
 		diffuse += tempDiff;
 	}
 
-	rtTexcoord = vec4(texCoord, 0.0, 1.0);
+	//output G-buffers
+	rtTexcoord = vec4(texCoord, 0.0f, 1.0f);
 	rtNormal = normal;
-	rtPosition = vec4(position, 1.0);
+	rtPosition = vec4(position, 1.0f);
 
-	rtDiffuseMapSample = vec4(0.4 * (diffuse.rgb + specular.rgb) + (0.5f * ambient.rgb), 1.0);
+	//create diffuse map that we'll use as a basis for the final color
+	rtDiffuseMapSample = vec4(0.4f * (diffuse.rgb + specular.rgb) + (0.5f * ambient.rgb), 1.0f);
 	//rtDiffuseMapSample = vec4(ambient.rgb, 1.0);
 
+	//crosshatch color output
 	float mergeColor = hatch(16 * texCoord.xy, relativeLuminance(rtDiffuseMapSample.rgb));
-	rtFragColor = vec4(vec3(mergeColor), 1.0);
+	rtFragColor = vec4(vec3(mergeColor), 1.0f);
+
+	//same as before but only using SSAO value as input.
 	float merge2 = hatch(16 * texCoord.xy, relativeLuminance(ambient.rgb));
 	rtSpecularMapSample = vec4(vec3(merge2), 1.0f);
 	rtDiffuseLightTotal = diffuse;
