@@ -56,7 +56,6 @@ uniform int uLightSz;
 uniform int uLightSzInvSq;
 uniform vec4 uLightPos[MAX_LIGHTS];
 uniform vec4 uLightCol[MAX_LIGHTS];
-uniform vec4 uColor;
 
 
 uniform mat4 uPB_inv;

@@ -775,7 +775,6 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		a3textureActivate(demoState->tex_crossHatchUpper, a3tex_unit06);
 		//a3ActivateSuperiorityComplex(currentDemoProgram);
 
-		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, grey);		//sets ambient color
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMat_inv.mm);
 		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
 		a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightSz, demoState->forwardLightCount, lightSz);
