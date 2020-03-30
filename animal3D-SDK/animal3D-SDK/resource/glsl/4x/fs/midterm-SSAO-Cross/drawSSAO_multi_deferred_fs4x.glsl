@@ -66,20 +66,6 @@ const float bias = 0.025;
 const float magnitude = 2.0; // lighten or darken map
 const float contrast = 1.0;
 
-
-vec3 CalculatePosition()
-{
-	vec3 sampledPos = texture(uImage01, vTexcoord.xy).rgb; // gives us position previously saved
-	//that data's [0,1], when we need [-x,x]
-	vec4 sampledDepth = texture(uImage00, vTexcoord.xy);
-
-	vec4 recalculatedPos = vec4(sampledPos.x, sampledPos.y, sampledDepth.z, 1.0);
-	//recalculatedPos.z = 2.0 * recalculatedPos.z - 1.0;	// reset depth value to [-1, 1]
-	recalculatedPos = uPB_inv * recalculatedPos;
-
-	return (recalculatedPos / recalculatedPos.w).xyz;
-}
-
 vec3 CalculatePosition(vec2 coord)
 {
 	vec3 sampledPos = texture(uImage01, coord).rgb; // gives us position previously saved
