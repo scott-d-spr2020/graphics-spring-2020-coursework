@@ -52,7 +52,7 @@ void a3shading_render_controls(a3_DemoState const* demoState, a3_Demo_Shading co
 	a3f32 const textAlign, a3f32 const textDepth, a3f32 const textOffsetDelta, a3f32 textOffset);
 void a3pipelines_render_controls(a3_DemoState const* demoState, a3_Demo_Pipelines const* demoMode,
 	a3f32 const textAlign, a3f32 const textDepth, a3f32 const textOffsetDelta, a3f32 textOffset);
-void a3curves_render_controls(a3_DemoState const* demoState, a3_Demo_Curves const* demoMode,
+void a3keyframes_render_controls(a3_DemoState const* demoState, a3_Demo_Keyframes const* demoMode,
 	a3f32 const textAlign, a3f32 const textDepth, a3f32 const textOffsetDelta, a3f32 textOffset);
 
 
@@ -86,8 +86,8 @@ void a3demo_render_controls(a3_DemoState const* demoState,
 	case demoState_pipelines:
 		a3pipelines_render_controls(demoState, demoState->demoMode_pipelines, textAlign, textDepth, textOffsetDelta, textOffset);
 		break;
-	case demoState_curves:
-		a3curves_render_controls(demoState, demoState->demoMode_curves, textAlign, textDepth, textOffsetDelta, textOffset);
+	case demoState_keyframes:
+		a3keyframes_render_controls(demoState, demoState->demoMode_keyframes, textAlign, textDepth, textOffsetDelta, textOffset);
 		break;
 	}
 
@@ -188,7 +188,7 @@ void a3demo_render_data(const a3_DemoState* demoState,
 
 void a3shading_render(a3_DemoState const* demoState, a3_Demo_Shading const* demoMode);
 void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* demoMode);
-void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMode);
+void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* demoMode);
 
 void a3demo_render(a3_DemoState const* demoState)
 {
@@ -213,8 +213,8 @@ void a3demo_render(a3_DemoState const* demoState)
 	case demoState_pipelines:
 		a3pipelines_render(demoState, demoState->demoMode_pipelines);
 		break;
-	case demoState_curves:
-		a3curves_render(demoState, demoState->demoMode_curves);
+	case demoState_keyframes:
+		a3keyframes_render(demoState, demoState->demoMode_keyframes);
 		break;
 	}
 

@@ -43,7 +43,7 @@ void a3demo_initSceneRefresh(a3_DemoState* demoState);
 
 void a3shading_init(a3_DemoState const* demoState, a3_Demo_Shading* demoMode);
 void a3pipelines_init(a3_DemoState const* demoState, a3_Demo_Pipelines* demoMode);
-void a3curves_init(a3_DemoState const* demoState, a3_Demo_Curves* demoMode);
+void a3keyframes_init(a3_DemoState const* demoState, a3_Demo_Keyframes* demoMode);
 
 
 //-----------------------------------------------------------------------------
@@ -269,11 +269,25 @@ void a3demo_initScene(a3_DemoState *demoState)
 	}
 
 
+	// skeleton
+	if (demoState->verticalAxis)
+	{
+		demoState->skeletonObject->position.z = -4.0f;
+		demoState->skeletonObject->euler.x = -90.0f;
+		demoState->skeletonObject->euler.z = +180.0f;
+	}
+	else
+	{
+		demoState->skeletonObject->position.y = +4.0f;
+		demoState->skeletonObject->euler.z = +180.0f;
+	}
+
+
 	// demo modes
 	a3shading_init(demoState, demoState->demoMode_shading);
 	a3pipelines_init(demoState, demoState->demoMode_pipelines);
-	a3curves_init(demoState, demoState->demoMode_curves);
-	demoState->demoMode = demoState_curves;
+	a3keyframes_init(demoState, demoState->demoMode_keyframes);
+	demoState->demoMode = demoState_keyframes;
 
 	// active camera params
 	demoState->activeCamera = demoState->demoMode_pipelines->activeCamera;

@@ -18,7 +18,7 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 
-	a3_Demo_Curves_idle-render.c
+	a3_Demo_Keyframes_idle-render.c
 	Demo mode implementations: curves & interpolation rendering.
 
 	********************************************
@@ -28,7 +28,7 @@
 
 //-----------------------------------------------------------------------------
 
-#include "../a3_Demo_Curves.h"
+#include "../a3_Demo_Keyframes.h"
 
 #include "../a3_DemoState.h"
 
@@ -48,33 +48,33 @@
 //-----------------------------------------------------------------------------
 
 // controls for pipelines mode
-void a3curves_render_controls(a3_DemoState const* demoState, a3_Demo_Curves const* demoMode,
+void a3keyframes_render_controls(a3_DemoState const* demoState, a3_Demo_Keyframes const* demoMode,
 	a3f32 const textAlign, a3f32 const textDepth, a3f32 const textOffsetDelta, a3f32 textOffset)
 {
 	// display mode info
-	a3byte const* pipelineText[curves_pipeline_max] = {
+	a3byte const* pipelineText[keyframes_pipeline_max] = {
 		"Forward rendering",
 	};
 
 	// forward pipeline names
-	a3byte const* renderProgramName[curves_render_max] = {
+	a3byte const* renderProgramName[keyframes_render_max] = {
 		"Phong shading",
 	};
 
 	// forward display names
-	a3byte const* displayProgramName[curves_display_max] = {
+	a3byte const* displayProgramName[keyframes_display_max] = {
 		"Texture",
 		"Texture with outlines",
 	};
 
 	// active camera name
-	a3byte const* cameraText[curves_camera_max] = {
+	a3byte const* cameraText[keyframes_camera_max] = {
 		"Scene camera",
 		"Shadow map light",
 	};
 
 	// pass names
-	a3byte const* passName[curves_pass_max] = {
+	a3byte const* passName[keyframes_pass_max] = {
 		"Pass: Capture shadow map",
 		"Pass: Render scene objects",
 		"Pass: Composite scene",
@@ -89,10 +89,10 @@ void a3curves_render_controls(a3_DemoState const* demoState, a3_Demo_Curves cons
 		"Pass: Vertical blur (1/8 frame)",
 		"Pass: Bloom composite",
 	};
-	a3byte const* targetText_shadow[curves_target_shadow_max] = {
+	a3byte const* targetText_shadow[keyframes_target_shadow_max] = {
 		"Depth buffer",
 	};
-	a3byte const* targetText_scene[curves_target_scene_max] = {
+	a3byte const* targetText_scene[keyframes_target_scene_max] = {
 		"Color target 0: FINAL DISPLAY COLOR",
 		"Color target 1: Attrib data: atlas texcoord",
 		"Color target 2: Attrib data: view tangent",
@@ -103,17 +103,17 @@ void a3curves_render_controls(a3_DemoState const* demoState, a3_Demo_Curves cons
 		"Color target 7: Lighting: specular total",
 		"Depth buffer",
 	};
-	a3byte const* targetText_composite[curves_target_composite_max] = {
+	a3byte const* targetText_composite[keyframes_target_composite_max] = {
 		"Color target 0: FINAL DISPLAY COLOR",
 	};
-	a3byte const* targetText_bright[curves_target_bright_max] = {
+	a3byte const* targetText_bright[keyframes_target_bright_max] = {
 		"Color target 0: FINAL DISPLAY COLOR",
 		"Color target 1: Luminance",
 	};
-	a3byte const* targetText_blur[curves_target_blur_max] = {
+	a3byte const* targetText_blur[keyframes_target_blur_max] = {
 		"Color target 0: FINAL DISPLAY COLOR",
 	};
-	a3byte const* const* targetText[curves_pass_max] = {
+	a3byte const* const* targetText[keyframes_pass_max] = {
 		targetText_shadow,
 		targetText_scene,
 		targetText_composite,
@@ -128,7 +128,7 @@ void a3curves_render_controls(a3_DemoState const* demoState, a3_Demo_Curves cons
 		targetText_blur,
 		targetText_composite,
 	};
-	a3byte const* interpText[curves_interp_max] = {
+	a3byte const* interpText[keyframes_interp_max] = {
 		"No interpolation",
 		"Linear interpolation (LERP)",
 		"Bezier interpolation",
@@ -140,43 +140,77 @@ void a3curves_render_controls(a3_DemoState const* demoState, a3_Demo_Curves cons
 	a3vec4 const col = { a3real_half, a3real_zero, a3real_half, a3real_one };
 
 	// pipeline and target
-	a3_Demo_Curves_RenderProgramName const render = demoMode->render;
-	a3_Demo_Curves_DisplayProgramName const display = demoMode->display;
-	a3_Demo_Curves_ActiveCameraName const activeCamera = demoMode->activeCamera;
-	a3_Demo_Curves_PipelineName const pipeline = demoMode->pipeline;
-	a3_Demo_Curves_PassName const pass = demoMode->pass;
-	a3_Demo_Curves_TargetName const targetIndex = demoMode->targetIndex[pass];
-	a3_Demo_Curves_TargetName const targetCount = demoMode->targetCount[pass];
-	a3_Demo_Curves_InterpolationModeName const interp = demoMode->interp;
+	a3_Demo_Keyframes_RenderProgramName const render = demoMode->render;
+	a3_Demo_Keyframes_DisplayProgramName const display = demoMode->display;
+	a3_Demo_Keyframes_ActiveCameraName const activeCamera = demoMode->activeCamera;
+	a3_Demo_Keyframes_PipelineName const pipeline = demoMode->pipeline;
+	a3_Demo_Keyframes_PassName const pass = demoMode->pass;
+	a3_Demo_Keyframes_TargetName const targetIndex = demoMode->targetIndex[pass];
+	a3_Demo_Keyframes_TargetName const targetCount = demoMode->targetCount[pass];
+	a3_Demo_Keyframes_InterpolationModeName const interp = demoMode->interp;
 
 	// demo modes
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"    Pipeline (%u / %u) ('[' | ']'): %s", pipeline + 1, curves_pipeline_max, pipelineText[pipeline]);
+		"    Pipeline (%u / %u) ('[' | ']'): %s", pipeline + 1, keyframes_pipeline_max, pipelineText[pipeline]);
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"    Display pass (%u / %u) ('(' | ')'): %s", pass + 1, curves_pass_max, passName[pass]);
+		"    Display pass (%u / %u) ('(' | ')'): %s", pass + 1, keyframes_pass_max, passName[pass]);
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
 		"        Target (%u / %u) ('{' | '}'): %s", targetIndex + 1, targetCount, targetText[pass][targetIndex]);
 
 	// lighting modes
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"    Rendering mode (%u / %u) ('j' | 'k'): %s", render + 1, curves_render_max, renderProgramName[render]);
+		"    Rendering mode (%u / %u) ('j' | 'k'): %s", render + 1, keyframes_render_max, renderProgramName[render]);
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"    Display mode (%u / %u) ('J' | 'K'): %s", display + 1, curves_display_max, displayProgramName[display]);
+		"    Display mode (%u / %u) ('J' | 'K'): %s", display + 1, keyframes_display_max, displayProgramName[display]);
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"    Active camera (%u / %u) ('c' prev | next 'v'): %s", activeCamera + 1, curves_camera_max, cameraText[activeCamera]);
+		"    Active camera (%u / %u) ('c' prev | next 'v'): %s", activeCamera + 1, keyframes_camera_max, cameraText[activeCamera]);
 
 	// additional modes
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"    Interpolation mode (%u / %u) ('C' | 'V'): %s", interp + 1, curves_interp_max, interpText[interp]);
+		"    Interpolation mode (%u / %u) ('C' | 'V'): %s", interp + 1, keyframes_interp_max, interpText[interp]);
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
 		"        Interpolation data: PARAM %.3f = %.3f / %.3f; SEGMENT %u / %u", (a3f32)demoState->segmentParam, (a3f32)demoState->segmentTime, (a3f32)demoState->segmentDuration, (a3ui32)demoState->segmentIndex + 1, (a3ui32)demoState->segmentCount);
+
+	// editing controls
+	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+		"EDIT JOINTS (toggle '0') %d", demoMode->editingJoint);
+	if (demoMode->editingJoint)
+	{
+		const a3_HierarchyNodePose* currentNodePose = demoState->hierarchyState_skel[demoMode->editSkeletonIndex].poseGroup->pose[0].nodePose + demoMode->editJointIndex;
+		const a3_HierarchyPoseFlag currentPoseFlag = demoState->hierarchyPoseFlag_skel[demoMode->editSkeletonIndex][demoMode->editJointIndex];
+
+		a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+			"    Editing joint %d / %d ( '8' prev | next '9' )", demoMode->editJointIndex + 1, demoState->hierarchy_skel[demoMode->editSkeletonIndex].numNodes);
+		a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+			"    Joint name: '%s'", demoState->hierarchy_skel[demoMode->editSkeletonIndex].nodes[demoMode->editJointIndex].name);
+		a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+			"    Edit DOFs: ");
+		if (currentPoseFlag & a3poseFlag_rotate)
+		{
+			a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+				"        orientation_x ('1' | '!'): %f", currentNodePose->orientation.x);
+			a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+				"        orientation_y ('2' | '@'): %f", currentNodePose->orientation.y);
+			a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+				"        orientation_z ('3' | '#'): %f", currentNodePose->orientation.z);
+		}
+		if (currentPoseFlag & a3poseFlag_translate)
+		{
+			a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+				"        translation_x ('4' | '$'): %f", currentNodePose->translation.x);
+			a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+				"        translation_y ('5' | '%%'): %f", currentNodePose->translation.y);
+			a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+				"        translation_z ('6' | '^'): %f", currentNodePose->translation.z);
+		}
+	}
 }
 
 
 //-----------------------------------------------------------------------------
 
 // sub-routine for rendering the demo state using the shading pipeline
-void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMode)
+void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* demoMode)
 {
 	// pointers
 	const a3_VertexDrawable* currentDrawable;
@@ -206,6 +240,23 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		* const cyan = rgba4[3].v, * const magenta = rgba4[4].v, * const yellow = rgba4[5].v,
 		* const orange = rgba4[6].v, * const skyblue = rgba4[7].v,
 		* const grey = rgba4[8].v, * const grey_t = rgba4[9].v;
+
+	// colorization levels
+	const a3vec4 hueWheel[] = {
+		{ 1.0f, 0.0f, 0.0f, 1.0f },	// red
+		{ 1.0f, 0.5f, 0.0f, 1.0f },	// orange
+		{ 1.0f, 1.0f, 0.0f, 1.0f },	// yellow
+		{ 0.5f, 1.0f, 0.0f, 1.0f },	// lime
+		{ 0.0f, 1.0f, 0.0f, 1.0f },	// green
+		{ 0.0f, 1.0f, 0.5f, 1.0f },	// aqua
+		{ 0.0f, 1.0f, 1.0f, 1.0f },	// cyan
+		{ 0.0f, 0.5f, 1.0f, 1.0f },	// sky
+		{ 0.0f, 0.0f, 1.0f, 1.0f },	// blue
+		{ 0.5f, 0.0f, 1.0f, 1.0f },	// purple
+		{ 1.0f, 0.0f, 1.0f, 1.0f },	// magenta
+		{ 1.0f, 0.0f, 0.5f, 1.0f },	// rose
+	};
+	const a3ui32 hueCount = sizeof(hueWheel) / sizeof(*hueWheel);
 
 	// camera used for drawing
 	const a3_DemoProjector* activeCamera = demoState->projector + demoState->activeCamera;
@@ -252,20 +303,20 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	};
 
 	// forward pipeline shader programs
-	const a3_DemoStateShaderProgram* renderProgram[curves_pipeline_max][curves_render_max] = {
+	const a3_DemoStateShaderProgram* renderProgram[keyframes_pipeline_max][keyframes_render_max] = {
 		{
 			demoState->prog_drawPhong_multi_forward_mrt,
 		},
 	};
 
 	// display shader programs
-	const a3_DemoStateShaderProgram* displayProgram[curves_display_max] = {
+	const a3_DemoStateShaderProgram* displayProgram[keyframes_display_max] = {
 		demoState->prog_drawTexture,
 		demoState->prog_drawTexture_outline,
 	};
 
 	// framebuffers to which to write based on pipeline mode
-	const a3_Framebuffer* writeFBO[curves_pass_max] = {
+	const a3_Framebuffer* writeFBO[keyframes_pass_max] = {
 		demoState->fbo_shadow_d32,
 		demoState->fbo_scene_c16d24s8_mrt,
 		demoState->fbo_composite_c16 + 2,
@@ -282,7 +333,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	};
 
 	// framebuffers from which to read based on pipeline mode
-	const a3_Framebuffer* readFBO[curves_pass_max][4] = {
+	const a3_Framebuffer* readFBO[keyframes_pass_max][4] = {
 		{ 0, },
 		{ 0, demoState->fbo_shadow_d32, 0, },
 		{ demoState->fbo_scene_c16d24s8_mrt, 0, },
@@ -299,12 +350,12 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	};
 
 	// target info
-	a3_Demo_Curves_RenderProgramName const render = demoMode->render;
-	a3_Demo_Curves_DisplayProgramName const display = demoMode->display;
-	a3_Demo_Curves_PipelineName const pipeline = demoMode->pipeline;
-	a3_Demo_Curves_PassName const pass = demoMode->pass;
-	a3_Demo_Curves_TargetName const targetIndex = demoMode->targetIndex[pass], targetCount = demoMode->targetCount[pass];
-	a3_Demo_Curves_PassName currentPass;
+	a3_Demo_Keyframes_RenderProgramName const render = demoMode->render;
+	a3_Demo_Keyframes_DisplayProgramName const display = demoMode->display;
+	a3_Demo_Keyframes_PipelineName const pipeline = demoMode->pipeline;
+	a3_Demo_Keyframes_PassName const pass = demoMode->pass;
+	a3_Demo_Keyframes_TargetName const targetIndex = demoMode->targetIndex[pass], targetCount = demoMode->targetCount[pass];
+	a3_Demo_Keyframes_PassName currentPass;
 
 
 	// pixel size and effect axis
@@ -352,7 +403,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	//		- capture depth
 
 	// select shadow FBO
-	currentPass = curves_passShadow;
+	currentPass = keyframes_passShadow;
 	currentWriteFBO = writeFBO[currentPass];
 	a3framebufferActivate(currentWriteFBO);
 
@@ -380,12 +431,12 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	//		- capture color and depth
 
 	// select target framebuffer
-	currentPass = curves_passScene;
+	currentPass = keyframes_passScene;
 	currentWriteFBO = writeFBO[currentPass];
 	switch (pipeline)
 	{
 		// shading with MRT
-	case curves_forward:
+	case keyframes_forward:
 		// target scene framebuffer
 		a3demo_setSceneState(currentWriteFBO, demoState->displaySkybox);
 		break;
@@ -423,7 +474,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	switch (pipeline)
 	{
 		// scene pass using forward pipeline
-	case curves_forward: {
+	case keyframes_forward: {
 		// activate shadow map and other relevant textures
 		currentReadFBO = demoState->fbo_shadow_d32;
 		a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit06);
@@ -465,13 +516,13 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	//	- activate composite framebuffer
 	//	- composite scene layers
 
-	currentPass = curves_passComposite;
+	currentPass = keyframes_passComposite;
 	currentWriteFBO = writeFBO[currentPass];
 	a3framebufferActivate(currentWriteFBO);
 
 	// composite skybox
 	currentDemoProgram = demoState->displaySkybox ? demoState->prog_drawTexture : demoState->prog_drawColorUnif;
-	a3demo_drawModelTexturedColored_invertModel(modelViewProjectionMat.m, viewProjectionMat.m, demoState->skyboxObject->modelMat.m, a3mat4_identity.m, currentDemoProgram, demoState->draw_skybox, demoState->tex_skybox_clouds, skyblue);
+	a3demo_drawModelTexturedColored_invertModel(modelViewProjectionMat.m, viewProjectionMat.m, demoState->skyboxObject->modelMat.m, a3mat4_identity.m, currentDemoProgram, demoState->draw_skybox, demoState->tex_skybox_clouds, grey);
 	a3demo_enableCompositeBlending();
 
 	// draw textured quad with previous pass image on it
@@ -481,7 +532,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 
 	switch (pipeline)
 	{
-	case curves_forward:
+	case keyframes_forward:
 		// use simple texturing program
 		currentDemoProgram = demoState->prog_drawTexture;
 		a3shaderProgramActivate(currentDemoProgram->program);
@@ -525,7 +576,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	currentDemoProgram = demoState->prog_drawTexture_brightPass;
 	a3shaderProgramActivate(currentDemoProgram->program);
 
-	currentPass = curves_passBright_2;
+	currentPass = keyframes_passBright_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
@@ -538,7 +589,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v);
 
-	currentPass = curves_passBlurH_2;
+	currentPass = keyframes_passBlurH_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
@@ -546,7 +597,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
 	a3vertexDrawableRenderActive();
 
-	currentPass = curves_passBlurV_2;
+	currentPass = keyframes_passBlurV_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
@@ -558,7 +609,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	currentDemoProgram = demoState->prog_drawTexture_brightPass;
 	a3shaderProgramActivate(currentDemoProgram->program);
 
-	currentPass = curves_passBright_4;
+	currentPass = keyframes_passBright_4;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
@@ -571,7 +622,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v);
 
-	currentPass = curves_passBlurH_4;
+	currentPass = keyframes_passBlurH_4;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
@@ -579,7 +630,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
 	a3vertexDrawableRenderActive();
 
-	currentPass = curves_passBlurV_4;
+	currentPass = keyframes_passBlurV_4;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
@@ -591,7 +642,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	currentDemoProgram = demoState->prog_drawTexture_brightPass;
 	a3shaderProgramActivate(currentDemoProgram->program);
 
-	currentPass = curves_passBright_8;
+	currentPass = keyframes_passBright_8;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
@@ -604,7 +655,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v);
 
-	currentPass = curves_passBlurH_8;
+	currentPass = keyframes_passBlurH_8;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
@@ -612,7 +663,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
 	a3vertexDrawableRenderActive();
 
-	currentPass = curves_passBlurV_8;
+	currentPass = keyframes_passBlurV_8;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
 	a3framebufferActivate(currentWriteFBO);
@@ -624,7 +675,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	currentDemoProgram = demoState->prog_drawTexture_blendScreen4;
 	a3shaderProgramActivate(currentDemoProgram->program);
 
-	currentPass = curves_passBlend;
+	currentPass = keyframes_passBlend;
 	currentWriteFBO = writeFBO[currentPass];
 	a3framebufferActivate(currentWriteFBO);
 	for (i = 0, j = 4; i < j; ++i)
@@ -649,26 +700,26 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	// select output to display
 	switch (demoMode->pass)
 	{
-	case curves_passShadow:
+	case keyframes_passShadow:
 			a3framebufferBindDepthTexture(currentDisplayFBO, a3tex_unit00);
 		break;
-	case curves_passScene:
+	case keyframes_passScene:
 		if (currentDisplayFBO->color && (!currentDisplayFBO->depthStencil || targetIndex < targetCount - 1))
 			a3framebufferBindColorTexture(currentDisplayFBO, a3tex_unit00, targetIndex);
 		else
 			a3framebufferBindDepthTexture(currentDisplayFBO, a3tex_unit00);
 		break;
-	case curves_passComposite:
-	case curves_passBright_2:
-	case curves_passBlurH_2:
-	case curves_passBlurV_2:
-	case curves_passBright_4:
-	case curves_passBlurH_4:
-	case curves_passBlurV_4:
-	case curves_passBright_8:
-	case curves_passBlurH_8:
-	case curves_passBlurV_8:
-	case curves_passBlend:
+	case keyframes_passComposite:
+	case keyframes_passBright_2:
+	case keyframes_passBlurH_2:
+	case keyframes_passBlurV_2:
+	case keyframes_passBright_4:
+	case keyframes_passBlurH_4:
+	case keyframes_passBlurV_4:
+	case keyframes_passBright_8:
+	case keyframes_passBlurH_8:
+	case keyframes_passBlurV_8:
+	case keyframes_passBlend:
 		a3framebufferBindColorTexture(currentDisplayFBO, a3tex_unit00, targetIndex);
 		break;
 	}
@@ -688,19 +739,19 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		switch (demoMode->display)
 		{
 			// most basic option: simply display texture
-		case curves_displayTexture:
+		case keyframes_displayTexture:
 			break;
 
 			// display with outlines
 			// need to activate more textures and send params (e.g. color, pixel size/axis)
-		case curves_displayOutline:
+		case keyframes_displayOutline:
 			currentReadFBO = demoState->fbo_scene_c16d24s8_mrt;
 			a3real2Set(pixelSize.v, a3recip((a3real)currentReadFBO->frameWidth), a3recip((a3real)currentReadFBO->frameHeight));
 			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, a3vec4_w.v);	// use as line color
 			a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, a3vec2_one.v);	// use as line thickness
 			a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v);	// use as actual pixel size
 			a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit01);
-			a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, curves_scene_normal);
+			a3framebufferBindColorTexture(currentReadFBO, a3tex_unit02, keyframes_scene_normal);
 			break;
 		}
 
@@ -776,8 +827,11 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	}
 
 	// hidden volumes
-	if (demoState->displayHiddenVolumes && demoMode->pass != curves_passShadow)
+	if (demoState->displayHiddenVolumes && demoMode->pass != keyframes_passShadow)
 	{
+		const a3_HierarchyState* currentHierarchyState;
+		const a3_Hierarchy* currentHierarchy;
+
 		glCullFace(GL_FRONT);
 
 		// draw light volumes
@@ -822,6 +876,38 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 			a3shaderUniformBufferActivate(demoState->ubo_curveWaypoint, 4);
 			a3vertexDrawableActivateAndRenderInstanced(demoState->dummyDrawable, demoState->segmentCount);
 		}
+
+
+		// set up to draw skeleton
+		currentDemoProgram = demoState->prog_drawColorUnif_instanced;
+		a3shaderProgramActivate(currentDemoProgram->program);
+		currentHierarchyState = demoState->hierarchyState_skel + demoMode->editSkeletonIndex;
+		currentHierarchy = currentHierarchyState->poseGroup->hierarchy;
+
+		// draw skeletal joints
+		a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_joint, 0);
+		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, orange);
+		currentDrawable = demoState->draw_skeletal_joint;
+		a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
+
+		// draw bones
+		currentDemoProgram = demoState->prog_drawColorizedHierarchy_instanced;
+		a3shaderProgramActivate(currentDemoProgram->program);
+		a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_bone, 0);
+		a3shaderUniformBufferActivate(demoState->ubo_hierarchy, 4);
+		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, hueCount, hueWheel->v);
+		currentDrawable = demoState->draw_skeletal_bone;
+		a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
+
+		// draw skeletal joint orientations
+		if (demoState->displayTangentBases)
+		{
+			currentDemoProgram = demoState->prog_drawColorAttrib_instanced;
+			a3shaderProgramActivate(currentDemoProgram->program);
+			a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_joint, 0);
+			currentDrawable = demoState->draw_axes;
+			a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
+		}
 	}
 
 
@@ -833,14 +919,14 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 
 	// center of world from current viewer
 	// also draw other viewer/viewer-like object in scene
-	if (demoState->displayWorldAxes && demoMode->pass != curves_passShadow)
+	if (demoState->displayWorldAxes && demoMode->pass != keyframes_passShadow)
 	{
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, viewProjectionMat.mm);
 		a3vertexDrawableRenderActive();
 	}
 
 	// individual objects
-	if (demoState->displayObjectAxes && demoMode->pass != curves_passShadow)
+	if (demoState->displayObjectAxes && demoMode->pass != keyframes_passShadow)
 	{
 		a3_DemoSceneObject const* axesObjects[] = {
 			demoState->planeObject, demoState->sphereObject, demoState->cylinderObject, demoState->torusObject, demoState->teapotObject,

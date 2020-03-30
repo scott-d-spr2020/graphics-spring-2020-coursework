@@ -98,6 +98,7 @@ void a3demo_loadGeometry(a3_DemoState* demoState);
 void a3demo_loadShaders(a3_DemoState* demoState);
 void a3demo_loadTextures(a3_DemoState* demoState);
 void a3demo_loadFramebuffers(a3_DemoState* demoState);
+void a3demo_loadAnimation(a3_DemoState* demoState);
 void a3demo_refresh(a3_DemoState* demoState);
 
 // unloading
@@ -105,6 +106,7 @@ void a3demo_unloadGeometry(a3_DemoState* demoState);
 void a3demo_unloadShaders(a3_DemoState* demoState);
 void a3demo_unloadTextures(a3_DemoState* demoState);
 void a3demo_unloadFramebuffers(a3_DemoState* demoState);
+void a3demo_unloadAnimation(a3_DemoState* demoState);
 void a3demo_validateUnload(a3_DemoState const* demoState);
 
 // other utils & setup
@@ -209,6 +211,9 @@ A3DYLIBSYMBOL a3_DemoState *a3demoCB_load(a3_DemoState *demoState, a3boolean hot
 			// textures
 			a3demo_loadTextures(demoState);
 
+			// animation
+			a3demo_loadAnimation(demoState);
+
 			// scene objects
 			a3demo_initScene(demoState);
 		}
@@ -242,6 +247,7 @@ A3DYLIBSYMBOL a3_DemoState *a3demoCB_unload(a3_DemoState *demoState, a3boolean h
 			a3demo_unloadShaders(demoState);
 			a3demo_unloadTextures(demoState);
 			a3demo_unloadFramebuffers(demoState);
+			a3demo_unloadAnimation(demoState);
 
 			// validate unload
 			a3demo_validateUnload(demoState);

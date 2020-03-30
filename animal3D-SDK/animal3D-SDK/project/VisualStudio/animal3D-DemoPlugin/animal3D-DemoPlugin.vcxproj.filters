@@ -94,9 +94,6 @@
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\06-deferred">
       <UniqueIdentifier>{d15f0b22-54ec-4cc8-a550-1d7cb625c0b0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\common\A3_DEMO\a3_Demo_Curves">
-      <UniqueIdentifier>{c18f34fd-b94d-4e57-b5bf-921b99d6c22f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\07-curves">
       <UniqueIdentifier>{e4fd9b23-c5db-4b1f-ba0d-cccd4cc2e5e0}</UniqueIdentifier>
     </Filter>
@@ -105,6 +102,18 @@
     </Filter>
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\fs\07-curves">
       <UniqueIdentifier>{1540b83f-7619-43c7-94ac-ddab1b7c7c2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common\A3_DEMO\a3_Demo_Keyframes">
+      <UniqueIdentifier>{c18f34fd-b94d-4e57-b5bf-921b99d6c22f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common\A3_DEMO\_a3_demo_utilities\_src\animation">
+      <UniqueIdentifier>{df568610-247a-46a1-b729-ad1ea32f4915}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\A3_DEMO\_a3_demo_utilities\animation">
+      <UniqueIdentifier>{2c03fa2c-c99c-4b44-9e75-4e25b652f656}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\07-keyframes">
+      <UniqueIdentifier>{b74bbca8-c4f3-4b5d-b29b-8ebc21cda84d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -159,17 +168,26 @@
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Pipelines\a3_Demo_Pipelines_idle-update.c">
       <Filter>Source Files\common\A3_DEMO\a3_Demo_Pipelines</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves\a3_Demo_Curves_idle-update.c">
-      <Filter>Source Files\common\A3_DEMO\a3_Demo_Curves</Filter>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Keyframes\a3_Demo_Keyframes_idle-input.c">
+      <Filter>Source Files\common\A3_DEMO\a3_Demo_Keyframes</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves\a3_Demo_Curves_initialize.c">
-      <Filter>Source Files\common\A3_DEMO\a3_Demo_Curves</Filter>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Keyframes\a3_Demo_Keyframes_idle-render.c">
+      <Filter>Source Files\common\A3_DEMO\a3_Demo_Keyframes</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves\a3_Demo_Curves_idle-input.c">
-      <Filter>Source Files\common\A3_DEMO\a3_Demo_Curves</Filter>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Keyframes\a3_Demo_Keyframes_idle-update.c">
+      <Filter>Source Files\common\A3_DEMO\a3_Demo_Keyframes</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves\a3_Demo_Curves_idle-render.c">
-      <Filter>Source Files\common\A3_DEMO\a3_Demo_Curves</Filter>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Keyframes\a3_Demo_Keyframes_initialize.c">
+      <Filter>Source Files\common\A3_DEMO\a3_Demo_Keyframes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\_src\animation\a3_Hierarchy.c">
+      <Filter>Source Files\common\A3_DEMO\_a3_demo_utilities\_src\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\_src\animation\a3_HierarchyState.c">
+      <Filter>Source Files\common\A3_DEMO\_a3_demo_utilities\_src\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\_src\animation\a3_Kinematics.c">
+      <Filter>Source Files\common\A3_DEMO\_a3_demo_utilities\_src\animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,8 +215,17 @@
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Pipelines.h">
       <Filter>Header Files\A3_DEMO</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Curves.h">
+    <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Keyframes.h">
       <Filter>Header Files\A3_DEMO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\animation\a3_Hierarchy.h">
+      <Filter>Header Files\A3_DEMO\_a3_demo_utilities\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\animation\a3_HierarchyState.h">
+      <Filter>Header Files\A3_DEMO\_a3_demo_utilities\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\animation\a3_Kinematics.h">
+      <Filter>Header Files\A3_DEMO\_a3_demo_utilities\animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -312,6 +339,9 @@
     </None>
     <None Include="..\..\..\resource\glsl\4x\gs\07-curves\drawCurveSegment_gs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\gs\07-curves</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\07-keyframes\passColor_hierarchy_transform_instanced_vs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\vs\07-keyframes</Filter>
     </None>
   </ItemGroup>
 </Project>

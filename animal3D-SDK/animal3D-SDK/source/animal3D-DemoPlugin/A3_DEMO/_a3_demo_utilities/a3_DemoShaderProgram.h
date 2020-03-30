@@ -118,6 +118,7 @@ extern "C"
 
 			a3i32
 				// animation uniform block handles
+				ubHierarchy,		// hierarchical information
 				ubCurveWaypoint;	// waypoints for interpolation
 		};
 	};
