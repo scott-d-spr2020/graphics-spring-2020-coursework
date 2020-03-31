@@ -58,7 +58,8 @@ extern "C"
 	{
 		pipelines_renderPhong,			// Phong shading
 		pipelines_renderPhongShadow,	// Phong shading with shadows
-
+		pipelines_renderNP,
+		pipelines_renderNPShadow,
 		pipelines_render_max
 	};
 
@@ -87,6 +88,7 @@ extern "C"
 		pipelines_forward,				// forward lighting pipeline
 		pipelines_deferred_shading,		// deferred shading pipeline
 		pipelines_deferred_lighting,	// deferred lighting pipeline
+		pipelines_deferred_ssao,		// deferred with SSAO pipeline
 
 		pipelines_pipeline_max
 	};
@@ -94,13 +96,17 @@ extern "C"
 	// render passes
 	enum a3_Demo_Pipelines_PassName
 	{
-		pipelines_passShadow,			// capture shadow map
+		pipelines_passShadow,			// capture shadow map (0)
 
-		pipelines_passScene,			// render scene objects
+		pipelines_passScene,			// render scene objects (1)
 
-		pipelines_passLighting,			// light pre-pass for deferred lighting
+		pipelines_passLighting,			// light pre-pass for deferred lighting (2)
 
-		pipelines_passComposite,		// composite for post-processing stage
+		pipelines_passSSAO,				// SSAO pre-pass for new lighting (3)
+		pipelines_passBlurSSAOH,			// Horizontal SSAO blur pass, full screen (4)
+		pipelines_passBlurSSAOV,			// Vertical SSAO blur pass, full screen (5)
+
+		pipelines_passComposite,		// composite for post-processing stage (6)
 
 		pipelines_passBright_2,			// bright pass for bloom (half screen size)
 		pipelines_passBlurH_2,			// horizontal blur for bloom (half screen size)
@@ -131,7 +137,17 @@ extern "C"
 		pipelines_scene_diffuseLight,		// diffuse light total
 		pipelines_scene_specularLight,		// specular light total
 		pipelines_scene_fragdepth,			// fragment depth
-		pipelines_target_scene_max, 
+		pipelines_target_scene_max,
+
+		pipelines_ssao_finalcolor = 0,		// final display color
+		pipelines_ssao_position,			// position
+		pipelines_ssao_normal,				// normal
+		pipelines_ssao_randomVec,			// random vector
+		pipelines_ssao_tangent,				// tangent
+		pipelines_ssao_bitangent,			// bitangent
+		pipelines_ssao_offset,				// offset
+		pipelines_ssao_newSamp,				// new sample
+		pipelines_target_ssao_max,
 
 		pipelines_composite_finalcolor = 0,	// final display color
 		pipelines_composite_position,		// position attribute

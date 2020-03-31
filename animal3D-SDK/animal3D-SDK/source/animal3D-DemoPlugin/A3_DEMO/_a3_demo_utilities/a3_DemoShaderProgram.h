@@ -101,7 +101,8 @@ extern "C"
 				uFlag,						// generic flag
 				uAxis,						// generic axis
 				uSize,						// generic size
-				uTime;						// time
+				uTime,						// time
+				uSSAOKernel;				// kernel for SSAO randomosity
 		};
 
 		// uniform blocks

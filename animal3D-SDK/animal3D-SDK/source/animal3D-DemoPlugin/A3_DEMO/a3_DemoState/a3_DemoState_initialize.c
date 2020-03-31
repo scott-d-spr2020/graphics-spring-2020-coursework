@@ -31,6 +31,7 @@
 //-----------------------------------------------------------------------------
 
 #include "../a3_DemoState.h"
+#include <stdio.h>
 
 
 //-----------------------------------------------------------------------------
@@ -248,6 +249,18 @@ void a3demo_initScene(a3_DemoState *demoState)
 		demoState->teapotObject->position.y = -6.0f;
 	}
 
+	//initialize control points for bezier
+	demoState->controlPoint0 = demoState->teapotObject->position; //not a teapot, actually a crate
+	demoState->controlPoint1 = demoState->torusObject->position;
+	demoState->controlPoint2 = demoState->cylinderObject->position;
+	demoState->controlPoint3 = demoState->sphereObject->position;
+	printf("%f, %f, %f\n", demoState->controlPoint0.x, demoState->controlPoint0.y, demoState->controlPoint0.z);
+	printf("%f, %f, %f\n", demoState->controlPoint1.x, demoState->controlPoint1.y, demoState->controlPoint1.z);
+	printf("%f, %f, %f\n", demoState->controlPoint2.x, demoState->controlPoint2.y, demoState->controlPoint2.z);
+	printf("%f, %f, %f\n", demoState->controlPoint3.x, demoState->controlPoint3.y, demoState->controlPoint3.z);
+
+	// Generate the kernel once, always use this one
+	genKernel(demoState->kernel, 64);
 
 	// animation
 	demoState->segmentDuration = a3real_four;

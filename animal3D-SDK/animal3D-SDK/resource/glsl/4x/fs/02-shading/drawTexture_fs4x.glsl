@@ -32,8 +32,11 @@
 
 out vec4 rtFragColor;
 
+in vec2 outTexCoord;
+
+uniform sampler2D mainTex;
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE WHITE
-	rtFragColor = vec4(1.0, 1.0, 1.0, 1.0);
+	rtFragColor = texture(mainTex, outTexCoord);
 }

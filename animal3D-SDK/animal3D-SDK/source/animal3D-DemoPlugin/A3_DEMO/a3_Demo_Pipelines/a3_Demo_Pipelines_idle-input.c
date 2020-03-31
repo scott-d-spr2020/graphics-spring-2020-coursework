@@ -89,13 +89,55 @@ void a3pipelinesCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Pip
 	{
 	case ']':
 	case '[':
-	case ')':
-		if (demoMode->pass == pipelines_passLighting && demoMode->pipeline != pipelines_deferred_lighting)
-			demoMode->pass = pipelines_passComposite;
-		break;
+	case ')': //if the new pass is passLighting, check if the pipeline supports it. If not, move to the specified pass. The same logic applies for all other cases
+		if (demoMode->pass == pipelines_passLighting) 
+		{
+			switch (demoMode->pipeline)
+			{
+			case pipelines_deferred_lighting: //do nothing
+				break;
+			case pipelines_deferred_ssao:
+				demoMode->pass = pipelines_passSSAO;
+				break;
+			default:
+				demoMode->pass = pipelines_passComposite;
+			}
+		}
+		else if (demoMode->pass == pipelines_passSSAO)
+		{
+			switch (demoMode->pipeline)
+			{
+			case pipelines_deferred_ssao: //do nothing
+				break;
+			default:
+				demoMode->pass = pipelines_passComposite;
+			}
+		}
 	case '(':
-		if (demoMode->pass == pipelines_passLighting && demoMode->pipeline != pipelines_deferred_lighting)
-			demoMode->pass = pipelines_passScene;
+
+		if (demoMode->pass == pipelines_passLighting)
+		{
+			switch (demoMode->pipeline)
+			{
+			case pipelines_deferred_lighting:
+				break;
+			default:
+				demoMode->pass = pipelines_passScene;
+			}
+		}
+		else if (demoMode->pass == pipelines_passBlurSSAOV)
+		{
+			switch (demoMode->pipeline)
+			{
+			case pipelines_deferred_lighting:
+				demoMode->pass = pipelines_passLighting;
+				break;
+			case pipelines_deferred_ssao:
+				break;
+			default:
+				demoMode->pass = pipelines_passScene;
+			}
+		}
 		break;
 	}
 }

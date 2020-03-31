@@ -30,14 +30,23 @@
 //	3) copy attribute data from varying to respective render targets, 
 //		transforming data accordingly
 
+layout (location = 0) out vec4 rtNormal;
 layout (location = 1) out vec4 rtViewPosition;
 layout (location = 2) out vec4 rtViewNormal;
 layout (location = 3) out vec4 rtAtlasTexcoord;
 
+in vbLightingData {
+	vec4 vViewPosition;
+	vec4 vViewNormal;
+	vec4 vTexcoord;
+	vec4 vBiasedClipCoord;
+} vbData;
+
 void main()
 {
+	rtNormal = vbData.vViewPosition;
 	// DUMMY OUTPUT: all fragments are OPAQUE RED, GREEN AND BLUE
-	rtViewPosition = vec4(1.0, 0.0, 0.0, 1.0);
-	rtViewNormal = vec4(0.0, 1.0, 0.0, 1.0);
-	rtAtlasTexcoord = vec4(0.0, 0.0, 1.0, 1.0);
+	rtViewPosition = vbData.vBiasedClipCoord/vbData.vBiasedClipCoord.w; //this is color target 4 (2225)
+	rtViewNormal = normalize(vbData.vViewNormal) * 0.5f + vec4(0.5f); //compress it!!
+	rtAtlasTexcoord = vbData.vTexcoord;
 }

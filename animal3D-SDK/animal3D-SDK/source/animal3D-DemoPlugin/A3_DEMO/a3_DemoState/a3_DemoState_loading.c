@@ -77,6 +77,9 @@
 #include "../a3_DemoState.h"
 
 #include <stdio.h>
+#include <time.h>
+
+#include "..//_a3_demo_utilities/a3_DemoSSAOUtils.h"
 
 
 //-----------------------------------------------------------------------------
@@ -431,7 +434,6 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		a3tex_unit12, a3tex_unit13, a3tex_unit14, a3tex_unit15
 	};
 
-
 	// list of all unique shaders
 	// this is a good idea to avoid multi-loading 
 	//	those that are shared between programs
@@ -493,7 +495,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 04-multipass
 			a3_DemoStateShader
 				drawTexture_outline_fs[1],
-				drawPhong_multi_shadow_mrt_fs[1];
+				drawPhong_multi_shadow_mrt_fs[1],
+				drawNP_multi_shadow_mrt_fs[1];
 			// 05-bloom
 			a3_DemoStateShader
 				drawTexture_brightPass_fs[1],
@@ -505,6 +508,10 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				drawPhong_multi_deferred_fs[1],
 				drawPhongVolume_fs[1],
 				drawPhongComposite_fs[1];
+			// MIDTERM
+			a3_DemoStateShader
+				drawPhongCross_fs[1],
+				drawSSAO_fs[1];
 			// 07-curves
 			a3_DemoStateShader
 				drawPhong_multi_forward_mrt_fs[1];
@@ -523,14 +530,14 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-vs:passthru-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"passthru_transform_instanced_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-col-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"passColor_transform_instanced_vs4x.glsl" } } },
 			// 02-shading
-			{ { { 0 },	"shdr-vs:pass-tex-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/e/passTexcoord_transform_vs4x.glsl" } } },
-			{ { { 0 },	"shdr-vs:pass-light-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/e/passLightingData_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-tex-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/passTexcoord_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-light-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/passLightingData_transform_vs4x.glsl" } } },
 			// 04-multipass
-			{ { { 0 },	"shdr-vs:pass-light-shadow-trans",	a3shader_vertex  ,	1,{ A3_DEMO_VS"04-multipass/e/passLightingData_shadowCoord_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-light-shadow-trans",	a3shader_vertex  ,	1,{ A3_DEMO_VS"04-multipass/passLightingData_shadowCoord_transform_vs4x.glsl" } } },
 			// 06-deferred
-			{ { { 0 },	"shdr-vs:pass-atlas-tex-trans",		a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/e/passAtlasTexcoord_transform_vs4x.glsl" } } },
-			{ { { 0 },	"shdr-vs:pass-light-trans-bias",	a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/e/passLightingData_transform_bias_vs4x.glsl" } } },
-			{ { { 0 },	"shdr-vs:pass-biasedclip-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/e/passBiasedClipCoord_transform_instanced_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-atlas-tex-trans",		a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/passAtlasTexcoord_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-light-trans-bias",	a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/passLightingData_transform_bias_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-biasedclip-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/passBiasedClipCoord_transform_instanced_vs4x.glsl" } } },
 			// 07-curves
 			{ { { 0 },	"shdr-vs:pass-tangent-trans-inst",	a3shader_vertex  ,	1,{ A3_DEMO_VS"07-curves/passTangentBasis_transform_instanced_vs4x.glsl" } } },
 			// 07-keyframes
@@ -547,31 +554,36 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-col-unif",			a3shader_fragment,	1,{ A3_DEMO_FS"drawColorUnif_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-col-attr",			a3shader_fragment,	1,{ A3_DEMO_FS"drawColorAttrib_fs4x.glsl" } } },
 			// 02-shading
-			{ { { 0 },	"shdr-fs:draw-tex",					a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/e/drawTexture_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-Lambert-multi",		a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/e/drawLambert_multi_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-Phong-multi",			a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/e/drawPhong_multi_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-nonphoto-multi",		a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/e/drawNonphoto_multi_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex",					a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/drawTexture_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Lambert-multi",		a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/drawLambert_multi_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Phong-multi",			a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/drawPhong_multi_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-nonphoto-multi",		a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/drawNonphoto_multi_fs4x.glsl" } } },
 			// 03-framebuffer
-			{ { { 0 },	"shdr-fs:draw-tex-mrt",				a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawTexture_mrt_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-tex-colormanip",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawTexture_colorManip_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-tex-coordmanip",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawTexture_coordManip_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-Lambert-multi-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawLambert_multi_mrt_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-Phong-multi-mrt",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawPhong_multi_mrt_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-nonphoto-multi-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/e/drawNonphoto_multi_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-mrt",				a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawTexture_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-colormanip",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawTexture_colorManip_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-coordmanip",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawTexture_coordManip_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Lambert-multi-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawLambert_multi_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Phong-multi-mrt",		a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawPhong_multi_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-nonphoto-multi-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"03-framebuffer/drawNonphoto_multi_mrt_fs4x.glsl" } } },
 			// 04-multipass
-			{ { { 0 },	"shdr-fs:draw-tex-outline",			a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/e/drawTexture_outline_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-Phong-multi-shadow",	a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/e/drawPhong_multi_shadow_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-outline",			a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/drawTexture_outline_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Phong-multi-shadow",	a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/drawPhong_multi_shadow_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-NP-multi-shadow",	a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/drawNonphoto_multi_shadow_mrt_fs4x.glsl" } } },
 			// 05-bloom
-			{ { { 0 },	"shdr-fs:draw-tex-bright",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/e/drawTexture_brightPass_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-tex-blur",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/e/drawTexture_blurGaussian_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-tex-blend4",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/e/drawTexture_blendScreen4_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-bright",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/drawTexture_brightPass_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-blur",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/drawTexture_blurGaussian_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex-blend4",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/drawTexture_blendScreen4_fs4x.glsl" } } },
 			// 06-deferred
-			{ { { 0 },	"shdr-fs:draw-lightingdata",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/e/drawLightingData_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-Phong-multi-def",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/e/drawPhong_multi_deferred_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-Phong-volume",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/e/drawPhongVolume_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-Phong-composite",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/e/drawPhongComposite_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-lightingdata",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/drawLightingData_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Phong-multi-def",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/drawPhong_multi_deferred_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Phong-volume",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/drawPhongVolume_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Phong-composite",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/drawPhongComposite_fs4x.glsl" } } },
+			//MIDTERM SSAO, Crosshatch
+			{ { { 0 },	"shdr-fs:draw-Phong-cross-def",		a3shader_fragment,	1,{ A3_DEMO_FS"midterm-SSAO-Cross/drawPhong_cross_deferred_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-SSAO-def",			a3shader_fragment,	1,{ A3_DEMO_FS"midterm-SSAO-Cross/drawSSAO_multi_deferred_fs4x.glsl" } } },
 			// 07-curves
 			{ { { 0 },	"shdr-fs:draw-Phong-mul-fwd-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"07-curves/drawPhong_multi_forward_mrt_fs4x.glsl" } } },
+			
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -690,6 +702,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-multi-shadow");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_shadowCoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_multi_shadow_mrt_fs->shader);
+
+	currentDemoProg = demoState->prog_drawNP_multi_shadow_mrt;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-NP-multi-shadow");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_shadowCoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawNP_multi_shadow_mrt_fs->shader);
+
 	// texturing program with outlines
 	currentDemoProg = demoState->prog_drawTexture_outline;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-outline");
@@ -734,6 +752,20 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-composite");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passAtlasTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhongComposite_fs->shader);
+	
+
+	//MIDTERM
+	//draw SSAO
+	currentDemoProg = demoState->prog_drawSSAO_deferred;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-SSAO");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passAtlasTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawSSAO_fs->shader);
+
+	//draw Phong with cross-hatch lighting
+	currentDemoProg = demoState->prog_drawPhongCross_deferred;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-cross");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passAtlasTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhongCross_fs->shader);
 
 	// 07-curves programs: 
 	// draw Phong forward MRT
@@ -855,6 +887,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		a3demo_setUniformDefaultDouble(currentDemoProg, uAxis, defaultDouble);
 		a3demo_setUniformDefaultDouble(currentDemoProg, uSize, defaultDouble);
 		a3demo_setUniformDefaultDouble(currentDemoProg, uTime, defaultDouble);
+		a3demo_setUniformDefaultVec3(currentDemoProg, uSSAOKernel, defaultFloat);
 
 		// transformation uniform blocks
 		a3demo_setUniformDefaultBlock(currentDemoProg, ubTransformStack, 0);
@@ -932,6 +965,8 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			a3_DemoStateTexture texRampDM[1];
 			a3_DemoStateTexture texRampSM[1];
 			a3_DemoStateTexture texChecker[1];
+			a3_DemoStateTexture texCrossHatchLower[1];
+			a3_DemoStateTexture texCrossHatchUpper[1];
 		};
 	} textureList = {
 		{
@@ -947,6 +982,8 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			{ demoState->tex_ramp_dm,		"tex:ramp-dm",		"../../../../resource/tex/sprite/celRamp_dm.png" },
 			{ demoState->tex_ramp_sm,		"tex:ramp-sm",		"../../../../resource/tex/sprite/celRamp_sm.png" },
 			{ demoState->tex_checker,		"tex:checker",		"../../../../resource/tex/sprite/checker.png" },
+			{ demoState->tex_crossHatchLower,"tex:crossDown",	"../../../../resource/tex/sprite/hatchdarkest.png" },
+			{ demoState->tex_crossHatchUpper,"tex:crossUp",		"../../../../resource/tex/sprite/hatchbrightest.png" },
 		}
 	};
 	const a3ui32 numTextures = sizeof(textureList) / sizeof(a3_DemoStateTexture);
@@ -988,6 +1025,17 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 		a3textureChangeRepeatMode(a3tex_repeatClamp, a3tex_repeatClamp);	// clamp both axes
 	}
 
+	// Creates the random 4x4 noise texture and sets to repeat for tiling purposes
+	a3randomSetSeed((a3integer)time(0));
+	a3real3 noise[16];
+	genNoise(noise, 16);
+
+	a3_TexturePixelFormatDescriptor desc[1];
+	a3textureCreatePixelFormatDescriptor(desc, a3tex_rgba8);
+	a3textureCreateFromData(demoState->tex_SSAONoise, "tex:SSAONoise", desc, 4, 4, &noise, false);
+	a3textureActivate(demoState->tex_SSAONoise, a3tex_unit00);
+	a3textureChangeRepeatMode(a3tex_repeatNormal, a3tex_repeatNormal);
+	a3textureChangeFilterMode(a3tex_filterNearest);
 
 	// set up texture atlas transforms
 	a3demo_setAtlasTransform_internal(demoState->atlas_stone->m, atlasSceneWidth, atlasSceneHeight,
@@ -1053,7 +1101,13 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 		a3framebufferCreate(fbo, "fbo:composite",
 			targets_composite, colorType_composite, a3fbo_depthDisable,
 			frameWidth1, frameHeight1);
-		
+
+		//	-> ssao goes here, we think. DEBUG SEARCH WAYPOINT
+		fbo = demoState->fbo_ssao_c16 + i;
+		a3framebufferCreate(fbo, "fbo:ssao",
+			targets_composite, colorType_scene, a3fbo_depthDisable,
+			frameWidth1, frameHeight1);
+
 		//	-> post-processing, color only
 		fbo = demoState->fbo_post_c16_2fr + i;
 		a3framebufferCreate(fbo, "fbo:post-half",

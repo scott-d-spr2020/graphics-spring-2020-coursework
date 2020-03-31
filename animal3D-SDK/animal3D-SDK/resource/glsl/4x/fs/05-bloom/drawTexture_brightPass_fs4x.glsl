@@ -32,9 +32,23 @@
 uniform sampler2D uImage00;
 
 layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtLuminance;
+
+in vec2 outTexCoord;
+
+float relativeLuminance(vec3 color)
+{
+	return (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b);
+}
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE CYAN
-	rtFragColor = vec4(0.0, 1.0, 1.0, 1.0);
+	vec3 texColor = texture(uImage00, outTexCoord).rgb;
+	float relativeLuminance = relativeLuminance(texColor);
+
+	//filtered reinhard with brightness
+	vec3 filtered = (texColor / (vec3(1.0) / texColor)) * relativeLuminance;
+
+	rtFragColor = vec4(filtered, 1.0);
+	rtLuminance = vec4(relativeLuminance, relativeLuminance, relativeLuminance, 1.0);
 }

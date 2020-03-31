@@ -94,6 +94,8 @@
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\06-deferred">
       <UniqueIdentifier>{d15f0b22-54ec-4cc8-a550-1d7cb625c0b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\fs\06.5-midterm">
+      <UniqueIdentifier>{fc0afe08-9306-47f3-b96b-6e83815724eb}</UniqueIdentifier>
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\07-curves">
       <UniqueIdentifier>{e4fd9b23-c5db-4b1f-ba0d-cccd4cc2e5e0}</UniqueIdentifier>
     </Filter>
@@ -168,6 +170,8 @@
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Pipelines\a3_Demo_Pipelines_idle-update.c">
       <Filter>Source Files\common\A3_DEMO\a3_Demo_Pipelines</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\_src\a3_DemoSSAOUtils.c">
+      <Filter>Source Files\common\A3_DEMO\_a3_demo_utilities\_src</Filter>
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Keyframes\a3_Demo_Keyframes_idle-input.c">
       <Filter>Source Files\common\A3_DEMO\a3_Demo_Keyframes</Filter>
     </ClCompile>
@@ -215,6 +219,8 @@
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Pipelines.h">
       <Filter>Header Files\A3_DEMO</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\a3_DemoSSAOUtils.h">
+      <Filter>Header Files\A3_DEMO\_a3_demo_utilities</Filter>
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Keyframes.h">
       <Filter>Header Files\A3_DEMO</Filter>
     </ClInclude>
@@ -307,6 +313,9 @@
     <None Include="..\..\..\resource\glsl\4x\fs\05-bloom\drawTexture_blendScreen4_fs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\fs\05-bloom</Filter>
     </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\04-multipass\drawNonphoto_multi_shadow_mrt_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\04-multipass</Filter>
+    </None>
     <None Include="..\..\..\resource\glsl\4x\fs\06-deferred\drawPhong_multi_deferred_fs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\fs\06-deferred</Filter>
     </None>
@@ -328,6 +337,11 @@
     <None Include="..\..\..\resource\glsl\4x\fs\06-deferred\drawPhongComposite_fs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\fs\06-deferred</Filter>
     </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\midterm-SSAO-Cross\drawPhong_cross_deferred_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\06.5-midterm</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\midterm-SSAO-Cross\drawSSAO_multi_deferred_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\06.5-midterm</Filter>
     <None Include="..\..\..\resource\glsl\4x\vs\07-curves\passTangentBasis_transform_instanced_vs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\vs\07-curves</Filter>
     </None>

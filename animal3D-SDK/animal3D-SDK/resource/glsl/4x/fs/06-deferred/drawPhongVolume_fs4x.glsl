@@ -39,12 +39,104 @@
 in vec4 vBiasedClipCoord;
 flat in int vInstanceID;
 
+const vec3 ambientColor = vec3(0.1f);
+
+uniform sampler2D uImage00; // g-buffer depth texture
+uniform sampler2D uImage01; // g-buffer position texture
+uniform sampler2D uImage02; // g-buffer normal texture
+
+uniform mat4 uPB_inv;
+
+struct pointLight
+{
+	vec4 worldPos;		// position in world space
+	vec4 viewPos;		// position in viewer space
+	vec4 color;			// RGB color with padding
+	float radius;		// radius (distance of effect from center)
+	float radiusInvSq;	// radius inverse squared (attenuation factor)
+	float pad[2];		// padding
+};
+
+uniform ubPointLight
+{
+	pointLight[MAX_LIGHTS] lights;
+};
+
+layout (location = 0) out vec4 rtColor;
+layout (location = 1) out vec4 rtViewPosition;
+layout (location = 2) out vec4 rtNormal;
 layout (location = 6) out vec4 rtDiffuseLight;
 layout (location = 7) out vec4 rtSpecularLight;
 
+
+struct LambertData
+{
+	vec4 LVec;
+	float dotProd_LN;
+};
+
+
+vec4 CalculateDiffuse(vec4 NVec, vec4 position, out LambertData lambert)
+{
+	vec4 LVec = normalize(lights[vInstanceID].worldPos - position); //w coord is zero, probably
+	float dotProd_LN = dot(NVec, LVec);
+	lambert = LambertData(LVec, dotProd_LN);
+	float dotProd = max(0.0f, dotProd_LN);
+
+	vec4 diffuseResult = lights[vInstanceID].color * dotProd;
+
+	return diffuseResult;
+}
+
+
+//calculates specular highlight.
+vec4 CalculateSpecular(vec4 NVec, LambertData lambert, vec3 VVec3d)
+{
+	vec3 NVec3d = NVec.xyz;
+	vec3 LVec3d = lambert.LVec.xyz; //unsure if this is actually necessary
+	vec3 RVec3d = (2.0f * lambert.dotProd_LN * NVec3d) - LVec3d;
+
+	//pow is 16
+	float tempSpecVal = max(0.0f, dot(VVec3d, RVec3d));
+	float powVal = tempSpecVal * tempSpecVal; //^2
+	powVal = powVal * powVal; //^4
+	powVal = powVal * powVal; //^8
+	powVal = powVal * powVal; //^16
+	return powVal * lights[vInstanceID].color;
+}
+
+
+vec3 CalculatePosition(vec2 sampleCoord)
+{
+	vec4 sampledPos = texture(uImage01, sampleCoord); //gives us position previously saved
+	
+	vec4 recalculatedPos = sampledPos;
+	
+	recalculatedPos = uPB_inv * recalculatedPos;
+
+	return (recalculatedPos / recalculatedPos.w).xyz;
+}
+
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	rtDiffuseLight = vec4(1.0, 0.0, 1.0, 1.0);
-	rtSpecularLight = vec4(1.0, 0.0, 1.0, 1.0);
+	vec4 screenCoord = vBiasedClipCoord / vBiasedClipCoord.w;
+
+	vec3 position = CalculatePosition(screenCoord.xy);
+
+	vec4 normal = texture(uImage02, screenCoord.xy);
+	normal = 2.0f * normal - 1.0f;
+
+	vec4 diffuse;
+	vec4 specular;
+	vec3 VVec3d = normalize(-position.xyz);
+
+	LambertData lambert;
+	diffuse = CalculateDiffuse(normal, vec4(position, 1.0), lambert);
+	specular = CalculateSpecular(normal, lambert, VVec3d);
+
+	rtViewPosition = vec4(position.rgb, 1.0f);
+	rtNormal = normal;
+	rtDiffuseLight = diffuse;
+	rtSpecularLight = specular;
 }

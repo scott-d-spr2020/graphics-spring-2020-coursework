@@ -48,6 +48,7 @@
 #include "a3_Demo_Pipelines.h"
 #include "a3_Demo_Keyframes.h"
 
+#include "_a3_demo_utilities/a3_DemoSSAOUtils.h"
 
 //-----------------------------------------------------------------------------
 
@@ -362,7 +363,8 @@ extern "C"
 					prog_drawTexture_mrt[1];					// draw texture, MRT
 				a3_DemoStateShaderProgram
 					prog_drawTexture_outline[1],				// draw texture with outlines from prior pass
-					prog_drawPhong_multi_shadow_mrt[1];			// draw Phong shading with shadow mapping
+					prog_drawPhong_multi_shadow_mrt[1],			// draw Phong shading with shadow mapping
+					prog_drawNP_multi_shadow_mrt[1];
 				a3_DemoStateShaderProgram
 					prog_drawTexture_brightPass[1],				// draw texture with bright-pass or tone-mapping
 					prog_drawTexture_blurGaussian[1],			// draw texture with Gaussian blurring
@@ -372,6 +374,9 @@ extern "C"
 					prog_drawPhong_multi_deferred[1],			// draw Phong shading model, multiple lights, in deferred pass
 					prog_drawPhongVolume_instanced[1],			// draw Phong light volume (point light)
 					prog_drawPhongComposite[1];					// draw Phong shading model by compositing light volumes
+				a3_DemoStateShaderProgram
+					prog_drawSSAO_deferred[1],					// draw SSAO using kernel and noise, using g-buffer data
+					prog_drawPhongCross_deferred[1];			// draw crosshatch Phong model by sampling and blending textures
 				a3_DemoStateShaderProgram
 					prog_drawCurveSegment[1],					// draw curve segment using interpolation
 					prog_drawPhong_multi_forward_mrt[1],		// draw Phong with forward point lights and MRT
@@ -400,7 +405,10 @@ extern "C"
 					tex_stone_dm[1],
 					tex_ramp_dm[1],
 					tex_ramp_sm[1],
-					tex_checker[1];
+					tex_checker[1],
+					tex_SSAONoise[1],
+					tex_crossHatchLower[1],
+					tex_crossHatchUpper[1];
 			};
 		};
 
@@ -414,6 +422,7 @@ extern "C"
 				a3_Framebuffer
 					fbo_shadow_d32[1];							// framebuffer for capturing shadow map
 				a3_Framebuffer
+					fbo_ssao_c16[3],							// framebuffers for handling SSAO. Preprocessing?
 					fbo_post_c16_2fr[3],						// framebuffers for post-processing, half frame size
 					fbo_post_c16_4fr[3],						// framebuffers for post-processing, quarter frame size
 					fbo_post_c16_8fr[3],						// framebuffers for post-processing, eighth frame size
@@ -451,7 +460,15 @@ extern "C"
 
 		// managed objects, no touchie
 		a3_VertexDrawable dummyDrawable[1];
+		union {
+			a3vec3 controlPoints[4];
+			struct {
+				a3vec3 controlPoint0, controlPoint1, controlPoint2, controlPoint3;
+			};
+		};
+		a3real lerpPos; //technically serves as time instead of an actual pos, which is calculated from this value
 
+		a3real3 kernel[64];
 
 		//---------------------------------------------------------------------
 	};
