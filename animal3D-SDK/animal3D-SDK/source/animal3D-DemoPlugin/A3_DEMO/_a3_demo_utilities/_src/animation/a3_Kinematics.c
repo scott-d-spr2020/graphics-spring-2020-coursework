@@ -45,12 +45,19 @@ extern inline a3i32 a3kinematicsSolveForwardPartial(const a3_HierarchyState *hie
 
 		for (i = firstIndex; i < end; ++i)
 		{
-			// ****TO-DO: implement forward kinematics algorithm
 			parentIndex = hierarchyState->poseGroup->hierarchy->nodes[i].parentIndex;	// sets parent index to current node's parent
 
-			if (hierarchyState->poseGroup->hierarchy->nodes[i].parentIndex >= 0)
+			if (parentIndex >= 0)
 			{
+				// multiplies parent node object space transform and current node local space transform, setting the current node object space transform to the result
 
+				// currently broken, seems to be overwriting something for some reason after the 4th iteration
+				a3real4x4Product(hierarchyState->objectSpace[i].transform->m, hierarchyState->objectSpace[parentIndex].transform->m, hierarchyState->localSpace[i].transform->m);
+			}
+			else
+			{
+				// if this is the root, set the object space to the local space
+				a3real4x4SetReal4x4(hierarchyState->objectSpace[i].transform->m, hierarchyState->localSpace[i].transform->m);
 			}
 
 			/*
