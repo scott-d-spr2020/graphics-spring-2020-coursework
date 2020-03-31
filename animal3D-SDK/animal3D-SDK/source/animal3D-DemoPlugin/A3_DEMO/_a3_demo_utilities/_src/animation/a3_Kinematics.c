@@ -46,7 +46,27 @@ extern inline a3i32 a3kinematicsSolveForwardPartial(const a3_HierarchyState *hie
 		for (i = firstIndex; i < end; ++i)
 		{
 			// ****TO-DO: implement forward kinematics algorithm
-			parentIndex = hierarchyState->poseGroup->hierarchy->nodes[i].parentIndex;	// sets parent node to current node's parent
+			parentIndex = hierarchyState->poseGroup->hierarchy->nodes[i].parentIndex;	// sets parent index to current node's parent
+
+			if (hierarchyState->poseGroup->hierarchy->nodes[i].parentIndex >= 0)
+			{
+
+			}
+
+			/*
+				Need to figure out how to identify root node, dan said root node index is negative:
+					hierarchyState->poseGroup->hierarchy->nodes[i].parentIndex >= 0
+				This says if the current node's parent index is 0 or greater, then we are not the root node, since the root node's parent is negative
+
+				if(current node != root node)
+				{
+					current node object space = parent node object space * current node local space
+				}
+				else
+				{
+					current node object space = current node local space
+				}
+			*/
 		}
 
 		// done, return number of nodes updated
