@@ -96,6 +96,7 @@
     </Filter>
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\fs\06.5-midterm">
       <UniqueIdentifier>{fc0afe08-9306-47f3-b96b-6e83815724eb}</UniqueIdentifier>
+	</Filter>
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\07-curves">
       <UniqueIdentifier>{e4fd9b23-c5db-4b1f-ba0d-cccd4cc2e5e0}</UniqueIdentifier>
     </Filter>
@@ -172,7 +173,8 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\_src\a3_DemoSSAOUtils.c">
       <Filter>Source Files\common\A3_DEMO\_a3_demo_utilities\_src</Filter>
-    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Keyframes\a3_Demo_Keyframes_idle-input.c">
+    </ClCompile>
+	<ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Keyframes\a3_Demo_Keyframes_idle-input.c">
       <Filter>Source Files\common\A3_DEMO\a3_Demo_Keyframes</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Keyframes\a3_Demo_Keyframes_idle-render.c">
@@ -221,7 +223,8 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\a3_DemoSSAOUtils.h">
       <Filter>Header Files\A3_DEMO\_a3_demo_utilities</Filter>
-    <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Keyframes.h">
+    </ClInclude>
+	<ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Keyframes.h">
       <Filter>Header Files\A3_DEMO</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\animation\a3_Hierarchy.h">
@@ -342,7 +345,8 @@
     </None>
     <None Include="..\..\..\resource\glsl\4x\fs\midterm-SSAO-Cross\drawSSAO_multi_deferred_fs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\fs\06.5-midterm</Filter>
-    <None Include="..\..\..\resource\glsl\4x\vs\07-curves\passTangentBasis_transform_instanced_vs4x.glsl">
+    </None>
+	<None Include="..\..\..\resource\glsl\4x\vs\07-curves\passTangentBasis_transform_instanced_vs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\vs\07-curves</Filter>
     </None>
     <None Include="..\..\..\resource\glsl\4x\fs\07-curves\drawPhong_multi_forward_mrt_fs4x.glsl">
