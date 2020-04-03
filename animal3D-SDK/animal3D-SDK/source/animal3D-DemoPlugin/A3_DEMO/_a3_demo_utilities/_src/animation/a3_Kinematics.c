@@ -51,7 +51,7 @@ extern inline a3i32 a3kinematicsSolveForwardPartial(const a3_HierarchyState *hie
 			{
 				// multiplies parent node object space transform and current node local space transform, setting the current node object space transform to the result
 
-				// currently broken, seems to be overwriting something for some reason after the 4th iteration
+				// altered subscripts. They seemingly work now.
 				a3real4x4Product(hierarchyState->objectSpace[0].transform[i].m, hierarchyState->objectSpace[0].transform[parentIndex].m, hierarchyState->localSpace[0].transform[i].m);
 			}
 			else

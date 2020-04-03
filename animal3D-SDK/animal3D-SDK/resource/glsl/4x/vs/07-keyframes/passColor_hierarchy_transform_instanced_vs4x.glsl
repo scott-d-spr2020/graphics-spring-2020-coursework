@@ -45,6 +45,19 @@ uniform ubTransformMVP {
 	mat4 uMVP[MAX_INSTANCES];
 };
 
+struct hierarchyNode
+{
+	int name[8]; //4 bytes = int
+	int index;
+	int parentIndex;
+};
+
+uniform ubHierarchy {
+	hierarchyNode hier[MAX_NODES];
+};
+
+
+
 uniform vec4 uColor[MAX_COLORS];
 
 out vec4 vColor;
@@ -54,5 +67,5 @@ void main()
 	gl_Position = uMVP[gl_InstanceID] * aPosition;
 
 	// DUMMY OUTPUT: select first color
-	vColor = uColor[0];
+	vColor = uColor[hier[gl_InstanceID].index];
 }
