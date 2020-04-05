@@ -152,6 +152,7 @@ extern "C"
 		keyframes_interpBezier,
 		keyframes_interpCatmullRom,
 		keyframes_interpCubicHermite,
+		keyframes_interpPose,
 
 		keyframes_interp_max
 	};
