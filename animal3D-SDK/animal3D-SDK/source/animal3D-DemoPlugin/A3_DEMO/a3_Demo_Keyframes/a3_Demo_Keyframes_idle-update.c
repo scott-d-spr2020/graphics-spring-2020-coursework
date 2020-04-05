@@ -39,6 +39,7 @@
 //-----------------------------------------------------------------------------
 // UPDATE
 
+int poseVal = 0;
 void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3f64 dt)
 {
 	a3ui32 i, j;
@@ -155,8 +156,9 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 	currentHierarchyPoseGroup = currentHierarchyState->poseGroup;
 	currentHierarchy = currentHierarchyPoseGroup->hierarchy;
 
+	poseVal = 1 - poseVal;
 	a3hierarchyPoseCopy(currentHierarchyState->localPose,
-		currentHierarchyPoseGroup->pose + 0, currentHierarchy->numNodes);
+		currentHierarchyPoseGroup->pose + poseVal, currentHierarchy->numNodes);
 	a3hierarchyPoseConvert(currentHierarchyState->localSpace,
 		currentHierarchyState->localPose, currentHierarchy->numNodes, 0);
 	a3kinematicsSolveForward(demoState->hierarchyState_skel);
