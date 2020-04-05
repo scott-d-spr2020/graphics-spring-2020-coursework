@@ -161,6 +161,11 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 	currentHierarchy = currentHierarchyPoseGroup->hierarchy;
 
 	poseVal = 1 - poseVal;
+
+	//create interpPose, copy that to local space, proceed as normal
+	//a3hierarchyPoseCopy(tempPose, pose[0], numNodes) or however we create a pose
+	//lerpAssign(tempPose, pose[0], pose[1], count) the first one allocates space.
+	//poseCopy with tempPose
 	a3hierarchyPoseCopy(currentHierarchyState->localPose,
 		currentHierarchyPoseGroup->pose + poseVal, currentHierarchy->numNodes);
 	a3hierarchyPoseConvert(currentHierarchyState->localSpace,
