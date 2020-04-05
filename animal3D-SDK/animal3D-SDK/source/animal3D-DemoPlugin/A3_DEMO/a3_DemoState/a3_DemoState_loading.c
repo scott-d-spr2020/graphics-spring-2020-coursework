@@ -1257,7 +1257,8 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	demoState->demoMode_keyframes->editSkeletonIndex = 0;
 	hierarchy = demoState->hierarchy_skel + demoState->demoMode_keyframes->editSkeletonIndex;
 	hierarchyPoseGroup = demoState->hierarchyPoseGroup_skel + demoState->demoMode_keyframes->editSkeletonIndex;
-	a3hierarchyPoseGroupCreate(hierarchyPoseGroup, hierarchy, 1);
+#define POSE_COUNT 3
+	a3hierarchyPoseGroupCreate(hierarchyPoseGroup, hierarchy, POSE_COUNT);
 	hierarchyPoseFlag = demoState->hierarchyPoseFlag_skel[demoState->demoMode_keyframes->editSkeletonIndex];
 
 	// define "bind pose" or the initial transformation 
