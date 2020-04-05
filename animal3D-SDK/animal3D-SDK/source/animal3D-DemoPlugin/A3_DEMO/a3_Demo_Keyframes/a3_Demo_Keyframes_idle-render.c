@@ -174,6 +174,9 @@ void a3keyframes_render_controls(a3_DemoState const* demoState, a3_Demo_Keyframe
 	// editing controls
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
 		"EDIT JOINTS (toggle '0') %d", demoMode->editingJoint);
+
+	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+		"START ANIMATION (toggle '-') %d", demoMode->animating);
 	if (demoMode->editingJoint)
 	{
 		const a3_HierarchyNodePose* currentNodePose = demoState->hierarchyState_skel[demoMode->editSkeletonIndex].poseGroup->pose[0].nodePose + demoMode->editJointIndex;

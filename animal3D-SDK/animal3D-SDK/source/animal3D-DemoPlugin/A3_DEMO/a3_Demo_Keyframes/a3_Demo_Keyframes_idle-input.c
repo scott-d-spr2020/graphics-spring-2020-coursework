@@ -104,8 +104,12 @@ void a3keyframesCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Key
 	{
 	case '0':
 		demoMode->editingJoint = !demoMode->editingJoint;
+		demoMode->animating = false;
 		break;
-
+	case '-':
+		demoMode->animating = !demoMode->animating;
+		demoMode->editingJoint = false;
+		break;
 	case '9':
 		if (demoMode->editingJoint)
 			demoMode->editJointIndex = (demoMode->editJointIndex + 1) % demoState->hierarchy_skel[demoMode->editSkeletonIndex].numNodes;
