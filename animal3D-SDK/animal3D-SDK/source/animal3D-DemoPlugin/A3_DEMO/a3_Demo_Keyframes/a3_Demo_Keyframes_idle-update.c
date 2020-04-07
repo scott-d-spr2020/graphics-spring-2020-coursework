@@ -137,11 +137,6 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 		//		m[0].v,
 		//		m[1].v,
 		//		demoState->segmentParam);
-			break;
-		case keyframes_interpPose:
-			// Interpolate between poses
-			
-			break;
 		}
 	}
 	else
