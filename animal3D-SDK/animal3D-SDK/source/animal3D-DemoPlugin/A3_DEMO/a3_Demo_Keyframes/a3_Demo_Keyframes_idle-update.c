@@ -155,7 +155,12 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 	currentHierarchyPoseGroup = currentHierarchyState->poseGroup;
 	currentHierarchy = currentHierarchyPoseGroup->hierarchy;
 
-	poseVal = 1 - poseVal;
+	if (demoMode->animating)
+	{
+		// we lerp things here
+	}
+	else
+		poseVal = 0;
 
 	//create interpPose, copy that to local space, proceed as normal
 	//a3hierarchyPoseCopy(tempPose, pose[0], numNodes) or however we create a pose
