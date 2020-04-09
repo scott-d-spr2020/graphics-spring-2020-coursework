@@ -155,16 +155,22 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 	currentHierarchyPoseGroup = currentHierarchyState->poseGroup;
 	currentHierarchy = currentHierarchyPoseGroup->hierarchy;
 
+
+	a3hierarchyPoseCopy(currentHierarchyState->localPose,
+		currentHierarchyPoseGroup->pose + poseVal, currentHierarchy->numNodes);
+
 	if (demoMode->animating)
 	{
 		// we lerp things here
-		
+		demoState->animPos += dt;
+		demoState->animPos = mathMod(demoState->animPos, 2.0f);
+		float pos = (a3real)(1.0 - fabs(1.0 - mathMod((a3real)(2.0 - demoState->animPos), 2.0)));
+		lerpAssign(currentHierarchyState->localPose, currentHierarchyPoseGroup->pose + 0, currentHierarchyPoseGroup->pose + 1);
 	}
 	else
 	{
 		poseVal = 0;
-		a3hierarchyPoseCopy(currentHierarchyState->localPose,
-			currentHierarchyPoseGroup->pose + poseVal, currentHierarchy->numNodes);
+		demoState->animPos = 0;	
 	}
 
 	//create interpPose, copy that to local space, proceed as normal

@@ -467,7 +467,7 @@ extern "C"
 			};
 		};
 		a3real lerpPos; //technically serves as time instead of an actual pos, which is calculated from this value
-
+		a3real animPos;
 		a3real3 kernel[64];
 
 		//---------------------------------------------------------------------
