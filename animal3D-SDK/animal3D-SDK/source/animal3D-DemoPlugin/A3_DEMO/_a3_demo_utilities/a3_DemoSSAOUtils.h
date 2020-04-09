@@ -24,6 +24,8 @@
 
 //-----------------------------------------------------------------------------
 // animal3D framework includes
+#ifndef A3_DEMOSSAOUTILS_H
+#define A3_DEMOSSAOUTILS_H
 
 #include <stdlib.h>
 #include <math.h>
@@ -51,6 +53,8 @@ void genNoise(a3real3* arr, int arrSize);
 
 a3vec3 vecLerp(a3vec3 a, a3vec3 b, float t);
 
+a3vec4 vec4Lerp(a3vec4 a, a3vec4 b, float t);
+
 a3vec3 bezierN(a3vec3* arr, int length, float t);
 
 a3real mathMod(a3real num, a3real mod);
@@ -62,3 +66,4 @@ a3real mathMod(a3real num, a3real mod);
 }
 #endif	// __cplusplus
 
+#endif // !A3_DEMOSSAOUTILS_H

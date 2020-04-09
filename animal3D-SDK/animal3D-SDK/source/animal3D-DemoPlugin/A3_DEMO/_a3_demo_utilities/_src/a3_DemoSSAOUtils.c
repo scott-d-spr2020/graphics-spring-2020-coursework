@@ -109,6 +109,16 @@ a3vec3 vecLerp(a3vec3 a, a3vec3 b, float t)
 	return ret;
 }
 
+a3vec4 vec4Lerp(a3vec4 a, a3vec4 b, float t)
+{
+	a3vec4 ret;
+	ret.x = a.x + t * (b.x - a.x);
+	ret.y = a.y + t * (b.y - a.y);
+	ret.z = a.z + t * (b.z - a.z);
+	ret.w = a.w + t * (b.w - a.w);
+	return ret;
+}
+
 //recursive bezier function
 a3vec3 bezierN(a3vec3* arr, int length, float t)
 {
