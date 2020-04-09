@@ -1184,12 +1184,14 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 		// manually set up a skeleton
 		// first is the hierarchy: the general non-spatial relationship between bones
 		const a3ui32 jointCount = 32;
+		const a3ui32 creeperJointCount = 12;
 
 		// indices of joints, their parents and branching joints
 		a3ui32 jointIndex = 0;
 		a3i32 jointParentIndex = -1;
 		a3i32 rootJointIndex, upperSpineJointIndex, clavicleJointIndex, pelvisJointIndex;
 
+#pragma region base_skeleton
 		// initialize hierarchy
 		hierarchy = demoState->hierarchy_skel;
 		a3hierarchyCreate(hierarchy, jointCount, 0);
@@ -1231,6 +1233,56 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel:ankle_l");
 		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel:foot_l");
 		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel:toe_l");
+
+		// use index field as something more useful, like level in hierarchy from root
+		for (jointIndex = 0; jointIndex < jointCount; ++jointIndex)
+		{
+			j = 0;
+			jointParentIndex = hierarchy->nodes[jointIndex].parentIndex;
+			while (jointParentIndex >= 0)
+			{
+				jointParentIndex = hierarchy->nodes[jointParentIndex].parentIndex;
+				++j;
+			}
+			hierarchy->nodes[jointIndex].index = j;
+		}
+
+		// save hierarchy assets
+		a3hierarchySaveBinary(hierarchy, fileStream);
+
+		// done
+		//a3fileStreamClose(fileStream);
+#pragma endregion
+
+		// Create the creeper
+		hierarchy = demoState->hierarchy_skel_creeper;
+		a3hierarchyCreate(hierarchy, creeperJointCount, 0);
+
+		jointIndex = 0;
+		jointParentIndex = -1;
+
+		// Set up creeper joint structure
+		// set up joint relationships
+		jointParentIndex = rootJointIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:root");
+		jointParentIndex = pelvisJointIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:pelvis");
+		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:neck");
+		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:head");
+		
+		jointParentIndex = pelvisJointIndex;
+		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:FL_knee");
+		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:FL_toe");
+
+		jointParentIndex = pelvisJointIndex;
+		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:FR_knee");
+		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:FR_toe");
+
+		jointParentIndex = pelvisJointIndex;
+		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:BL_knee");
+		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:BL_toe");
+																									   
+		jointParentIndex = pelvisJointIndex;														   
+		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:BL_knee");
+		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:BL_toe");
 
 		// use index field as something more useful, like level in hierarchy from root
 		for (jointIndex = 0; jointIndex < jointCount; ++jointIndex)

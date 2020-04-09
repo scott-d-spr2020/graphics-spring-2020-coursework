@@ -221,6 +221,11 @@ extern "C"
 		a3_HierarchyPoseGroup hierarchyPoseGroup_skel[1];
 		a3_HierarchyPoseFlag hierarchyPoseFlag_skel[1][128];
 
+		a3_Hierarchy hierarchy_skel_creeper[1];
+		a3_HierarchyState hierarchyState_skel_creeper[1];
+		a3_HierarchyPoseGroup hierarchyPoseGroup_skel_creeper[1];
+		a3_HierarchyPoseFlag hierarchyPoseFlag_skel_creeper[1][128];
+
 
 		//---------------------------------------------------------------------
 		// object arrays: organized as anonymous unions for two reasons: 
@@ -247,7 +252,8 @@ extern "C"
 				// animating scene objects
 				a3_DemoSceneObject
 					morphObject[1],
-					skeletonObject[1];
+					skeletonObject[1],
+					creeperObject[1];
 			};
 		};
 		union {

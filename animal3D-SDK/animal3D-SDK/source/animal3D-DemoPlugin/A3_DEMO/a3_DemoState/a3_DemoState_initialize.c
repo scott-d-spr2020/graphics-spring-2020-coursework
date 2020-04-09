@@ -288,11 +288,18 @@ void a3demo_initScene(a3_DemoState *demoState)
 		demoState->skeletonObject->position.z = -4.0f;
 		demoState->skeletonObject->euler.x = -90.0f;
 		demoState->skeletonObject->euler.z = +180.0f;
+
+		demoState->creeperObject->position.z = +4.0f;
+		demoState->creeperObject->euler.x = -90.0f;
+		demoState->creeperObject->euler.z = +180.0f;
 	}
 	else
 	{
 		demoState->skeletonObject->position.y = +4.0f;
 		demoState->skeletonObject->euler.z = +180.0f;
+
+		demoState->creeperObject->position.y = -4.0f;
+		demoState->creeperObject->euler.z = +180.0f;
 	}
 
 
