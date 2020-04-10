@@ -108,7 +108,7 @@ extern inline a3i32 a3kinematicsSolveInversePartial(const a3_HierarchyState *hie
 
 			if (parentIndex >= 0)
 			{
-				a3real4x4Product(hierarchyState->localSpace[0].transform[i].m, hierarchyState->objectSpaceInverse[0].transform[parentIndex].m, hierarchyState->localSpace[0].transform[i].m);
+				a3real4x4Product(hierarchyState->localSpace[0].transform[i].m, hierarchyState->objectSpaceInverse[0].transform[parentIndex].m, hierarchyState->objectSpace[0].transform[i].m);
 			}
 			else
 			{
