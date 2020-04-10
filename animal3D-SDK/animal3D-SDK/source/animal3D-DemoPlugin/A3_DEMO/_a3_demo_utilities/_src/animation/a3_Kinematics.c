@@ -97,14 +97,24 @@ extern inline a3i32 a3kinematicsSolveInversePartial(const a3_HierarchyState *hie
 	if (hierarchyState && hierarchyState->poseGroup &&
 		firstIndex < hierarchyState->poseGroup->hierarchy->numNodes && nodeCount)
 	{
-	//	a3i32 parentIndex;
+		a3i32 parentIndex;
 		a3ui32 i, end = firstIndex + nodeCount;
 		end = a3minimum(end, hierarchyState->poseGroup->hierarchy->numNodes);
 
 		for (i = firstIndex; i < end; ++i)
 		{
 			// ****TO-DO: implement inverse kinematics algorithm
+			parentIndex = hierarchyState->poseGroup->hierarchy->nodes[i].parentIndex;	// sets parent index to current node's parent
 
+			if (parentIndex >= 0)
+			{
+				a3real4x4Product(hierarchyState->localSpace[0].transform[i].m, hierarchyState->objectSpaceInverse[0].transform[parentIndex].m, hierarchyState->localSpace[0].transform[i].m);
+			}
+			else
+			{
+				// if this is the root, set the local space to the object space
+				a3real4x4SetReal4x4(hierarchyState->localSpace[0].transform[0].m, hierarchyState->objectSpace[0].transform[0].m);
+			}
 		}
 
 		// done, return number of nodes updated

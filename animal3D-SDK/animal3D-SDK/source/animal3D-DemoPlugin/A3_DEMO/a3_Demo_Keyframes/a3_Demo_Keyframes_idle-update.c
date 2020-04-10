@@ -184,6 +184,8 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 	a3hierarchyPoseConvert(currentHierarchyState->localSpace,
 		currentHierarchyState->localPose, currentHierarchy->numNodes, 0);
 	a3kinematicsSolveForward(demoState->hierarchyState_skel);
+	a3kinematicsSolveInverse(demoState->hierarchyState_skel);
+	a3kinematicsSolveForward(demoState->hierarchyState_skel);
 
 	// update human buffers: 
 	//	-> calculate and store bone transforms
