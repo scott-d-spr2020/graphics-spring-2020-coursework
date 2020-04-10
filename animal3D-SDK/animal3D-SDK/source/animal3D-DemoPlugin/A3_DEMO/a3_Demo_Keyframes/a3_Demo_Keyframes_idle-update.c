@@ -164,7 +164,7 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 	if (demoMode->animating)
 	{
 		// we lerp things here
-		demoState->animPos += (a3real) dt;
+		demoState->animPos += (a3real) dt * 4.0f;
 		demoState->animPos = mathMod(demoState->animPos, 2.0f);
 		a3real pos = (a3real)(1.0 - fabs(1.0 - mathMod((a3real)(2.0 - demoState->animPos), 2.0)));
 		lerpAssign(currentHierarchyState->localPose, currentHierarchyPoseGroup->pose + 0, currentHierarchyPoseGroup->pose + 1, pos, currentHierarchy->numNodes);
@@ -249,10 +249,8 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 	if (demoMode->animating)
 	{
 		// we lerp things here
-		demoState->animPos += (a3real)dt;
-		demoState->animPos = mathMod(demoState->animPos, 2.0f);
 		a3real pos = (a3real)(1.0 - fabs(1.0 - mathMod((a3real)(2.0 - demoState->animPos), 2.0)));
-		//lerpAssign(currentHierarchyState->localPose, currentHierarchyPoseGroup->pose + 0, currentHierarchyPoseGroup->pose + 1, pos, currentHierarchy->numNodes);
+		lerpAssign(currentHierarchyState->localPose, currentHierarchyPoseGroup->pose + 0, currentHierarchyPoseGroup->pose + 1, pos, currentHierarchy->numNodes);
 	}
 	else
 	{
