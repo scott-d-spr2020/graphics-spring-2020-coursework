@@ -1285,7 +1285,7 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:BR_toe");
 
 		// use index field as something more useful, like level in hierarchy from root
-		for (jointIndex = 0; jointIndex < jointCount; ++jointIndex)
+		for (jointIndex = 0; jointIndex < creeperJointCount; ++jointIndex)
 		{
 			j = 0;
 			jointParentIndex = hierarchy->nodes[jointIndex].parentIndex;

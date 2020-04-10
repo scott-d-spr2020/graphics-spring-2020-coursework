@@ -144,6 +144,7 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 	{
 		// reset position
 		demoState->skeletonObject->position = demoState->curveWaypoint[0].xyz;
+		demoState->creeperObject->position = demoState->curveWaypoint[0].xyz;
 	}
 
 
@@ -183,6 +184,39 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 	a3hierarchyPoseConvert(currentHierarchyState->localSpace,
 		currentHierarchyState->localPose, currentHierarchy->numNodes, 0);
 	a3kinematicsSolveForward(demoState->hierarchyState_skel);
+
+
+	currentHierarchyState = demoState->hierarchyState_skel_creeper + demoMode->editSkeletonIndex;
+	currentHierarchyPoseGroup = currentHierarchyState->poseGroup;
+	currentHierarchy = currentHierarchyPoseGroup->hierarchy;
+
+
+	a3hierarchyPoseCopy(currentHierarchyState->localPose,
+		currentHierarchyPoseGroup->pose + poseVal, currentHierarchy->numNodes);
+
+	if (demoMode->animating)
+	{
+		// we lerp things here
+		demoState->animPos += (a3real)dt;
+		demoState->animPos = mathMod(demoState->animPos, 2.0f);
+		a3real pos = (a3real)(1.0 - fabs(1.0 - mathMod((a3real)(2.0 - demoState->animPos), 2.0)));
+		lerpAssign(currentHierarchyState->localPose, currentHierarchyPoseGroup->pose + 0, currentHierarchyPoseGroup->pose + 1, pos, currentHierarchy->numNodes);
+	}
+	else
+	{
+		poseVal = 0;
+		demoState->animPos = 0;
+	}
+
+	//create interpPose, copy that to local space, proceed as normal
+	//a3hierarchyPoseCopy(tempPose, pose[0], numNodes) or however we create a pose
+	//lerpAssign(tempPose, pose[0], pose[1], count) the first one allocates space.
+	//poseCopy with tempPose
+
+	// ALWAYS DO THIS
+	a3hierarchyPoseConvert(currentHierarchyState->localSpace,
+		currentHierarchyState->localPose, currentHierarchy->numNodes, 0);
+	a3kinematicsSolveForward(demoState->hierarchyState_skel_creeper);
 
 
 	// update buffers: 
