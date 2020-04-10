@@ -1624,7 +1624,7 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	j = a3hierarchyGetNodeIndex(hierarchy, "skel_creeper:root");
 	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
 	a3hierarchyNodePoseSetRotation(hierarchyNodePose, +90.0f, +90.0f, 0.0f, a3true);
-	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 0.0f, 0.0f, +3.6f);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +6.0f, 0.0f, +3.6f);
 	hierarchyPoseFlag[j] = a3poseFlag_translate;
 	j = a3hierarchyGetNodeIndex(hierarchy, "skel_creeper:pelvis");
 	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;

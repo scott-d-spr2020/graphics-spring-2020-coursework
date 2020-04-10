@@ -189,7 +189,7 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 	//	-> calculate and store bone transforms
 	//	-> calculate and store joint transforms
 	//	-> calculate and store skinning transforms
-	{
+	
 		a3mat4 modelViewProjectionMat, localModelViewProjectionMat[128] = { 0 };
 
 		// update common MVP
@@ -236,7 +236,7 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 
 		// send hierarchical info
 		a3bufferRefill(demoState->ubo_hierarchy, 0, currentHierarchy->numNodes * sizeof(a3_HierarchyNode), currentHierarchy->nodes);
-	}
+	
 
 	currentHierarchyState = demoState->hierarchyState_skel_creeper + demoMode->editSkeletonIndex;
 	currentHierarchyPoseGroup = currentHierarchyState->poseGroup;
@@ -246,19 +246,19 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 	a3hierarchyPoseCopy(currentHierarchyState->localPose,
 		currentHierarchyPoseGroup->pose + poseVal, currentHierarchy->numNodes);
 
-	/*if (demoMode->animating)
+	if (demoMode->animating)
 	{
 		// we lerp things here
 		demoState->animPos += (a3real)dt;
 		demoState->animPos = mathMod(demoState->animPos, 2.0f);
 		a3real pos = (a3real)(1.0 - fabs(1.0 - mathMod((a3real)(2.0 - demoState->animPos), 2.0)));
-		lerpAssign(currentHierarchyState->localPose, currentHierarchyPoseGroup->pose + 0, currentHierarchyPoseGroup->pose + 1, pos, currentHierarchy->numNodes);
+		//lerpAssign(currentHierarchyState->localPose, currentHierarchyPoseGroup->pose + 0, currentHierarchyPoseGroup->pose + 1, pos, currentHierarchy->numNodes);
 	}
 	else
 	{
 		poseVal = 0;
 		demoState->animPos = 0;
-	}*/
+	}
 
 	//create interpPose, copy that to local space, proceed as normal
 	//a3hierarchyPoseCopy(tempPose, pose[0], numNodes) or however we create a pose
@@ -270,12 +270,12 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 		currentHierarchyState->localPose, currentHierarchy->numNodes, 0);
 	a3kinematicsSolveForward(demoState->hierarchyState_skel_creeper);
 
-	// update human buffers: 
+	// update creeper buffers: 
 	//	-> calculate and store bone transforms
 	//	-> calculate and store joint transforms
 	//	-> calculate and store skinning transforms
-	{
-		a3mat4 modelViewProjectionMat, localModelViewProjectionMat[128] = { 0 };
+	
+		//a3mat4 modelViewProjectionMat localModelViewProjectionMat[128] = { 0 };
 
 		// update common MVP
 		a3real4x4Product(modelViewProjectionMat.m, activeCamera->viewProjectionMat.m, demoState->creeperObject->modelMat.m);
@@ -321,7 +321,7 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 
 		// send hierarchical info
 		a3bufferRefill(demoState->ubo_hierarchy_creeper, 0, currentHierarchy->numNodes * sizeof(a3_HierarchyNode), currentHierarchy->nodes);
-	}
+	
 	
 }
 

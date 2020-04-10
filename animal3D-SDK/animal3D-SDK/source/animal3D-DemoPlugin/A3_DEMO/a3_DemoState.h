@@ -93,7 +93,7 @@ extern "C"
 	//	more than enough memory to hold extra objects
 	enum a3_DemoState_ObjectMaxCount
 	{
-		demoStateMaxCount_sceneObject = 8,
+		demoStateMaxCount_sceneObject = 9,
 		demoStateMaxCount_cameraObject = 1,
 		demoStateMaxCount_lightObject = 4,
 		demoStateMaxCount_projector = 2,
