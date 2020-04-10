@@ -3,7 +3,6 @@
 
 void lerpAssign(a3_HierarchyPose* outPose, a3_HierarchyPose* pose0, a3_HierarchyPose* pose1, a3real t, a3ui32 numNodes)
 {
-	a3_HierarchyNodePose* nodePose = outPose->nodePose, * const end = nodePose + numNodes;
 	for (a3ui32 i = 0; i < numNodes; ++i)
 	{
 		a3_HierarchyNodePose* outNode = outPose->nodePose + i;
