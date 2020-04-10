@@ -179,13 +179,13 @@ void a3keyframes_render_controls(a3_DemoState const* demoState, a3_Demo_Keyframe
 		"START ANIMATION (toggle '-') %d", demoMode->animating);
 	if (demoMode->editingJoint)
 	{
-		const a3_HierarchyNodePose* currentNodePose = demoState->hierarchyState_skel[demoMode->editSkeletonIndex].poseGroup->pose[0].nodePose + demoMode->editJointIndex;
-		const a3_HierarchyPoseFlag currentPoseFlag = demoState->hierarchyPoseFlag_skel[demoMode->editSkeletonIndex][demoMode->editJointIndex];
+		const a3_HierarchyNodePose* currentNodePose = demoState->hierarchyState_skel_creeper[demoMode->editSkeletonIndex].poseGroup->pose[0].nodePose + demoMode->editJointIndex;
+		const a3_HierarchyPoseFlag currentPoseFlag = demoState->hierarchyPoseFlag_skel_creeper[demoMode->editSkeletonIndex][demoMode->editJointIndex];
 
 		a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-			"    Editing joint %d / %d ( '8' prev | next '9' )", demoMode->editJointIndex + 1, demoState->hierarchy_skel[demoMode->editSkeletonIndex].numNodes);
+			"    Editing joint %d / %d ( '8' prev | next '9' )", demoMode->editJointIndex + 1, demoState->hierarchy_skel_creeper[demoMode->editSkeletonIndex].numNodes);
 		a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-			"    Joint name: '%s'", demoState->hierarchy_skel[demoMode->editSkeletonIndex].nodes[demoMode->editJointIndex].name);
+			"    Joint name: '%s'", demoState->hierarchy_skel_creeper[demoMode->editSkeletonIndex].nodes[demoMode->editJointIndex].name);
 		a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
 			"    Edit DOFs: ");
 		if (currentPoseFlag & a3poseFlag_rotate)

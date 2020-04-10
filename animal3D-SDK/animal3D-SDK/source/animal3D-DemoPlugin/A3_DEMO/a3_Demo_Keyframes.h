@@ -177,6 +177,8 @@ extern "C"
 		a3ui32 editJointIndex;
 		a3boolean editingJoint;
 		a3boolean animating;
+
+		a3boolean editingCreeper;
 	};
 
 
