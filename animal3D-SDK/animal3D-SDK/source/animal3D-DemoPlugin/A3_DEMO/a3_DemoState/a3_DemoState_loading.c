@@ -1281,8 +1281,8 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:BL_toe");
 																									   
 		jointParentIndex = pelvisJointIndex;														   
-		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:BL_knee");
-		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:BL_toe");
+		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:BR_knee");
+		jointParentIndex = a3hierarchySetNode(hierarchy, jointIndex++, jointParentIndex, "skel_creeper:BR_toe");
 
 		// use index field as something more useful, like level in hierarchy from root
 		for (jointIndex = 0; jointIndex < jointCount; ++jointIndex)
@@ -1313,6 +1313,7 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	a3hierarchyPoseGroupCreate(hierarchyPoseGroup, hierarchy, POSE_COUNT);
 	hierarchyPoseFlag = demoState->hierarchyPoseFlag_skel[demoState->demoMode_keyframes->editSkeletonIndex];
 
+#pragma region base_skel_poses
 	// define "bind pose" or the initial transformation 
 	//	description for each joint (not a literal transform)
 	p = 0;
@@ -1346,9 +1347,9 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
 	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, +90.0f, 0.0f, a3true);
 	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -0.1f, +0.1f, 0.0f);
-//	j = a3hierarchyGetNodeIndex(hierarchy, "skel:pelvis");
-//	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
-//	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 0.0f, +0.1f, -0.1f);
+	//	j = a3hierarchyGetNodeIndex(hierarchy, "skel:pelvis");
+	//	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	//	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 0.0f, +0.1f, -0.1f);
 
 	j = a3hierarchyGetNodeIndex(hierarchy, "skel:shoulderblade_r");
 	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
@@ -1604,6 +1605,84 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	// finally set up hierarchy states
 	hierarchyPoseGroup = demoState->hierarchyPoseGroup_skel + demoState->demoMode_keyframes->editSkeletonIndex;
 	hierarchyState = demoState->hierarchyState_skel + demoState->demoMode_keyframes->editSkeletonIndex;
+	a3hierarchyStateCreate(hierarchyState, hierarchyPoseGroup);
+#pragma endregion
+
+	demoState->demoMode_keyframes->editSkeletonIndex = 0;
+	hierarchy = demoState->hierarchy_skel_creeper + demoState->demoMode_keyframes->editSkeletonIndex;
+	hierarchyPoseGroup = demoState->hierarchyPoseGroup_skel_creeper + demoState->demoMode_keyframes->editSkeletonIndex;
+#define POSE_COUNT_CREEPER 1
+	a3hierarchyPoseGroupCreate(hierarchyPoseGroup, hierarchy, POSE_COUNT_CREEPER);
+	hierarchyPoseFlag = demoState->hierarchyPoseFlag_skel_creeper[demoState->demoMode_keyframes->editSkeletonIndex];
+
+	// define "bind pose" or the initial transformation 
+	//	description for each joint (not a literal transform)
+	p = 0;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel_creeper:root");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 0.0f, 0.0f, +3.6f);
+	hierarchyPoseFlag[j] = a3poseFlag_translate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel_creeper:pelvis");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, 0.0f, -0.1f, +0.1f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel_creeper:neck");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, +10.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.0f, +3.0f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel_creeper:head");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, +0.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.0f, +0.25f, 0.0f);
+
+	hierarchyPoseFlag[j] = a3poseFlag_rotate | a3poseFlag_translate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel_creeper:FL_knee");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, +0.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.75f, -0.1f, +0.5f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel_creeper:FL_toe");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, +0.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.0f, -0.1f, 0.0f);
+	
+	hierarchyPoseFlag[j] = a3poseFlag_rotate | a3poseFlag_translate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel_creeper:FR_knee");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, +0.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -0.75f, -0.1f, +0.5f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel_creeper:FR_toe");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, +0.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.0f, -0.1f, 0.0f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate | a3poseFlag_translate;
+
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel_creeper:BL_knee");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, +0.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.75f, -0.1f, -0.5f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel_creeper:BL_toe");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, +0.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.0f, -0.1f, 0.0f);
+
+	hierarchyPoseFlag[j] = a3poseFlag_rotate | a3poseFlag_translate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel_creeper:BR_knee");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, +0.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, -0.75f, -0.1f, -0.5f);
+	hierarchyPoseFlag[j] = a3poseFlag_rotate;
+	j = a3hierarchyGetNodeIndex(hierarchy, "skel_creeper:BR_toe");
+	hierarchyNodePose = hierarchyPoseGroup->pose[p].nodePose + j;
+	a3hierarchyNodePoseSetRotation(hierarchyNodePose, 0.0f, 0.0f, +0.0f, a3true);
+	a3hierarchyNodePoseSetTranslation(hierarchyNodePose, +0.0f, -0.1f, 0.0f);
+
+	// finally set up hierarchy states (creeper)
+	hierarchyPoseGroup = demoState->hierarchyPoseGroup_skel_creeper + demoState->demoMode_keyframes->editSkeletonIndex;
+	hierarchyState = demoState->hierarchyState_skel_creeper + demoState->demoMode_keyframes->editSkeletonIndex;
 	a3hierarchyStateCreate(hierarchyState, hierarchyPoseGroup);
 }
 
