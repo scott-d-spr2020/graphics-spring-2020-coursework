@@ -185,41 +185,7 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 		currentHierarchyState->localPose, currentHierarchy->numNodes, 0);
 	a3kinematicsSolveForward(demoState->hierarchyState_skel);
 
-
-	currentHierarchyState = demoState->hierarchyState_skel_creeper + demoMode->editSkeletonIndex;
-	currentHierarchyPoseGroup = currentHierarchyState->poseGroup;
-	currentHierarchy = currentHierarchyPoseGroup->hierarchy;
-
-
-	a3hierarchyPoseCopy(currentHierarchyState->localPose,
-		currentHierarchyPoseGroup->pose + poseVal, currentHierarchy->numNodes);
-
-	if (demoMode->animating)
-	{
-		// we lerp things here
-		demoState->animPos += (a3real)dt;
-		demoState->animPos = mathMod(demoState->animPos, 2.0f);
-		a3real pos = (a3real)(1.0 - fabs(1.0 - mathMod((a3real)(2.0 - demoState->animPos), 2.0)));
-		lerpAssign(currentHierarchyState->localPose, currentHierarchyPoseGroup->pose + 0, currentHierarchyPoseGroup->pose + 1, pos, currentHierarchy->numNodes);
-	}
-	else
-	{
-		poseVal = 0;
-		demoState->animPos = 0;
-	}
-
-	//create interpPose, copy that to local space, proceed as normal
-	//a3hierarchyPoseCopy(tempPose, pose[0], numNodes) or however we create a pose
-	//lerpAssign(tempPose, pose[0], pose[1], count) the first one allocates space.
-	//poseCopy with tempPose
-
-	// ALWAYS DO THIS
-	a3hierarchyPoseConvert(currentHierarchyState->localSpace,
-		currentHierarchyState->localPose, currentHierarchy->numNodes, 0);
-	a3kinematicsSolveForward(demoState->hierarchyState_skel_creeper);
-
-
-	// update buffers: 
+	// update human buffers: 
 	//	-> calculate and store bone transforms
 	//	-> calculate and store joint transforms
 	//	-> calculate and store skinning transforms
@@ -271,6 +237,92 @@ void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3
 		// send hierarchical info
 		a3bufferRefill(demoState->ubo_hierarchy, 0, currentHierarchy->numNodes * sizeof(a3_HierarchyNode), currentHierarchy->nodes);
 	}
+
+	currentHierarchyState = demoState->hierarchyState_skel_creeper + demoMode->editSkeletonIndex;
+	currentHierarchyPoseGroup = currentHierarchyState->poseGroup;
+	currentHierarchy = currentHierarchyPoseGroup->hierarchy;
+
+
+	a3hierarchyPoseCopy(currentHierarchyState->localPose,
+		currentHierarchyPoseGroup->pose + poseVal, currentHierarchy->numNodes);
+
+	/*if (demoMode->animating)
+	{
+		// we lerp things here
+		demoState->animPos += (a3real)dt;
+		demoState->animPos = mathMod(demoState->animPos, 2.0f);
+		a3real pos = (a3real)(1.0 - fabs(1.0 - mathMod((a3real)(2.0 - demoState->animPos), 2.0)));
+		lerpAssign(currentHierarchyState->localPose, currentHierarchyPoseGroup->pose + 0, currentHierarchyPoseGroup->pose + 1, pos, currentHierarchy->numNodes);
+	}
+	else
+	{
+		poseVal = 0;
+		demoState->animPos = 0;
+	}*/
+
+	//create interpPose, copy that to local space, proceed as normal
+	//a3hierarchyPoseCopy(tempPose, pose[0], numNodes) or however we create a pose
+	//lerpAssign(tempPose, pose[0], pose[1], count) the first one allocates space.
+	//poseCopy with tempPose
+
+	// ALWAYS DO THIS
+	a3hierarchyPoseConvert(currentHierarchyState->localSpace,
+		currentHierarchyState->localPose, currentHierarchy->numNodes, 0);
+	a3kinematicsSolveForward(demoState->hierarchyState_skel_creeper);
+
+	// update human buffers: 
+	//	-> calculate and store bone transforms
+	//	-> calculate and store joint transforms
+	//	-> calculate and store skinning transforms
+	{
+		a3mat4 modelViewProjectionMat, localModelViewProjectionMat[128] = { 0 };
+
+		// update common MVP
+		a3real4x4Product(modelViewProjectionMat.m, activeCamera->viewProjectionMat.m, demoState->creeperObject->modelMat.m);
+
+		// calculate and send bone transforms
+		// need to make the bone point from parent to current
+		a3real4x4SetScale(localModelViewProjectionMat[0].m, a3real_zero);
+		a3real4x4ConcatR(modelViewProjectionMat.m, localModelViewProjectionMat[0].m);
+		for (i = 1; i < currentHierarchy->numNodes; ++i)
+		{
+			j = currentHierarchy->nodes[i].parentIndex;
+			localModelViewProjectionMat[i] = currentHierarchyState->objectSpace->transform[j];
+			a3real3Diff(localModelViewProjectionMat[i].v2.v,
+				currentHierarchyState->objectSpace->transform[i].v3.v,
+				currentHierarchyState->objectSpace->transform[j].v3.v);
+			a3real3CrossUnit(localModelViewProjectionMat[i].v0.v,
+				(a3isNotNearZero(localModelViewProjectionMat[i].m20) || a3isNotNearZero(localModelViewProjectionMat[i].m21)) ? a3vec3_z.v : a3vec3_y.v,
+				localModelViewProjectionMat[i].v2.v);
+			a3real3CrossUnit(localModelViewProjectionMat[i].v1.v,
+				localModelViewProjectionMat[i].v2.v,
+				localModelViewProjectionMat[i].v0.v);
+			a3real4x4ConcatR(modelViewProjectionMat.m, localModelViewProjectionMat[i].m);
+		}
+		a3bufferRefill(demoState->ubo_transformLMVP_bone_creeper, 0, currentHierarchy->numNodes * sizeof(a3mat4), localModelViewProjectionMat);
+
+		// calculate and send joint transforms
+		for (i = 0; i < currentHierarchy->numNodes; ++i)
+		{
+			a3real4x4SetScale(localModelViewProjectionMat[i].m, 0.2f);
+			a3real4x4ConcatR(currentHierarchyState->objectSpace->transform[i].m, localModelViewProjectionMat[i].m);
+			a3real4x4ConcatR(modelViewProjectionMat.m, localModelViewProjectionMat[i].m);
+		}
+		a3bufferRefill(demoState->ubo_transformLMVP_joint_creeper, 0, currentHierarchy->numNodes * sizeof(a3mat4), localModelViewProjectionMat);
+
+		// calculate and send skinning matrices
+	//	a3hierarchyStateUpdateObjectBindToCurrent(currentHierarchyState, ???);
+	//	for (i = 0; i < currentHierarchy->numNodes; ++i)
+	//	{
+	//		localModelViewProjectionMat[i] = currentHierarchyState->objectSpaceBindToCurrent->transform[i];
+	//		a3real4x4ConcatR(modelViewProjectionMat.m, localModelViewProjectionMat[i].m);
+	//	}
+	//	a3bufferRefill(demoState->???, 0, currentHierarchy->numNodes * sizeof(a3mat4), localModelViewProjectionMat);
+
+		// send hierarchical info
+		a3bufferRefill(demoState->ubo_hierarchy_creeper, 0, currentHierarchy->numNodes * sizeof(a3_HierarchyNode), currentHierarchy->nodes);
+	}
+	
 }
 
 

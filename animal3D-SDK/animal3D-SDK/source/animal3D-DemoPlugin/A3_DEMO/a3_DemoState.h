@@ -457,8 +457,11 @@ extern "C"
 				// animation uniform buffers
 				a3_UniformBuffer
 					ubo_transformLMVP_joint[1],										// transforms for skeletal joints
+					ubo_transformLMVP_joint_creeper[1],										// transforms for skeletal joints
 					ubo_transformLMVP_bone[1],										// transforms for skeletal bones
+					ubo_transformLMVP_bone_creeper[1],										// transforms for skeletal bones
 					ubo_hierarchy[1],												// hierarchical information
+					ubo_hierarchy_creeper[1],												// hierarchical information
 					ubo_curveWaypoint[1];											// interpolation curve waypoints
 			};
 		};

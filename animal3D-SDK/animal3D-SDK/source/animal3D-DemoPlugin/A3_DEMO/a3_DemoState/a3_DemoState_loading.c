@@ -919,8 +919,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 
 	// set up miscellaneous uniform buffers
 	a3bufferCreate(demoState->ubo_transformLMVP_joint, "ubo:transform-lmvp-joint", a3buffer_uniform, a3index_countMaxShort, 0);
+	a3bufferCreate(demoState->ubo_transformLMVP_joint_creeper, "ubo:transform-lmvp-joint-creeper", a3buffer_uniform, a3index_countMaxShort, 0);
 	a3bufferCreate(demoState->ubo_transformLMVP_bone, "ubo:transform-lmvp-bone", a3buffer_uniform, a3index_countMaxShort, 0);
+	a3bufferCreate(demoState->ubo_transformLMVP_bone_creeper, "ubo:transform-lmvp-bone-creeper", a3buffer_uniform, a3index_countMaxShort, 0);
 	a3bufferCreate(demoState->ubo_hierarchy, "ubo:hierarchy", a3buffer_uniform, a3index_countMaxShort, 0);
+	a3bufferCreate(demoState->ubo_hierarchy_creeper, "ubo:hierarchy-creeper", a3buffer_uniform, a3index_countMaxShort, 0);
 	a3bufferCreate(demoState->ubo_curveWaypoint, "ubo:curvewaypoint", a3buffer_uniform, a3index_countMaxShort, 0);
 
 
@@ -1761,6 +1764,8 @@ void a3demo_refresh(a3_DemoState* demoState)
 
 	demoState->hierarchyState_skel->poseGroup = demoState->hierarchyPoseGroup_skel;
 	demoState->hierarchyPoseGroup_skel->hierarchy = demoState->hierarchy_skel;
+	demoState->hierarchyState_skel_creeper->poseGroup = demoState->hierarchyPoseGroup_skel_creeper;
+	demoState->hierarchyPoseGroup_skel_creeper->hierarchy = demoState->hierarchy_skel_creeper;
 }
 
 

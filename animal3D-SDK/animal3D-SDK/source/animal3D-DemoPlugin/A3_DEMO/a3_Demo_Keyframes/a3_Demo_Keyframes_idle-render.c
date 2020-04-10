@@ -919,7 +919,7 @@ void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* 
 		currentHierarchy = currentHierarchyState->poseGroup->hierarchy;
 
 		// draw skeletal joints
-		a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_joint, 0);
+		a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_joint_creeper, 0);
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, orange);
 		currentDrawable = demoState->draw_skeletal_joint;
 		a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
@@ -927,8 +927,8 @@ void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* 
 		// draw bones
 		currentDemoProgram = demoState->prog_drawColorizedHierarchy_instanced;
 		a3shaderProgramActivate(currentDemoProgram->program);
-		a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_bone, 0);
-		a3shaderUniformBufferActivate(demoState->ubo_hierarchy, 4);
+		a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_bone_creeper, 0);
+		a3shaderUniformBufferActivate(demoState->ubo_hierarchy_creeper, 4);
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, hueCount, hueWheel->v);
 		currentDrawable = demoState->draw_skeletal_bone;
 		a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
@@ -938,7 +938,7 @@ void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* 
 		{
 			currentDemoProgram = demoState->prog_drawColorAttrib_instanced;
 			a3shaderProgramActivate(currentDemoProgram->program);
-			a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_joint, 0);
+			a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_joint_creeper, 0);
 			currentDrawable = demoState->draw_axes;
 			a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
 		}
