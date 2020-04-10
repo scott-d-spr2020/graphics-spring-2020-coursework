@@ -112,11 +112,11 @@ void a3keyframesCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Key
 		break;
 	case '9':
 		if (demoMode->editingJoint)
-			demoMode->editJointIndex = (demoMode->editJointIndex + 1) % demoState->hierarchy_skel[demoMode->editSkeletonIndex].numNodes;
+			demoMode->editJointIndex = (demoMode->editJointIndex + 1) % demoState->hierarchy_skel_creeper[demoMode->editSkeletonIndex].numNodes;
 		break;
 	case '8':
 		if (demoMode->editingJoint)
-			demoMode->editJointIndex = (demoMode->editJointIndex + demoState->hierarchy_skel[demoMode->editSkeletonIndex].numNodes - 1) % demoState->hierarchy_skel[demoMode->editSkeletonIndex].numNodes;
+			demoMode->editJointIndex = (demoMode->editJointIndex + demoState->hierarchy_skel_creeper[demoMode->editSkeletonIndex].numNodes - 1) % demoState->hierarchy_skel_creeper[demoMode->editSkeletonIndex].numNodes;
 		break;
 	}
 }
@@ -127,8 +127,10 @@ void a3keyframesCB_input_keyCharHold(a3_DemoState const* demoState, a3_Demo_Keyf
 	// individual DOF editing
 	if (demoMode->editingJoint)
 	{
-		a3_HierarchyNodePose* currentNodePose = demoState->hierarchyState_skel[demoMode->editSkeletonIndex].poseGroup->pose[0].nodePose + demoMode->editJointIndex;
-		const a3_HierarchyPoseFlag currentPoseFlag = demoState->hierarchyPoseFlag_skel[demoMode->editSkeletonIndex][demoMode->editJointIndex];
+		a3_HierarchyNodePose* currentNodePose = (demoMode->editingCreeper ? demoState->hierarchyState_skel_creeper : demoState->hierarchyState_skel)
+			[demoMode->editSkeletonIndex].poseGroup->pose[0].nodePose + demoMode->editJointIndex;
+		const a3_HierarchyPoseFlag currentPoseFlag = (demoMode->editingCreeper ? demoState->hierarchyPoseFlag_skel_creeper : demoState->hierarchyPoseFlag_skel)
+			[demoMode->editSkeletonIndex][demoMode->editJointIndex];
 		const a3boolean doesRotate = currentPoseFlag & a3poseFlag_rotate;
 		const a3boolean doesTranslate = currentPoseFlag & a3poseFlag_translate;
 		const a3real rotateRate = a3real_half;
@@ -136,6 +138,9 @@ void a3keyframesCB_input_keyCharHold(a3_DemoState const* demoState, a3_Demo_Keyf
 
 		switch (asciiKey)
 		{
+		case '`':
+			demoMode->editingCreeper = !demoMode->editingCreeper;
+			break;
 			// sub rotate x
 		case '1':
 			if (doesRotate)
