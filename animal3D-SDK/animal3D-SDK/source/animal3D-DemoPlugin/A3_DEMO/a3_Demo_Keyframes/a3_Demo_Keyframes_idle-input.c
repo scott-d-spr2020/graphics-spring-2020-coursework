@@ -127,8 +127,10 @@ void a3keyframesCB_input_keyCharHold(a3_DemoState const* demoState, a3_Demo_Keyf
 	// individual DOF editing
 	if (demoMode->editingJoint)
 	{
-		a3_HierarchyNodePose* currentNodePose = demoState->hierarchyState_skel_creeper[demoMode->editSkeletonIndex].poseGroup->pose[0].nodePose + demoMode->editJointIndex;
-		const a3_HierarchyPoseFlag currentPoseFlag = demoState->hierarchyPoseFlag_skel_creeper[demoMode->editSkeletonIndex][demoMode->editJointIndex];
+		a3_HierarchyNodePose* currentNodePose = (demoMode->editingCreeper ? demoState->hierarchyState_skel_creeper : demoState->hierarchyState_skel)
+			[demoMode->editSkeletonIndex].poseGroup->pose[0].nodePose + demoMode->editJointIndex;
+		const a3_HierarchyPoseFlag currentPoseFlag = (demoMode->editingCreeper ? demoState->hierarchyPoseFlag_skel_creeper : demoState->hierarchyPoseFlag_skel)
+			[demoMode->editSkeletonIndex][demoMode->editJointIndex];
 		const a3boolean doesRotate = currentPoseFlag & a3poseFlag_rotate;
 		const a3boolean doesTranslate = currentPoseFlag & a3poseFlag_translate;
 		const a3real rotateRate = a3real_half;
@@ -136,6 +138,9 @@ void a3keyframesCB_input_keyCharHold(a3_DemoState const* demoState, a3_Demo_Keyf
 
 		switch (asciiKey)
 		{
+		case '`':
+			demoMode->editingCreeper = !demoMode->editingCreeper;
+			break;
 			// sub rotate x
 		case '1':
 			if (doesRotate)
