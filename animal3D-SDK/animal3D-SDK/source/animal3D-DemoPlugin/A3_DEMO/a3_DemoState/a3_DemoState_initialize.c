@@ -44,7 +44,7 @@ void a3demo_initSceneRefresh(a3_DemoState* demoState);
 
 void a3shading_init(a3_DemoState const* demoState, a3_Demo_Shading* demoMode);
 void a3pipelines_init(a3_DemoState const* demoState, a3_Demo_Pipelines* demoMode);
-void a3keyframes_init(a3_DemoState const* demoState, a3_Demo_Keyframes* demoMode);
+void a3materials_init(a3_DemoState const* demoState, a3_Demo_Materials* demoMode);
 
 
 //-----------------------------------------------------------------------------
@@ -306,8 +306,8 @@ void a3demo_initScene(a3_DemoState *demoState)
 	// demo modes
 	a3shading_init(demoState, demoState->demoMode_shading);
 	a3pipelines_init(demoState, demoState->demoMode_pipelines);
-	a3keyframes_init(demoState, demoState->demoMode_keyframes);
-	demoState->demoMode = demoState_keyframes;
+	a3materials_init(demoState, demoState->demoMode_materials);
+	demoState->demoMode = demoState_materials;
 
 	// active camera params
 	demoState->activeCamera = demoState->demoMode_pipelines->activeCamera;

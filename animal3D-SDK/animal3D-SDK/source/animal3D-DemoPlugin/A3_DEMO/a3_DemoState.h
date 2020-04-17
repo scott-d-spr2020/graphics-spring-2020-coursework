@@ -47,6 +47,7 @@
 #include "a3_Demo_Shading.h"
 #include "a3_Demo_Pipelines.h"
 #include "a3_Demo_Keyframes.h"
+#include "a3_Demo_Materials.h"
 
 #include "_a3_demo_utilities/a3_DemoSSAOUtils.h"
 
@@ -70,6 +71,7 @@ extern "C"
 		demoState_shading,				// basic shading mode
 		demoState_pipelines,			// different pipelines for exploration
 		demoState_keyframes,			// keyframe animation, interpolation and curve drawing
+		demoState_materials,			// material render system, final project
 
 		demoState_mode_max
 	};
@@ -171,6 +173,7 @@ extern "C"
 		a3_Demo_Shading demoMode_shading[1];
 		a3_Demo_Pipelines demoMode_pipelines[1];
 		a3_Demo_Keyframes demoMode_keyframes[1];
+		a3_Demo_Materials demoMode_materials[1];
 		a3_DemoState_ModeName demoMode;
 
 		// cameras

@@ -130,6 +130,9 @@ void a3demo_input(a3_DemoState *demoState, a3f64 dt)
 	case demoState_keyframes:
 		demoState->activeCamera = demoState->demoMode_keyframes->activeCamera;
 		break;
+	case demoState_materials:
+		demoState->activeCamera = demoState->demoMode_materials->activeCamera;
+		break;
 	}
 }
 
@@ -141,7 +144,7 @@ void a3demo_input(a3_DemoState *demoState, a3f64 dt)
 void a3shadingCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Shading* demoMode, a3i32 asciiKey);
 void a3pipelinesCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Pipelines* demoMode, a3i32 asciiKey);
 void a3keyframesCB_input_keyCharPress(a3_DemoState const* demoState, a3_Demo_Keyframes* demoMode, a3i32 asciiKey);
-void a3keyframesCB_input_keyCharHold(a3_DemoState const* demoState, a3_Demo_Keyframes* demoMode, a3i32 asciiKey);
+void a3materialsCB_input_keyCharHold(a3_DemoState const* demoState, a3_Demo_Materials* demoMode, a3i32 asciiKey);
 
 // ascii key callback
 void a3demoCB_input_keyCharPress(a3_DemoState* demoState, a3i32 asciiKey)
@@ -202,10 +205,10 @@ void a3demoCB_input_keyCharPress(a3_DemoState* demoState, a3i32 asciiKey)
 	case demoState_pipelines:
 		a3pipelinesCB_input_keyCharPress(demoState, demoState->demoMode_pipelines, asciiKey);
 		break;
-	case demoState_keyframes:
+	case demoState_materials:
 		// press and hold
-		a3keyframesCB_input_keyCharPress(demoState, demoState->demoMode_keyframes, asciiKey);
-		a3keyframesCB_input_keyCharHold(demoState, demoState->demoMode_keyframes, asciiKey);
+		a3materialsCB_input_keyCharPress(demoState, demoState->demoMode_materials, asciiKey);
+		a3materialsCB_input_keyCharHold(demoState, demoState->demoMode_materials, asciiKey);
 		break;
 	}
 }
@@ -227,8 +230,8 @@ void a3demoCB_input_keyCharHold(a3_DemoState* demoState, a3i32 asciiKey)
 		break;
 	case demoState_pipelines:
 		break;
-	case demoState_keyframes:
-		a3keyframesCB_input_keyCharHold(demoState, demoState->demoMode_keyframes, asciiKey);
+	case demoState_materials:
+		a3materialsCB_input_keyCharHold(demoState, demoState->demoMode_materials, asciiKey);
 		break;
 	}
 }

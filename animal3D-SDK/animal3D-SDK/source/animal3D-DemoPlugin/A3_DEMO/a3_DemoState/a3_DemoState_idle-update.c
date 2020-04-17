@@ -222,6 +222,7 @@ void a3demo_update_scene(a3_DemoState *demoState, a3f64 dt)
 
 void a3pipelines_update(a3_DemoState* demoState, a3_Demo_Pipelines* demoMode, a3f64 dt);
 void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3f64 dt);
+void a3materials_update(a3_DemoState* demoState, a3_Demo_Materials* demoMode, a3f64 dt);
 
 void a3demo_update(a3_DemoState *demoState, a3f64 dt)
 {
@@ -238,6 +239,9 @@ void a3demo_update(a3_DemoState *demoState, a3f64 dt)
 		break;
 	case demoState_keyframes:
 		a3keyframes_update(demoState, demoState->demoMode_keyframes, dt);
+		break;
+	case demoState_materials:
+		a3materials_update(demoState, demoState->demoMode_materials, dt);
 		break;
 	}
 }
