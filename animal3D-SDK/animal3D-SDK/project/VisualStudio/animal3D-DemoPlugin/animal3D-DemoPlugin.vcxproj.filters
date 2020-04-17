@@ -118,6 +118,12 @@
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\07-keyframes">
       <UniqueIdentifier>{b74bbca8-c4f3-4b5d-b29b-8ebc21cda84d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\common\A3_DEMO\a3_Demo_Materials">
+      <UniqueIdentifier>{d727119a-7b15-4012-9f5e-d712dfece7b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\A3_DEMO\_a3_demo_utilities\materials">
+      <UniqueIdentifier>{85300ffe-f840-481e-9434-86f792c36cee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_src_win\main_dll.c">
@@ -198,6 +204,18 @@
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\_src\a3_DemoPoseUtils.c">
       <Filter>Source Files\common\A3_DEMO\_a3_demo_utilities\_src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Materials\a3_Demo_Materials_idle-input.c">
+      <Filter>Source Files\common\A3_DEMO\a3_Demo_Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Materials\a3_Demo_Materials_idle-render.c">
+      <Filter>Source Files\common\A3_DEMO\a3_Demo_Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Materials\a3_Demo_Materials_idle-update.c">
+      <Filter>Source Files\common\A3_DEMO\a3_Demo_Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Materials\a3_Demo_Materials_initialize.c">
+      <Filter>Source Files\common\A3_DEMO\a3_Demo_Materials</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_DemoState.h">
@@ -241,6 +259,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\a3_DemoPoseUtils.h">
       <Filter>Header Files\A3_DEMO\_a3_demo_utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\a3_Demo_Materials.h">
+      <Filter>Header Files\A3_DEMO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\materials\a3_Material.h">
+      <Filter>Header Files\A3_DEMO\_a3_demo_utilities\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\materials\a3_RenderPass.h">
+      <Filter>Header Files\A3_DEMO\_a3_demo_utilities\materials</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
