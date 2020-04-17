@@ -213,7 +213,8 @@ void a3demoCB_input_keyCharPress(a3_DemoState* demoState, a3i32 asciiKey)
 		a3keyframesCB_input_keyCharHold(demoState, demoState->demoMode_keyframes, asciiKey);
 		break;
 	case demoState_materials:
-		//TODO add inputs here
+		a3materialsCB_input_keyCharPress(demoState, demoState->demoMode_materials, asciiKey);
+		a3materialsCB_input_keyCharHold(demoState, demoState->demoMode_materials, asciiKey);
 		break;
 	}
 }
