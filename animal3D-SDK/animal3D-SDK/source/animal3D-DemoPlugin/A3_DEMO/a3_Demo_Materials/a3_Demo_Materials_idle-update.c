@@ -40,10 +40,9 @@ typedef struct a3_DemoState a3_DemoState;
 //-----------------------------------------------------------------------------
 // UPDATE
 
-int poseVal = 0;
 void a3materials_update(a3_DemoState* demoState, a3_Demo_Materials* demoMode, a3f64 dt)
 {
-	a3ui32 i, j;
+	/*a3ui32 i, j;
 
 	const a3_DemoProjector* activeCamera = demoState->projector + demoState->activeCamera;
 	const a3_DemoSceneObject* activeCameraObject = activeCamera->sceneObject;
@@ -51,7 +50,7 @@ void a3materials_update(a3_DemoState* demoState, a3_Demo_Materials* demoMode, a3
 
 	
 	
-	
+	*/
 }
 
 

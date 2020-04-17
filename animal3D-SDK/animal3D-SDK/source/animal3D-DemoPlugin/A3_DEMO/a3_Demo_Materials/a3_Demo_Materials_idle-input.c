@@ -33,7 +33,7 @@
 //typedef struct a3_DemoState a3_DemoState;
 #include "../a3_DemoState.h"
 
-//#include "../_a3_demo_utilities/a3_DemoMacros.h"
+#include "../_a3_demo_utilities/a3_DemoMacros.h"
 //
 //
 ////-----------------------------------------------------------------------------

@@ -41,7 +41,7 @@
 // UPDATE
 
 int poseVal = 0;
-void a3Materials_update(a3_DemoState* demoState, a3_Demo_Materials* demoMode, a3f64 dt)
+void a3keyframes_update(a3_DemoState* demoState, a3_Demo_Keyframes* demoMode, a3f64 dt)
 {
 	a3ui32 i, j;
 
@@ -101,13 +101,13 @@ void a3Materials_update(a3_DemoState* demoState, a3_Demo_Materials* demoMode, a3
 		// perform position interpolation on current segment
 		switch (demoMode->interp)
 		{
-		case Materials_interpLerp:
+		case keyframes_interpLerp:
 			a3real3Lerp(demoState->skeletonObject->position.v,
 				demoState->curveWaypoint[k[0]].v,
 				demoState->curveWaypoint[k[1]].v,
 				demoState->segmentParam);
 			break;
-		case Materials_interpBezier:
+		case keyframes_interpBezier:
 			a3real3Bezier3(demoState->skeletonObject->position.v,
 				demoState->curveWaypoint[k[0]].v,
 				demoState->curveWaypoint[k[1]].v,
@@ -115,7 +115,7 @@ void a3Materials_update(a3_DemoState* demoState, a3_Demo_Materials* demoMode, a3
 				demoState->curveWaypoint[k[3]].v,
 				demoState->segmentParam);
 			break;
-		case Materials_interpCatmullRom:
+		case keyframes_interpCatmullRom:
 			a3real3CatmullRom(demoState->skeletonObject->position.v,
 				demoState->curveWaypoint[k[3]].v,
 				demoState->curveWaypoint[k[0]].v,
@@ -123,7 +123,7 @@ void a3Materials_update(a3_DemoState* demoState, a3_Demo_Materials* demoMode, a3
 				demoState->curveWaypoint[k[2]].v,
 				demoState->segmentParam);
 			break;
-		case Materials_interpCubicHermite:
+		case keyframes_interpCubicHermite:
 			a3real3HermiteControl(demoState->skeletonObject->position.v,
 				demoState->curveWaypoint[k[0]].v,
 				demoState->curveWaypoint[k[1]].v,

@@ -168,7 +168,7 @@ extern "C"
 
 		a3_Demo_Materials_PipelineName pipeline;
 		a3_Demo_Materials_PassName pass;
-		a3_Demo_Materials_TargetName targetIndex[keyframes_pass_max], targetCount[keyframes_pass_max];
+		a3_Demo_Materials_TargetName targetIndex[materials_pass_max], targetCount[materials_pass_max];
 
 		a3_Demo_Materials_InterpolationModeName interp;
     
