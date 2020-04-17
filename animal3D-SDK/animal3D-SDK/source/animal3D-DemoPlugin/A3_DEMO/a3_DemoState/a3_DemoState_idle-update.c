@@ -239,6 +239,9 @@ void a3demo_update(a3_DemoState *demoState, a3f64 dt)
 	case demoState_keyframes:
 		a3keyframes_update(demoState, demoState->demoMode_keyframes, dt);
 		break;
+	case demoState_materials:
+		//TODO add update here
+		break;
 	}
 }
 

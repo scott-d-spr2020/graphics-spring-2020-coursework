@@ -130,6 +130,9 @@ void a3demo_input(a3_DemoState *demoState, a3f64 dt)
 	case demoState_keyframes:
 		demoState->activeCamera = demoState->demoMode_keyframes->activeCamera;
 		break;
+	case demoState_materials:
+		demoState->activeCamera = demoState->demoMode_materials->activeCamera;
+		break;
 	}
 }
 
@@ -207,6 +210,9 @@ void a3demoCB_input_keyCharPress(a3_DemoState* demoState, a3i32 asciiKey)
 		a3keyframesCB_input_keyCharPress(demoState, demoState->demoMode_keyframes, asciiKey);
 		a3keyframesCB_input_keyCharHold(demoState, demoState->demoMode_keyframes, asciiKey);
 		break;
+	case demoState_materials:
+		//TODO add inputs here
+		break;
 	}
 }
 
@@ -229,6 +235,9 @@ void a3demoCB_input_keyCharHold(a3_DemoState* demoState, a3i32 asciiKey)
 		break;
 	case demoState_keyframes:
 		a3keyframesCB_input_keyCharHold(demoState, demoState->demoMode_keyframes, asciiKey);
+		break;
+	case demoState_materials:
+		//TODO add inputs here
 		break;
 	}
 }

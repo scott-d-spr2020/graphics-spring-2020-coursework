@@ -41,10 +41,10 @@
 extern "C"
 {
 #else	// !__cplusplus
-	//typedef struct a3_Demo_Keyframes						a3_Demo_Keyframes;
+	typedef struct a3_Demo_Materials						a3_Demo_Materials;
 	//typedef enum a3_Demo_Keyframes_RenderProgramName		a3_Demo_Keyframes_RenderProgramName;
 	//typedef enum a3_Demo_Keyframes_DisplayProgramName		a3_Demo_Keyframes_DisplayProgramName;
-	//typedef enum a3_Demo_Keyframes_ActiveCameraName			a3_Demo_Keyframes_ActiveCameraName;
+	typedef enum a3_Demo_Materials_ActiveCameraName			a3_Demo_Materials_ActiveCameraName;
 	//typedef enum a3_Demo_Keyframes_PipelineName				a3_Demo_Keyframes_PipelineName;
 	//typedef enum a3_Demo_Keyframes_PassName					a3_Demo_Keyframes_PassName;
 	//typedef enum a3_Demo_Keyframes_TargetName				a3_Demo_Keyframes_TargetName;
@@ -159,27 +159,27 @@ extern "C"
     //
 //--//---------------------------------------------------------------------------
     //
-	//// demo mode for basic shading
-	//struct a3_Demo_Keyframes
-	//{
-	//	a3_Demo_Keyframes_RenderProgramName render;
-	//	a3_Demo_Keyframes_DisplayProgramName display;
-	//	a3_Demo_Keyframes_ActiveCameraName activeCamera;
-    //
-	//	a3_Demo_Keyframes_PipelineName pipeline;
-	//	a3_Demo_Keyframes_PassName pass;
-	//	a3_Demo_Keyframes_TargetName targetIndex[keyframes_pass_max], targetCount[keyframes_pass_max];
-    //
-	//	a3_Demo_Keyframes_InterpolationModeName interp;
-    //
-	//	// skeletal controls
-	//	a3ui32 editSkeletonIndex;
-	//	a3ui32 editJointIndex;
-	//	a3boolean editingJoint;
-	//	a3boolean animating;
-    //
-	//	a3boolean editingCreeper;
-	//};
+	// demo mode for materials
+	struct a3_Demo_Materials
+	{
+		//a3_Demo_Keyframes_RenderProgramName render;
+		//a3_Demo_Keyframes_DisplayProgramName display;
+		a3_Demo_Materials_ActiveCameraName activeCamera;
+    	//
+		//a3_Demo_Keyframes_PipelineName pipeline;
+		//a3_Demo_Keyframes_PassName pass;
+		//a3_Demo_Keyframes_TargetName targetIndex[keyframes_pass_max], targetCount[keyframes_pass_max];
+    	//
+		//a3_Demo_Keyframes_InterpolationModeName interp;
+    	//
+		//// skeletal controls
+		//a3ui32 editSkeletonIndex;
+		//a3ui32 editJointIndex;
+		//a3boolean editingJoint;
+		//a3boolean animating;
+    	//
+		a3boolean editingCreeper; //uncommented so struct doesn't cry
+	};
 
 
 //-----------------------------------------------------------------------------

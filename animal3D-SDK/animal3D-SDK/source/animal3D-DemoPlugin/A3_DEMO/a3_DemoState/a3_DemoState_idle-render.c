@@ -89,6 +89,9 @@ void a3demo_render_controls(a3_DemoState const* demoState,
 	case demoState_keyframes:
 		a3keyframes_render_controls(demoState, demoState->demoMode_keyframes, textAlign, textDepth, textOffsetDelta, textOffset);
 		break;
+	case demoState_materials:
+		//TODO render controls here
+		break;
 	}
 
 	// global controls
@@ -215,6 +218,9 @@ void a3demo_render(a3_DemoState const* demoState)
 		break;
 	case demoState_keyframes:
 		a3keyframes_render(demoState, demoState->demoMode_keyframes);
+		break;
+	case demoState_materials:
+		//TODO render here
 		break;
 	}
 
