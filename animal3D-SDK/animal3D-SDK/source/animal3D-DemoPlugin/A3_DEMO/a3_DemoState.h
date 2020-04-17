@@ -478,6 +478,8 @@ extern "C"
 				a3vec3 controlPoint0, controlPoint1, controlPoint2, controlPoint3;
 			};
 		};
+
+		//SSAO and animation utils
 		a3real lerpPos; //technically serves as time instead of an actual pos, which is calculated from this value
 		a3real animPos;
 		a3real3 kernel[64];
