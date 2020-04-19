@@ -440,7 +440,10 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 		currentSceneObject <= endSceneObject;
 		++k, ++currentSceneObject)
 	{
-		drawMaterial(drawable[k], currentSceneObject->renderMaterial);
+		if (currentSceneObject->renderMaterial != NULL)
+		{
+			drawMaterial(drawable[k], currentSceneObject->renderMaterial);
+		}
 	}
 	//-------------------------------------------------------------------------
 	// 1) SCENE PASS: render scene with desired shader

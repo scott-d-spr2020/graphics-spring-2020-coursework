@@ -60,15 +60,16 @@ extern "C"
 		a3_ShaderProgram* shaderProgram;
 		a3i32* uniformHandles;						//the handle (or in some cases texture unit) to pass uniforms to
 		a3i32* uniformTypes;
-		a3_UniformSwitch* uniformMatFlags;			//we're combining uniform and uniformMat, so this distinguishes what to parse the uniformType as
+		a3_UniformSwitch* uniformFlags;			//we're combining uniform and uniformMat, so this distinguishes what to parse the uniformType as
 		void** sources;								//sources can be ANYTHING. We're relying on the uniform type to help distinguish things.
 		a3ui32* unifDataCounts;						//how many of a uniform to pass. Will usually be 1.
+		a3ui32* unifSourceTargets;					//the target for texture units
 		a3ui32 numUniforms;
 	};
 	
 	struct a3_RenderMaterial
 	{
-		a3_RenderPass* passes;
+		a3_RenderPass** passes;						//array of POINTERS to render passes. Not sure if passes can be reused yet. Probably?
 		a3_Texture** maps;							//TODO array of maps for each pass. Needs restructuring probably. Maybe map[] and a bitstring that's sizeof(passes)/sizeof(passes[0]) long?
 		a3ui32 numPasses;
 		a3ui32 numMaps;
