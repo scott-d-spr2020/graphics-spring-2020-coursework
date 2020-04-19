@@ -80,6 +80,7 @@
 #include <time.h>
 
 #include "..//_a3_demo_utilities/a3_DemoSSAOUtils.h"
+#include "../_a3_demo_utilities/a3_DemoMaterialUtils.h"
 
 
 //-----------------------------------------------------------------------------
@@ -1756,19 +1757,38 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 
 void a3demo_loadMaterials(a3_DemoState* demoState)
 {
-	demoState->materials[0].numPasses = 5; //arbitrary number for now
+	demoState->materials[0].numPasses = 1; //arbitrary number for now
 	demoState->materials[0].passes = malloc(sizeof(a3_RenderPass) * demoState->materials[0].numPasses);
-	int uniformCount = 100;
+	int uniformCount = 1;
 	demoState->passes[0].numUniforms = uniformCount;
 	demoState->passes[0].uniformHandles = malloc(sizeof(a3i32) * uniformCount);
 	demoState->passes[0].uniformTypes = malloc(sizeof(a3i32) * uniformCount);
 	demoState->passes[0].uniformFlags = malloc(sizeof(a3_UniformSwitch) * uniformCount);
 	demoState->passes[0].sources = malloc(sizeof(void*) * uniformCount);
+	demoState->passes[0].sourceFunctions = malloc(sizeof(a3_UnifFunction) * uniformCount);
+	demoState->passes[0].sourceFunctionFlags = malloc(sizeof(a3boolean) * uniformCount);
 	demoState->passes[0].unifDataCounts = malloc(sizeof(a3ui32) * uniformCount);
 	demoState->passes[0].unifSourceTargets = malloc(sizeof(a3ui32) * uniformCount);
-	//writeFBO
+	
+	demoState->passes[0].writeFBO = demoState->fbo_scene_c16d24s8_mrt;
+	demoState->passes[0].shaderProgram = demoState->prog_drawPhong_multi_mrt;
+
+	demoState->passes[0].uniformFlags[0] = uniformSwitch_FloatMat;
+	demoState->passes[0].uniformTypes[0] = a3unif_mat4;
+	demoState->passes[0].uniformHandles[0] = demoState->passes[0].shaderProgram->uP;
+	demoState->passes[0].unifDataCounts[0] = 1;
+	demoState->passes[0].sourceFunctions[0] = uniform_retrieveActiveCamera;
+	demoState->passes[0].sourceFunctionFlags[0] = 1;
+	//HOW DO WE GET activeCamera->projectionMat.mm???
+	//flag and extra pointer for functions?
 	//shaderProgram
 	demoState->materials[0].passes[0] = &demoState->passes[0];
+
+	demoState->planeObject->renderMaterial = &demoState->materials[0];
+	demoState->sphereObject->renderMaterial = &demoState->materials[0];
+	demoState->cylinderObject->renderMaterial = &demoState->materials[0];
+	demoState->torusObject->renderMaterial = &demoState->materials[0];
+	demoState->teapotObject->renderMaterial = &demoState->materials[0];
 }
 
 
