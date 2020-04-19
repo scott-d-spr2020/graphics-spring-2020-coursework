@@ -241,6 +241,7 @@ void a3demoCB_input_keyCharHold(a3_DemoState* demoState, a3i32 asciiKey)
 		break;
 	case demoState_materials:
 		//TODO add inputs here
+		a3materialsCB_input_keyCharHold(demoState, demoState->demoMode_materials, asciiKey);
 		break;
 	}
 }
