@@ -1754,6 +1754,23 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	a3hierarchyStateCreate(hierarchyState, hierarchyPoseGroup);
 }
 
+void a3demo_loadMaterials(a3_DemoState* demoState)
+{
+	demoState->materials[0].numPasses = 5; //arbitrary number for now
+	demoState->materials[0].passes = malloc(sizeof(a3_RenderPass) * demoState->materials[0].numPasses);
+	int uniformCount = 100;
+	demoState->passes[0].numUniforms = uniformCount;
+	demoState->passes[0].uniformHandles = malloc(sizeof(a3i32) * uniformCount);
+	demoState->passes[0].uniformTypes = malloc(sizeof(a3i32) * uniformCount);
+	demoState->passes[0].uniformFlags = malloc(sizeof(a3_UniformSwitch) * uniformCount);
+	demoState->passes[0].sources = malloc(sizeof(void*) * uniformCount);
+	demoState->passes[0].unifDataCounts = malloc(sizeof(a3ui32) * uniformCount);
+	demoState->passes[0].unifSourceTargets = malloc(sizeof(a3ui32) * uniformCount);
+	//writeFBO
+	//shaderProgram
+	demoState->materials[0].passes[0] = &demoState->passes[0];
+}
+
 
 //-----------------------------------------------------------------------------
 

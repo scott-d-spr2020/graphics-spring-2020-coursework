@@ -44,6 +44,8 @@
 #include "_a3_demo_utilities/a3_DemoShaderProgram.h"
 #include "_a3_demo_utilities/animation/a3_Kinematics.h"
 
+#include "_a3_demo_utilities/materials/a3_RenderMaterial.h"
+
 #include "a3_Demo_Shading.h"
 #include "a3_Demo_Pipelines.h"
 #include "a3_Demo_Keyframes.h"
@@ -484,6 +486,12 @@ extern "C"
 		a3real animPos;
 		a3real3 kernel[64];
 
+
+		//material info
+
+		//dummy data for now
+		a3_RenderPass passes[64];
+		a3_RenderMaterial materials[5];
 		//---------------------------------------------------------------------
 	};
 

@@ -99,6 +99,7 @@ void a3demo_loadShaders(a3_DemoState* demoState);
 void a3demo_loadTextures(a3_DemoState* demoState);
 void a3demo_loadFramebuffers(a3_DemoState* demoState);
 void a3demo_loadAnimation(a3_DemoState* demoState);
+void a3demo_loadMaterials(a3_DemoState* demoState);
 void a3demo_refresh(a3_DemoState* demoState);
 
 // unloading
@@ -213,6 +214,9 @@ A3DYLIBSYMBOL a3_DemoState *a3demoCB_load(a3_DemoState *demoState, a3boolean hot
 
 			// animation
 			a3demo_loadAnimation(demoState);
+
+			//materials
+			a3demo_loadMaterials(demoState);
 
 			// scene objects
 			a3demo_initScene(demoState);
