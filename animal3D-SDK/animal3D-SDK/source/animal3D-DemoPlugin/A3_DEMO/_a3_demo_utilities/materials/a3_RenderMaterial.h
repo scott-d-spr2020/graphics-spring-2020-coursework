@@ -48,19 +48,22 @@ extern "C"
 
 	enum a3_UniformSwitch
 	{
-		uniform = 0,
-		uniformMat = 1,
-		uniformBuffer = 2,
-		textureUnit = 3
+		uniformSwitch_Int = 0,
+		uniformSwitch_Float = 1,
+		uniformSwitch_Double = 2,
+		uniformSwitch_FloatMat = 3,
+		uniformSwitch_DoubleMat = 4,
+		uniformSwitch_Buffer = 5,
+		uniformSwitch_TextureUnit = 6
 	};
 
-	struct a3_RenderPass
+	struct a3_RenderPass //TODO we only support floats currently. How do we support doubles and ints?
 	{
-		a3_Framebuffer* writeFBO;
-		a3_ShaderProgram* shaderProgram;
-		a3i32* uniformHandles;						//the handle (or in some cases texture unit) to pass uniforms to
-		a3i32* uniformTypes;
-		a3_UniformSwitch* uniformFlags;			//we're combining uniform and uniformMat, so this distinguishes what to parse the uniformType as
+		a3_Framebuffer* writeFBO;					//output
+		a3_ShaderProgram* shaderProgram;			//shader program to use
+		a3i32* uniformHandles;						//the handle (or in some cases texture unit) to pass uniforms to. Used as the index for UBOs
+		a3i32* uniformTypes;						//is it a vec3? a mat4? used in conjunction with uniformFlags.
+		a3_UniformSwitch* uniformFlags;				//we're combining uniform and uniformMat, so this distinguishes what to parse the uniformType as
 		void** sources;								//sources can be ANYTHING. We're relying on the uniform type to help distinguish things.
 		a3ui32* unifDataCounts;						//how many of a uniform to pass. Will usually be 1.
 		a3ui32* unifSourceTargets;					//the target for texture units
