@@ -29,6 +29,8 @@
 //-----------------------------------------------------------------------------
 
 #include "../a3_Demo_Materials.h"
+#include "../_a3_demo_utilities/materials/a3_RenderMaterial.h"
+#include "../_a3_demo_utilities/a3_DemoMaterialUtils.h"
 
 #include "../a3_DemoState.h"
 
@@ -53,7 +55,7 @@ void a3materials_render_controls(a3_DemoState const* demoState, a3_Demo_Material
 {
 	// display mode info
 	a3byte const* pipelineText[materials_pipeline_max] = {
-		"Forward rendering",
+		"Material-based rendering",
 	};
 
 	// forward pipeline names
@@ -433,7 +435,13 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 		a3demo_drawModelSimple_activateModel(modelViewProjectionMat.m, activeShadowCaster->viewProjectionMat.m, currentSceneObject->modelMat.m, currentDemoProgram, drawable[k]);
 	glCullFace(GL_BACK);
 
-
+	for (k = 0,
+		currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject;
+		currentSceneObject <= endSceneObject;
+		++k, ++currentSceneObject)
+	{
+		drawMaterial(drawable[k], currentSceneObject->renderMaterial);
+	}
 	//-------------------------------------------------------------------------
 	// 1) SCENE PASS: render scene with desired shader
 	//	- activate scene framebuffer

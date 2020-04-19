@@ -28,6 +28,7 @@
 
 // math library
 #include "animal3D-A3DM/animal3D-A3DM.h"
+#include "materials/a3_RenderMaterial.h"
 
 
 //-----------------------------------------------------------------------------
@@ -81,6 +82,7 @@ extern "C"
 		a3vec3 position;	// scene position for direct control
 		a3vec3 scale;		// scale (not accounted for in update)
 		a3i32 scaleMode;		// 0 = off; 1 = uniform; other = non-uniform (nightmare)
+		a3_RenderMaterial* renderMaterial;
 	};
 
 	// projector/camera/viewer
