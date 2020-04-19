@@ -38,7 +38,42 @@ typedef struct a3_DemoState a3_DemoState;
 
 void a3materials_init(a3_DemoState const* demoState, a3_Demo_Materials* demoMode)
 {
-	
+	demoMode->render = materials_renderPhong;
+	demoMode->display = materials_displayTexture;
+	demoMode->activeCamera = materials_cameraSceneViewer;
+
+	demoMode->pipeline = materials_forward;
+	demoMode->pass = materials_passComposite;
+
+	demoMode->targetIndex[materials_passShadow] = materials_shadow_fragdepth;
+	demoMode->targetIndex[materials_passScene] = materials_scene_finalcolor;
+	demoMode->targetIndex[materials_passComposite] = materials_composite_finalcolor;
+	demoMode->targetIndex[materials_passBright_2] = materials_bright_finalcolor;
+	demoMode->targetIndex[materials_passBlurH_2] = materials_blur_finalcolor;
+	demoMode->targetIndex[materials_passBlurV_2] = materials_blur_finalcolor;
+	demoMode->targetIndex[materials_passBright_4] = materials_bright_finalcolor;
+	demoMode->targetIndex[materials_passBlurH_4] = materials_blur_finalcolor;
+	demoMode->targetIndex[materials_passBlurV_4] = materials_blur_finalcolor;
+	demoMode->targetIndex[materials_passBright_8] = materials_bright_finalcolor;
+	demoMode->targetIndex[materials_passBlurH_8] = materials_blur_finalcolor;
+	demoMode->targetIndex[materials_passBlurV_8] = materials_blur_finalcolor;
+	demoMode->targetIndex[materials_passBlend] = materials_display_finalcolor;
+
+	demoMode->targetCount[materials_passShadow] = materials_target_shadow_max;
+	demoMode->targetCount[materials_passScene] = materials_target_scene_max;
+	demoMode->targetCount[materials_passComposite] = materials_target_composite_max;
+	demoMode->targetCount[materials_passBright_2] = materials_target_bright_max;
+	demoMode->targetCount[materials_passBlurH_2] = materials_target_blur_max;
+	demoMode->targetCount[materials_passBlurV_2] = materials_target_blur_max;
+	demoMode->targetCount[materials_passBright_4] = materials_target_bright_max;
+	demoMode->targetCount[materials_passBlurH_4] = materials_target_blur_max;
+	demoMode->targetCount[materials_passBlurV_4] = materials_target_blur_max;
+	demoMode->targetCount[materials_passBright_8] = materials_target_bright_max;
+	demoMode->targetCount[materials_passBlurH_8] = materials_target_blur_max;
+	demoMode->targetCount[materials_passBlurV_8] = materials_target_blur_max;
+	demoMode->targetCount[materials_passBlend] = materials_target_display_max;
+
+	demoMode->interp = materials_interpNone;
 }
 
 

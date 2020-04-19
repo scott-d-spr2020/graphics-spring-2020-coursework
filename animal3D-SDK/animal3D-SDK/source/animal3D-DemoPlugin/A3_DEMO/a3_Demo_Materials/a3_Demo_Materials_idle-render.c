@@ -319,7 +319,7 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 	// forward pipeline shader programs
 	const a3_DemoStateShaderProgram* renderProgram[materials_pipeline_max][materials_render_max] = {
 		{
-			demoState->prog_drawPhong_multi_mrt,
+			demoState->prog_drawPhong_multi_forward_mrt,
 		},
 	};
 
@@ -452,6 +452,7 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 	case materials_forward:
 		// target scene framebuffer
 		a3demo_setSceneState(currentWriteFBO, demoState->displaySkybox);
+		break;
 	}
 
 
@@ -470,7 +471,7 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 	//	- light data
 	//	- activate shared textures including atlases if using
 	//	- shared animation data
-	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, activeCamera->projectionMat.mm);
+	//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, activeCamera->projectionMat.mm);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP_inv, 1, activeCamera->projectionMatInv.mm);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB, 1, projectionBiasMat.mm);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMat_inv.mm);
@@ -485,46 +486,47 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 	glDisable(GL_BLEND);
 	switch (pipeline)
 	{
-		//TODO look at this!!!!!
 		// scene pass using forward pipeline
 	case materials_forward: {
-		for (k = 0,
-			currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject;
+		// activate shadow map and other relevant textures
+		currentReadFBO = demoState->fbo_shadow_d32;
+		a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit06);
+		a3textureActivate(demoState->tex_earth_dm, a3tex_unit07);
+
+		// send more common uniforms
+		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
+		a3shaderUniformBufferActivate(demoState->ubo_transformStack_model, 0);
+		a3shaderUniformBufferActivate(demoState->ubo_pointLight, 4);
+
+		// individual object requirements: 
+		//	- modelviewprojection
+		//	- modelview
+		//	- modelview for normals
+		//	- per-object animation data
+		for (currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject,
+			j = (a3ui32)(currentSceneObject - demoState->sceneObject), k = 0;
 			currentSceneObject <= endSceneObject;
-			++k, ++currentSceneObject)
+			++j, ++k, ++currentSceneObject)
+		{
+			// send data and draw
+			//a3textureActivate(texture_dm[k], a3tex_unit00);
+			//a3textureActivate(texture_sm[k], a3tex_unit01);
+			//a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
+			//a3vertexDrawableActivateAndRender(drawable[k]);
+		}
+		for (currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject,
+			j = (a3ui32)(currentSceneObject - demoState->sceneObject), k = 0;
+			currentSceneObject <= endSceneObject;
+			++j, ++k, ++currentSceneObject)
 		{
 			if (currentSceneObject->renderMaterial != NULL)
 			{
+				a3textureActivate(texture_dm[k], a3tex_unit00);
+				a3textureActivate(texture_sm[k], a3tex_unit01);
+				a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
 				drawMaterial(demoState, drawable[k], currentSceneObject->renderMaterial);
 			}
 		}
-		break;
-		// activate shadow map and other relevant textures
-		//currentReadFBO = demoState->fbo_shadow_d32;
-		//a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit06);
-		//a3textureActivate(demoState->tex_earth_dm, a3tex_unit07);
-		//
-		//// send more common uniforms
-		//a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
-		//a3shaderUniformBufferActivate(demoState->ubo_transformStack_model, 0);
-		//a3shaderUniformBufferActivate(demoState->ubo_pointLight, 4);
-		//
-		//// individual object requirements: 
-		////	- modelviewprojection
-		////	- modelview
-		////	- modelview for normals
-		////	- per-object animation data
-		//for (currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject,
-		//	j = (a3ui32)(currentSceneObject - demoState->sceneObject), k = 0;
-		//	currentSceneObject <= endSceneObject;
-		//	++j, ++k, ++currentSceneObject)
-		//{
-		//	// send data and draw
-		//	a3textureActivate(texture_dm[k], a3tex_unit00);
-		//	a3textureActivate(texture_sm[k], a3tex_unit01);
-		//	a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
-		//	a3vertexDrawableActivateAndRender(drawable[k]);
-		//}
 	}	break;
 		// end forward scene pass
 	}
@@ -725,7 +727,7 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 	switch (demoMode->pass)
 	{
 	case materials_passShadow:
-			a3framebufferBindDepthTexture(currentDisplayFBO, a3tex_unit00);
+		a3framebufferBindDepthTexture(currentDisplayFBO, a3tex_unit00);
 		break;
 	case materials_passScene:
 		if (currentDisplayFBO->color && (!currentDisplayFBO->depthStencil || targetIndex < targetCount - 1))
@@ -988,7 +990,7 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 			demoState->mainLightObject, demoState->mainCameraObject,
 			0
 		}, ** axesObjectsItr = axesObjects;
-		for (currentSceneObject = *axesObjectsItr, 
+		for (currentSceneObject = *axesObjectsItr,
 			endSceneObject = demoState->displayHiddenVolumes ? 0 : demoState->mainLightObject;
 			currentSceneObject != endSceneObject;
 			currentSceneObject = *(++axesObjectsItr))

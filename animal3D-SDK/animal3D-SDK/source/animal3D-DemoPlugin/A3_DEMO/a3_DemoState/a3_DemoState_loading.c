@@ -1771,7 +1771,7 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 	demoState->passes[0].unifSourceTargets = malloc(sizeof(a3ui32) * uniformCount);
 	
 	demoState->passes[0].writeFBO = demoState->fbo_scene_c16d24s8_mrt;
-	demoState->passes[0].shaderProgram = demoState->prog_drawPhong_multi_mrt;
+	demoState->passes[0].shaderProgram = demoState->prog_drawPhong_multi_forward_mrt;
 
 	demoState->passes[0].uniformFlags[0] = uniformSwitch_FloatMat;
 	demoState->passes[0].uniformTypes[0] = a3unif_mat4;

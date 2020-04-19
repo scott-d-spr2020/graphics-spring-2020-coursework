@@ -12,9 +12,9 @@ a3ret drawMaterial(a3_DemoState const* demoState, const a3_VertexDrawable* drawa
 
 a3ret drawPass(a3_DemoState const* demoState, const a3_VertexDrawable* drawable, const a3_RenderPass* pass)
 {
-	a3shaderProgramActivate(pass->shaderProgram->program);
-	a3framebufferActivate(pass->writeFBO);
-	a3framebufferBindDepthTexture(demoState->fbo_shadow_d32, a3tex_unit00); //this needs to be configurable because phong uses 06.
+	//a3shaderProgramActivate(pass->shaderProgram->program);
+	//a3framebufferActivate(pass->writeFBO);
+	//a3framebufferBindDepthTexture(demoState->fbo_shadow_d32, a3tex_unit00); //this needs to be configurable because phong uses 06.
 	for (a3ui32 i = 0; i < pass->numUniforms; ++i)
 	{
 		void* source = pass->sourceFunctionFlags ? pass->sourceFunctions[i](demoState) : pass->sources[i];
