@@ -400,5 +400,11 @@
     <None Include="..\..\..\resource\glsl\4x\vs\07-keyframes\passColor_hierarchy_transform_instanced_vs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\vs\07-keyframes</Filter>
     </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\04-multipass\drawPhong_ms_mat_mrt_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\03-framebuffer</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\04-multipass\passLightingData_shadowmat_transform_vs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\vs\04-multipass</Filter>
+    </None>
   </ItemGroup>
 </Project>
