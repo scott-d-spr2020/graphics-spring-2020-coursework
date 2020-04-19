@@ -319,7 +319,7 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 	// forward pipeline shader programs
 	const a3_DemoStateShaderProgram* renderProgram[materials_pipeline_max][materials_render_max] = {
 		{
-			demoState->prog_drawPhong_multi_forward_mrt,
+			demoState->prog_drawPhong_multi_mrt,
 		},
 	};
 
