@@ -33,6 +33,7 @@
 #include "animal3D-A3DG/a3graphics/a3_ShaderProgram.h"
 #include "../a3_DemoShaderProgram.h"
 #include "animal3D-A3DG/a3graphics/a3_Texture.h"
+#include "animal3D-A3DG/a3graphics/a3_Material.h"
 
 
 #ifdef __cplusplus
@@ -75,7 +76,7 @@ extern "C"
 	struct a3_RenderPass //TODO we only support floats currently. How do we support doubles and ints?
 	{
 		a3_Framebuffer* writeFBO;					// output
-		a3_ShaderProgram* shaderProgram;			// shader program to use
+		a3_DemoStateShaderProgram* shaderProgram;			// shader program to use
 		a3i32* uniformHandles;						// the handle (or in some cases texture unit) to pass uniforms to. Used as the index for UBOs
 		a3i32* uniformTypes;						// is it a vec3? a mat4? used in conjunction with uniformFlags.
 		a3_UniformSwitch* uniformFlags;				// we're combining uniform and uniformMat, so this distinguishes what to parse the uniformType as
