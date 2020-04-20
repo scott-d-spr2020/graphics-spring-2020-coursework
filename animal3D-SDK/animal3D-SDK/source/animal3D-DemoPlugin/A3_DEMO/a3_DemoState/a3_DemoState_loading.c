@@ -1759,7 +1759,7 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 {
 	demoState->materials[0].numPasses = 1; //arbitrary number for now
 	demoState->materials[0].passes = malloc(sizeof(a3_RenderPass) * demoState->materials[0].numPasses);
-	int uniformCount = 1;
+	int uniformCount = 7;
 	demoState->passes[0].numUniforms = uniformCount;
 	demoState->passes[0].uniformHandles = malloc(sizeof(a3i32) * uniformCount);
 	demoState->passes[0].uniformTypes = malloc(sizeof(a3i32) * uniformCount);
@@ -1778,71 +1778,71 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 	demoState->passes[0].uniformTypes[0] = a3unif_mat4;
 	demoState->passes[0].uniformHandles[0] = demoState->passes[0].shaderProgram->uP;
 	demoState->passes[0].unifDataCounts[0] = 1;
-	demoState->passes[0].sourceFunctions[0] = uniform_retrieveActiveCamera;
+	demoState->passes[0].sourceFunctions[0] = uniform_retrieveActiveCamProjMat;
 	demoState->passes[0].sourceFunctionFlags[0] = 1;
 
-	uniformCount++;
+	//uniformCount++;
 
 	// 475 uP_inv
 	demoState->passes[0].uniformFlags[1] = uniformSwitch_FloatMat;
 	demoState->passes[0].uniformTypes[1] = a3unif_mat4;
 	demoState->passes[0].uniformHandles[1] = demoState->passes[0].shaderProgram->uP_inv;
 	demoState->passes[0].unifDataCounts[1] = 1;
-	demoState->passes[0].sourceFunctions[1] = uniform_retrieveActiveCamera;
+	demoState->passes[0].sourceFunctions[1] = uniform_retrieveActiveCamProjMatInv;
 	demoState->passes[0].sourceFunctionFlags[1] = 1;
 
-	uniformCount++;
+	//uniformCount++;
 
 	// 476 uPB (needs to get projectionBiasMat, which is calculated at 407 in idle render using active camera)
 	demoState->passes[0].uniformFlags[2] = uniformSwitch_FloatMat;
 	demoState->passes[0].uniformTypes[2] = a3unif_mat4;
 	demoState->passes[0].uniformHandles[2] = demoState->passes[0].shaderProgram->uPB;
 	demoState->passes[0].unifDataCounts[2] = 1;
-	demoState->passes[0].sourceFunctions[2] = uniform_retrieveActiveCamera;
+	demoState->passes[0].sourceFunctions[2] = uniform_retrieveActiveCamProjBiasMat;
 	demoState->passes[0].sourceFunctionFlags[2] = 1;
 
-	uniformCount++;
+	//uniformCount++;
 
 	// 477 uPB_inv (needs to get projectionBiasMatInv, which is calculated at 408 in idle render using active camera)
 	demoState->passes[0].uniformFlags[3] = uniformSwitch_FloatMat;
 	demoState->passes[0].uniformTypes[3] = a3unif_mat4;
 	demoState->passes[0].uniformHandles[3] = demoState->passes[0].shaderProgram->uPB_inv;
 	demoState->passes[0].unifDataCounts[3] = 1;
-	demoState->passes[0].sourceFunctions[3] = uniform_retrieveActiveCamera;
+	demoState->passes[0].sourceFunctions[3] = uniform_retrieveActiveCamProjBiasMatInv;
 	demoState->passes[0].sourceFunctionFlags[3] = 1;
 
-	uniformCount++;
+	//uniformCount++;
 
 	// 478 uAtlas
 	demoState->passes[0].uniformFlags[4] = uniformSwitch_FloatMat;
 	demoState->passes[0].uniformTypes[4] = a3unif_mat4;
 	demoState->passes[0].uniformHandles[4] = demoState->passes[0].shaderProgram->uAtlas;
 	demoState->passes[0].unifDataCounts[4] = 1;
-	//demoState->passes[0].sources[4] = a3mat4_identity.mm;	 // it doesn't like the overflow here, and I don't know enough about void*
+	demoState->passes[0].sources[4] = (void*) a3mat4_identity.mm;	 // it doesn't like the overflow here, and I don't know enough about void*
 	demoState->passes[0].sourceFunctionFlags[4] = 0;
 
-	uniformCount++;
+	//uniformCount++;
 
 	// 479 uTime
 	demoState->passes[0].uniformFlags[5] = uniformSwitch_Double;
 	demoState->passes[0].uniformTypes[5] = a3unif_single;
 	demoState->passes[0].uniformHandles[5] = demoState->passes[0].shaderProgram->uTime;
 	demoState->passes[0].unifDataCounts[5] = 1;
-	demoState->passes[0].sources[5] = &demoState->renderTimer->totalTime;	// Right?
-	demoState->passes[0].sourceFunctionFlags[5] = 0;
+	demoState->passes[0].sourceFunctions[5] = uniform_retrieveTotalRenderTime;
+	demoState->passes[0].sourceFunctionFlags[5] = 1;
 
-	uniformCount++;
+	//uniformCount++;
 
 	// 480 uColor
-	demoState->passes[0].uniformFlags[5] = uniformSwitch_Float;
-	demoState->passes[0].uniformTypes[5] = a3unif_vec4;
-	demoState->passes[0].uniformHandles[5] = demoState->passes[0].shaderProgram->uColor;
-	demoState->passes[0].unifDataCounts[5] = 1;
-	//demoState->passes[0].sources[5] = skyblue;	// This bit will need that color const moved here
-	demoState->passes[0].sourceFunctionFlags[5] = 0;
+	demoState->passes[0].uniformFlags[6] = uniformSwitch_Float;
+	demoState->passes[0].uniformTypes[6] = a3unif_vec4;
+	demoState->passes[0].uniformHandles[6] = demoState->passes[0].shaderProgram->uColor;
+	demoState->passes[0].unifDataCounts[6] = 1;
+	a3vec4 skyBlueArr[] = { { 0.0f, 0.5f, 1.0f, 1.0f } };
+	a3real * skyBlue = skyBlueArr[0].v;
+	demoState->passes[0].sources[6] = skyBlue;	// this dyes everything blue...
+	demoState->passes[0].sourceFunctionFlags[6] = 0;
 
-	//HOW DO WE GET activeCamera->projectionMat.mm???
-	//flag and extra pointer for functions?
 	//shaderProgram
 	demoState->materials[0].passes[0] = &demoState->passes[0];
 

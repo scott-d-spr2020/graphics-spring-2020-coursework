@@ -17,7 +17,7 @@ a3ret drawPass(a3_DemoState const* demoState, const a3_VertexDrawable* drawable,
 	//a3framebufferBindDepthTexture(demoState->fbo_shadow_d32, a3tex_unit00); //this needs to be configurable because phong uses 06.
 	for (a3ui32 i = 0; i < pass->numUniforms; ++i)
 	{
-		void* source = pass->sourceFunctionFlags ? pass->sourceFunctions[i](demoState) : pass->sources[i];
+		void* source = pass->sourceFunctionFlags[i] ? pass->sourceFunctions[i](demoState) : pass->sources[i];
 		//start of loading uniforms, not sure what else I'm missing or if this works.
 		switch (pass->uniformFlags[i])
 		{
@@ -52,7 +52,57 @@ a3ret drawPass(a3_DemoState const* demoState, const a3_VertexDrawable* drawable,
 	return 0;
 }
 
-void* uniform_retrieveActiveCamera(a3_DemoState* demoState)
+a3_DemoProjector* getActiveCamera(a3_DemoState* demoState)
 {
-	return (void*)(demoState->projector + demoState->activeCamera);
+	return (demoState->projector + demoState->activeCamera);
+}
+
+void* uniform_retrieveActiveCamProjMat(a3_DemoState* demoState)
+{
+	return (void*)getActiveCamera(demoState)->projectionMat.mm;
+}
+
+void* uniform_retrieveActiveCamProjMatInv(a3_DemoState* demoState)
+{
+	return (void*)getActiveCamera(demoState)->projectionMatInv.mm;
+}
+
+void* uniform_retrieveActiveCamProjBiasMat(a3_DemoState* demoState)
+{
+	const a3mat4 bias = {
+		0.5f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.5f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.5f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f,
+	};
+
+	a3_DemoProjector* activeCamera = getActiveCamera(demoState);
+	a3mat4 viewProjectionBiasMat_other = demoState->shadowLight->viewProjectionMat;
+	a3mat4* projectionBiasMatPointer = malloc(sizeof(a3mat4));
+	*projectionBiasMatPointer = activeCamera->projectionMat;
+
+	a3real4x4ConcatR(bias.m, viewProjectionBiasMat_other.m);
+
+	a3real4x4Product(projectionBiasMatPointer->m, bias.m, activeCamera->projectionMat.m);
+	return (void*)projectionBiasMatPointer->mm;
+}
+
+void* uniform_retrieveActiveCamProjBiasMatInv(a3_DemoState* demoState)
+{
+	const a3mat4 unbias = {
+		 2.0f,  0.0f,  0.0f, 0.0f,
+		 0.0f,  2.0f,  0.0f, 0.0f,
+		 0.0f,  0.0f,  2.0f, 0.0f,
+		-1.0f, -1.0f, -1.0f, 1.0f,
+	};
+	a3_DemoProjector* activeCamera = getActiveCamera(demoState);
+	a3mat4 projectionBiasMat_inv = activeCamera->projectionMatInv;
+
+	a3real4x4Product(projectionBiasMat_inv.m, activeCamera->projectionMatInv.m, unbias.m);
+	return (void*)activeCamera->projectionMatInv.mm;
+}
+
+void* uniform_retrieveTotalRenderTime(a3_DemoState* demoState)
+{
+	return (void*)&demoState->renderTimer->totalTime;
 }

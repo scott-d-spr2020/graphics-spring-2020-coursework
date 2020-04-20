@@ -8,5 +8,9 @@ a3ret drawPass(a3_DemoState const* demoState, const a3_VertexDrawable* drawable,
 
 //uniform retrieval functions!
 
-void* uniform_retrieveActiveCamera(a3_DemoState* demoState);
+void* uniform_retrieveActiveCamProjMat(a3_DemoState* demoState);
+void* uniform_retrieveActiveCamProjMatInv(a3_DemoState* demoState);
+void* uniform_retrieveActiveCamProjBiasMat(a3_DemoState* demoState);
+void* uniform_retrieveActiveCamProjBiasMatInv(a3_DemoState* demoState);
+void* uniform_retrieveTotalRenderTime(a3_DemoState* demoState);
 #endif
