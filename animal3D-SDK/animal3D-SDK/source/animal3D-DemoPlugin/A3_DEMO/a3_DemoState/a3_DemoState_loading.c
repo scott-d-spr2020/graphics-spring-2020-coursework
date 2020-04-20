@@ -1838,9 +1838,12 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 	demoState->passes[0].uniformTypes[6] = a3unif_vec4;
 	demoState->passes[0].uniformHandles[6] = demoState->passes[0].shaderProgram->uColor;
 	demoState->passes[0].unifDataCounts[6] = 1;
-	a3vec4 skyBlueArr[] = { { 0.0f, 0.5f, 1.0f, 1.0f } };
-	a3real * skyBlue = skyBlueArr[0].v;
-	demoState->passes[0].sources[6] = skyBlue;	// this dyes everything blue...
+	a3vec4* skyBlueArr = malloc(sizeof(a3vec4));		//why
+	skyBlueArr->r = 0.0f;								//does
+	skyBlueArr->g = 0.5f;								//this
+	skyBlueArr->b = 1.0f;								//code
+	skyBlueArr->a = 1.0f;								//work
+	demoState->passes[0].sources[6] = skyBlueArr->v;	//?
 	demoState->passes[0].sourceFunctionFlags[6] = 0;
 
 	//shaderProgram

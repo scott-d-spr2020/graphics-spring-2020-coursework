@@ -59,8 +59,10 @@ extern "C"
 		uniformSwitch_Double = 2,
 		uniformSwitch_FloatMat = 3,
 		uniformSwitch_DoubleMat = 4,
-		uniformSwitch_Buffer = 5,
-		uniformSwitch_TextureUnit = 6
+		uniformSwitch_UniformBuffer = 5,
+		uniformSwitch_TextureUnit = 6,
+		uniformSwitch_DepthBuffer = 7,
+		uniformSwitch_ColorBuffer = 8
 	};
 
 	enum a3_MaterialTextureType

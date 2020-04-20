@@ -36,16 +36,19 @@ a3ret drawPass(a3_DemoState const* demoState, const a3_VertexDrawable* drawable,
 		case uniformSwitch_DoubleMat:
 			a3shaderUniformSendDoubleMat(pass->uniformTypes[i], 0, pass->uniformHandles[i], pass->unifDataCounts[i], (const a3f64*)source);
 			break;
-		case uniformSwitch_Buffer:
+		case uniformSwitch_UniformBuffer:
 			//if it's a uniform buffer, the handle is just the index to bind it at. Usually a 0, 1, or 4. I'm not sure how this would be programmatically solved.
 			//look up ubTransformStack and ubo_transformStack_model for more information.
 			a3shaderUniformBufferActivate((const a3_UniformBuffer*)source, pass->uniformHandles[i]);
 			break;
 		case uniformSwitch_TextureUnit:
-			assert(i != 0); //can't bind to a3tex_unit00 because that's the depth texture!
+			break;
+		case uniformSwitch_ColorBuffer:
 			//binds a source texture to the correct color unit
 			a3framebufferBindColorTexture((const a3_Framebuffer*)source, pass->uniformHandles[i], pass->unifSourceTargets[i]);
 			break;
+		case uniformSwitch_DepthBuffer:
+			a3framebufferBindDepthTexture((const a3_Framebuffer*)source, pass->uniformHandles[i]);
 		}
 	}
 	a3vertexDrawableActivateAndRender(drawable);
