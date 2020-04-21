@@ -1760,91 +1760,37 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 	demoState->materials[0].numPasses = 1; //arbitrary number for now
 	demoState->materials[0].passes = malloc(sizeof(a3_RenderPass) * demoState->materials[0].numPasses);
 	int uniformCount = 7;
-	demoState->passes[0].numUniforms = uniformCount;
-	demoState->passes[0].uniformHandles = malloc(sizeof(a3i32) * uniformCount);
-	demoState->passes[0].uniformTypes = malloc(sizeof(a3i32) * uniformCount);
-	demoState->passes[0].uniformFlags = malloc(sizeof(a3_UniformSwitch) * uniformCount);
-	demoState->passes[0].sources = malloc(sizeof(void*) * uniformCount);
-	demoState->passes[0].sourceFunctions = malloc(sizeof(a3_UnifFunction) * uniformCount);
-	demoState->passes[0].sourceFunctionFlags = malloc(sizeof(a3boolean) * uniformCount);
-	demoState->passes[0].unifDataCounts = malloc(sizeof(a3ui32) * uniformCount);
-	demoState->passes[0].unifSourceTargets = malloc(sizeof(a3ui32) * uniformCount);
-	
-	demoState->passes[0].writeFBO = demoState->fbo_scene_c16d24s8_mrt;
-	demoState->passes[0].shaderProgram = demoState->prog_drawPhong_multi_forward_mrt;
+
+	initRenderPass(&demoState->passes[0], uniformCount, demoState->fbo_scene_c16d24s8_mrt, demoState->prog_drawPhong_multi_forward_mrt);
 
 	// 474 uP
-	demoState->passes[0].uniformFlags[0] = uniformSwitch_FloatMat;
-	demoState->passes[0].uniformTypes[0] = a3unif_mat4;
-	demoState->passes[0].uniformHandles[0] = demoState->passes[0].shaderProgram->uP;
-	demoState->passes[0].unifDataCounts[0] = 1;
-	demoState->passes[0].sourceFunctions[0] = uniform_retrieveActiveCamProjMat;
-	demoState->passes[0].sourceFunctionFlags[0] = 1;
-
-	//uniformCount++;
+	addRenderUniform(&demoState->passes[0], 0, uniformSwitch_FloatMat, a3unif_mat4, demoState->passes[0].shaderProgram->uP, 1, NULL, uniform_retrieveActiveCamProjMat, 1);
 
 	// 475 uP_inv
-	demoState->passes[0].uniformFlags[1] = uniformSwitch_FloatMat;
-	demoState->passes[0].uniformTypes[1] = a3unif_mat4;
-	demoState->passes[0].uniformHandles[1] = demoState->passes[0].shaderProgram->uP_inv;
-	demoState->passes[0].unifDataCounts[1] = 1;
-	demoState->passes[0].sourceFunctions[1] = uniform_retrieveActiveCamProjMatInv;
-	demoState->passes[0].sourceFunctionFlags[1] = 1;
-
-	//uniformCount++;
+	addRenderUniform(&demoState->passes[0], 1, uniformSwitch_FloatMat, a3unif_mat4, demoState->passes[0].shaderProgram->uP_inv, 1, NULL, uniform_retrieveActiveCamProjMatInv, 1);
 
 	// 476 uPB (needs to get projectionBiasMat, which is calculated at 407 in idle render using active camera)
-	demoState->passes[0].uniformFlags[2] = uniformSwitch_FloatMat;
-	demoState->passes[0].uniformTypes[2] = a3unif_mat4;
-	demoState->passes[0].uniformHandles[2] = demoState->passes[0].shaderProgram->uPB;
-	demoState->passes[0].unifDataCounts[2] = 1;
-	demoState->passes[0].sourceFunctions[2] = uniform_retrieveActiveCamProjBiasMat;
-	demoState->passes[0].sourceFunctionFlags[2] = 1;
-
-	//uniformCount++;
+	addRenderUniform(&demoState->passes[0], 2, uniformSwitch_FloatMat, a3unif_mat4, demoState->passes[0].shaderProgram->uPB, 1, NULL, uniform_retrieveActiveCamProjBiasMat, 1);
 
 	// 477 uPB_inv (needs to get projectionBiasMatInv, which is calculated at 408 in idle render using active camera)
-	demoState->passes[0].uniformFlags[3] = uniformSwitch_FloatMat;
-	demoState->passes[0].uniformTypes[3] = a3unif_mat4;
-	demoState->passes[0].uniformHandles[3] = demoState->passes[0].shaderProgram->uPB_inv;
-	demoState->passes[0].unifDataCounts[3] = 1;
-	demoState->passes[0].sourceFunctions[3] = uniform_retrieveActiveCamProjBiasMatInv;
-	demoState->passes[0].sourceFunctionFlags[3] = 1;
-
-	//uniformCount++;
+	addRenderUniform(&demoState->passes[0], 3, uniformSwitch_FloatMat, a3unif_mat4, demoState->passes[0].shaderProgram->uPB_inv, 1, NULL, uniform_retrieveActiveCamProjBiasMatInv, 1);
 
 	// 478 uAtlas
-	demoState->passes[0].uniformFlags[4] = uniformSwitch_FloatMat;
-	demoState->passes[0].uniformTypes[4] = a3unif_mat4;
-	demoState->passes[0].uniformHandles[4] = demoState->passes[0].shaderProgram->uAtlas;
-	demoState->passes[0].unifDataCounts[4] = 1;
-	demoState->passes[0].sources[4] = (void*) a3mat4_identity.mm;	 // it doesn't like the overflow here, and I don't know enough about void*
-	demoState->passes[0].sourceFunctionFlags[4] = 0;
-
-	//uniformCount++;
+	addRenderUniform(&demoState->passes[0], 4, uniformSwitch_FloatMat, a3unif_mat4, demoState->passes[0].shaderProgram->uAtlas, 1, (void*)a3mat4_identity.mm, NULL, 0);
 
 	// 479 uTime
-	demoState->passes[0].uniformFlags[5] = uniformSwitch_Double;
-	demoState->passes[0].uniformTypes[5] = a3unif_single;
-	demoState->passes[0].uniformHandles[5] = demoState->passes[0].shaderProgram->uTime;
-	demoState->passes[0].unifDataCounts[5] = 1;
-	demoState->passes[0].sourceFunctions[5] = uniform_retrieveTotalRenderTime;
-	demoState->passes[0].sourceFunctionFlags[5] = 1;
+	addRenderUniform(&demoState->passes[0], 5, uniformSwitch_Double, a3unif_single, demoState->passes[0].shaderProgram->uTime, 1, NULL, uniform_retrieveTotalRenderTime, 1);
 
-	//uniformCount++;
 
 	// 480 uColor
-	demoState->passes[0].uniformFlags[6] = uniformSwitch_Float;
-	demoState->passes[0].uniformTypes[6] = a3unif_vec4;
-	demoState->passes[0].uniformHandles[6] = demoState->passes[0].shaderProgram->uColor;
-	demoState->passes[0].unifDataCounts[6] = 1;
 	a3vec4* skyBlueArr = malloc(sizeof(a3vec4));		//why
 	skyBlueArr->r = 0.0f;								//does
 	skyBlueArr->g = 0.5f;								//this
 	skyBlueArr->b = 1.0f;								//code
-	skyBlueArr->a = 1.0f;								//work
-	demoState->passes[0].sources[6] = skyBlueArr->v;	//?
-	demoState->passes[0].sourceFunctionFlags[6] = 0;
+	skyBlueArr->a = 1.0f;								//work?
+	addRenderUniform(&demoState->passes[0], 6, uniformSwitch_Float, a3unif_vec4, demoState->passes[0].shaderProgram->uColor, 1, skyBlueArr->v, NULL, 0);
+
+	addRenderUniform(&demoState->passes[0], 6, uniformSwitch_TextureUnit, -1, a3tex_unit04, 1, demoState->tex_ramp_dm, NULL, 0);
 
 	//shaderProgram
 	demoState->materials[0].passes[0] = &demoState->passes[0];

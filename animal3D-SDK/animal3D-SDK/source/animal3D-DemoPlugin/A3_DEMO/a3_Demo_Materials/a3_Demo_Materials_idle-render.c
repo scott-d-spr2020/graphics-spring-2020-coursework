@@ -478,7 +478,7 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 	//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
 	//a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->renderTimer->totalTime);
 	//a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
-	a3textureActivate(demoState->tex_ramp_dm, a3tex_unit04);
+	//a3textureActivate(demoState->tex_ramp_dm, a3tex_unit04); is this unnecessary...?
 	a3textureActivate(demoState->tex_ramp_sm, a3tex_unit05);
 
 

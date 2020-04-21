@@ -1,6 +1,35 @@
 #include "..\a3_DemoMaterialUtils.h"
 #include <assert.h>
 
+a3ret initRenderPass(a3_RenderPass* pass, a3ui32 uniformCount, a3_Framebuffer* writeFBO, a3_DemoStateShaderProgram* shaderProgram)
+{
+	pass->numUniforms = uniformCount;
+	pass->uniformHandles = malloc(sizeof(a3i32) * uniformCount);
+	pass->uniformTypes = malloc(sizeof(a3i32) * uniformCount);
+	pass->uniformFlags = malloc(sizeof(a3_UniformSwitch) * uniformCount);
+	pass->sources = malloc(sizeof(void*) * uniformCount);
+	pass->sourceFunctions = malloc(sizeof(a3_UnifFunction) * uniformCount);
+	pass->sourceFunctionFlags = malloc(sizeof(a3boolean) * uniformCount);
+	pass->unifDataCounts = malloc(sizeof(a3ui32) * uniformCount);
+	pass->unifSourceTargets = malloc(sizeof(a3ui32) * uniformCount);
+	pass->writeFBO = writeFBO;
+	pass->shaderProgram = shaderProgram;
+	return 0;
+}
+
+a3ret addRenderUniform(a3_RenderPass* pass, int unifIndex, a3_UniformSwitch unifSwitch, a3i32 unifType, a3i32 unifHandle, a3ui32 count, void* source, a3_UnifFunction sourceFunction, a3boolean functionFlag)
+{
+	pass->uniformFlags[unifIndex] = unifSwitch;
+	pass->uniformTypes[unifIndex] = unifType;
+	pass->uniformTypes[unifIndex] = unifType;
+	pass->uniformHandles[unifIndex] = unifHandle;
+	pass->unifDataCounts[unifIndex] = count;
+	pass->sources[unifIndex] = source;
+	pass->sourceFunctions[unifIndex] = sourceFunction;
+	pass->sourceFunctionFlags[unifIndex] = functionFlag;
+	return 0;
+}
+
 a3ret drawMaterial(a3_DemoState const* demoState, const a3_VertexDrawable* drawable, const a3_RenderMaterial* mat)
 {
 	for (a3ui32 i = 0; i < mat->numPasses; ++i)
@@ -42,6 +71,7 @@ a3ret drawPass(a3_DemoState const* demoState, const a3_VertexDrawable* drawable,
 			a3shaderUniformBufferActivate((const a3_UniformBuffer*)source, pass->uniformHandles[i]);
 			break;
 		case uniformSwitch_TextureUnit:
+			a3textureActivate((const a3_Texture*)source, pass->uniformHandles[i]);
 			break;
 		case uniformSwitch_ColorBuffer:
 			//binds a source texture to the correct color unit
