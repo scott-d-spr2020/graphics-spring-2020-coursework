@@ -220,7 +220,13 @@
       <Filter>Source Files\common\A3_DEMO\a3_Demo_Materials</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\_src\a3_DemoMaterialUtils.c">
-      <Filter>Source Files\common\A3_DEMO\_a3_demo_utilities\_src</Filter>
+      <Filter>Source Files\common\A3_DEMO\_a3_demo_utilities\_src\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\_src\materials\a3_RenderMaterial.c">
+      <Filter>Source Files\common\A3_DEMO\_a3_demo_utilities\_src\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\_src\materials\a3_MaterialEditor.c">
+      <Filter>Source Files\common\A3_DEMO\_a3_demo_utilities\_src\materials</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -274,6 +280,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\a3_DemoMaterialUtils.h">
       <Filter>Header Files\A3_DEMO\_a3_demo_utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\materials\a3_RenderPass.h">
+      <Filter>Header Files\A3_DEMO\_a3_demo_utilities\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\animal3D-DemoPlugin\A3_DEMO\_a3_demo_utilities\materials\a3_MaterialEditor.h">
+      <Filter>Header Files\A3_DEMO\_a3_demo_utilities\materials</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

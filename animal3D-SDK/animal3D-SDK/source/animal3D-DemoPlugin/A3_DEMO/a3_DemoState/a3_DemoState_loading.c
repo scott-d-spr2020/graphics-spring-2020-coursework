@@ -81,6 +81,7 @@
 
 #include "..//_a3_demo_utilities/a3_DemoSSAOUtils.h"
 #include "../_a3_demo_utilities/a3_DemoMaterialUtils.h"
+#include "../_a3_demo_utilities/materials/a3_MaterialEditor.h"
 
 
 //-----------------------------------------------------------------------------
@@ -1755,16 +1756,6 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	a3hierarchyStateCreate(hierarchyState, hierarchyPoseGroup);
 }
 
-a3i32 materialParser(a3_RenderMaterial* mat,  a3byte const *data)
-{
-	//sizeof(char) == sizeof(byte);
-	//Uniforms = 3
-	//	Uniform
-	//	Uniform
-	//	Uniform
-	//	Material
-	//	Material
-}
 
 void a3demo_loadMaterials(a3_DemoState* demoState)
 {
@@ -1773,8 +1764,9 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 	if (a3streamLoadContents(fs, "../temp_notarealfile.txt") > 0)
 	{
 		a3_RenderMaterial rm[1] = { 0 };
-		a3streamObjectRead(fs, rm, materialParser);
+		a3streamObjectRead(fs, rm, (a3_StreamReadFunc)a3materialParseFile);
 	}
+
 	demoState->materials[0].numPasses = 1; //arbitrary number for now
 	demoState->materials[0].passes = malloc(sizeof(a3_RenderPass) * demoState->materials[0].numPasses);
 	int uniformCount = 14;
