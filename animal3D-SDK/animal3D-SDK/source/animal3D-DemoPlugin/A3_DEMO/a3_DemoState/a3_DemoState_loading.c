@@ -1755,11 +1755,29 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	a3hierarchyStateCreate(hierarchyState, hierarchyPoseGroup);
 }
 
+a3i32 materialParser(a3_RenderMaterial* mat,  a3byte const *data)
+{
+	//sizeof(char) == sizeof(byte);
+	//Uniforms = 3
+	//	Uniform
+	//	Uniform
+	//	Uniform
+	//	Material
+	//	Material
+}
+
 void a3demo_loadMaterials(a3_DemoState* demoState)
 {
+	//File loading
+	a3_Stream fs[1] = { 0 }; //is this memset?
+	if (a3streamLoadContents(fs, "../temp_notarealfile.txt") > 0)
+	{
+		a3_RenderMaterial rm[1] = { 0 };
+		a3streamObjectRead(fs, rm, materialParser);
+	}
 	demoState->materials[0].numPasses = 1; //arbitrary number for now
 	demoState->materials[0].passes = malloc(sizeof(a3_RenderPass) * demoState->materials[0].numPasses);
-	int uniformCount = 7;
+	int uniformCount = 14;
 
 	initRenderPass(&demoState->passes[0], uniformCount, demoState->fbo_scene_c16d24s8_mrt, demoState->prog_drawPhong_multi_forward_mrt);
 
@@ -1790,7 +1808,19 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 	skyBlueArr->a = 1.0f;								//work?
 	addRenderUniform(&demoState->passes[0], 6, uniformSwitch_Float, a3unif_vec4, demoState->passes[0].shaderProgram->uColor, 1, skyBlueArr->v, NULL, 0);
 
-	addRenderUniform(&demoState->passes[0], 6, uniformSwitch_TextureUnit, -1, a3tex_unit04, 1, demoState->tex_ramp_dm, NULL, 0);
+	addRenderUniform(&demoState->passes[0], 7, uniformSwitch_TextureUnit, -1, a3tex_unit04, 1, demoState->tex_ramp_dm, NULL, 0);
+	
+	addRenderUniform(&demoState->passes[0], 8, uniformSwitch_TextureUnit, -1, a3tex_unit05, 1, demoState->tex_ramp_sm, NULL, 0);
+
+	addRenderUniform(&demoState->passes[0], 9, uniformSwitch_DepthBuffer, -1, a3tex_unit06, 1, demoState->fbo_shadow_d32, NULL, 0);
+
+	addRenderUniform(&demoState->passes[0], 10, uniformSwitch_TextureUnit, -1, a3tex_unit07, 1, demoState->tex_earth_dm, NULL, 0);
+
+	addRenderUniform(&demoState->passes[0], 11, uniformSwitch_Int, a3unif_single, demoState->passes[0].shaderProgram->uLightCt, 1, &demoState->forwardLightCount, NULL, 0);
+
+	addRenderUniform(&demoState->passes[0], 12, uniformSwitch_UniformBuffer, -1, 0, 1, demoState->ubo_transformStack_model, NULL, 0);
+	
+	addRenderUniform(&demoState->passes[0], 13, uniformSwitch_UniformBuffer, -1, 4, 1, demoState->ubo_pointLight, NULL, 0);
 
 	//shaderProgram
 	demoState->materials[0].passes[0] = &demoState->passes[0];

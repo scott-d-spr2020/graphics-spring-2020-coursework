@@ -478,8 +478,8 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 	//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
 	//a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->renderTimer->totalTime);
 	//a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
-	//a3textureActivate(demoState->tex_ramp_dm, a3tex_unit04); is this unnecessary...?
-	a3textureActivate(demoState->tex_ramp_sm, a3tex_unit05);
+	//a3textureActivate(demoState->tex_ramp_dm, a3tex_unit04);
+	//a3textureActivate(demoState->tex_ramp_sm, a3tex_unit05);
 
 
 	// select pipeline algorithm
@@ -490,13 +490,13 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 	case materials_forward: {
 		// activate shadow map and other relevant textures
 		currentReadFBO = demoState->fbo_shadow_d32;
-		a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit06);
-		a3textureActivate(demoState->tex_earth_dm, a3tex_unit07);
-
-		// send more common uniforms
-		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
-		a3shaderUniformBufferActivate(demoState->ubo_transformStack_model, 0);
-		a3shaderUniformBufferActivate(demoState->ubo_pointLight, 4);
+		//a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit06);
+		//a3textureActivate(demoState->tex_earth_dm, a3tex_unit07);
+		//
+		//// send more common uniforms
+		//a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
+		//a3shaderUniformBufferActivate(demoState->ubo_transformStack_model, 0);
+		//a3shaderUniformBufferActivate(demoState->ubo_pointLight, 4);
 
 		// individual object requirements: 
 		//	- modelviewprojection
