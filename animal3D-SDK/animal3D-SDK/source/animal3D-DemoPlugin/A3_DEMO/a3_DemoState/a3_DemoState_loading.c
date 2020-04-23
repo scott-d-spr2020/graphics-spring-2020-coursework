@@ -1761,9 +1761,11 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 {
 	//File loading
 	a3_Stream fs[1] = { 0 }; //is this memset?
-	if (a3streamLoadContents(fs, "../temp_notarealfile.txt") > 0)
+	a3_RenderMaterial rm[1] = { 0 };
+	a3ui32 fileLength = a3streamLoadContents(fs, "../../../../resource/materials/testmat.txt");
+
+	if (fileLength > 0)
 	{
-		a3_RenderMaterial rm[1] = { 0 };
 		a3streamObjectRead(fs, rm, (a3_StreamReadFunc)a3materialParseFile);
 	}
 

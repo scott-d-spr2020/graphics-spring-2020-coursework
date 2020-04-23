@@ -30,6 +30,7 @@
 #include "animal3D/a3/a3types_integer.h"
 #include "animal3D/a3utility/a3_Stream.h"
 #include "a3_RenderMaterial.h"
+#include "..//a3_DemoMaterialUtils.h"
 
 
 #ifdef __cplusplus
@@ -43,7 +44,12 @@ extern "C"
 
 //-----------------------------------------------------------------------------
 
+
 void a3materialParseFile(a3_RenderMaterial* mat, a3byte const* data);
+
+void a3materialParserHandleKeyword(const a3byte* keyword, const a3byte* data, a3_RenderMaterial* mat);
+
+void a3materialParserHandleProgram(const a3byte* data, a3_RenderMaterial* mat);
 
 
 //-----------------------------------------------------------------------------
