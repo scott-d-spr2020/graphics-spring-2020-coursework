@@ -1,2 +1,4 @@
 shaderprogram
 	prog:draw-Phong-mul-fwd-mrt
+texture
+	testpath.png

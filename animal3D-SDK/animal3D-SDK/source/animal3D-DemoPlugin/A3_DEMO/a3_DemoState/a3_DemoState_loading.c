@@ -1764,9 +1764,14 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 	a3_RenderMaterial rm[1] = { 0 };
 	a3ui32 fileLength = a3streamLoadContents(fs, "../../../../resource/materials/testmat.txt");
 
+	ParserData* tempParserData = malloc(sizeof(ParserData));
+	tempParserData->state = demoState;
+	tempParserData->mat = rm;
+	tempParserData->numUnifs = 14;
+
 	if (fileLength > 0)
 	{
-		a3streamObjectRead(fs, rm, (a3_StreamReadFunc)a3materialParseFile);
+		a3streamObjectRead(fs, tempParserData, (a3_StreamReadFunc)a3materialParseFile);
 	}
 
 	demoState->materials[0].numPasses = 1; //arbitrary number for now

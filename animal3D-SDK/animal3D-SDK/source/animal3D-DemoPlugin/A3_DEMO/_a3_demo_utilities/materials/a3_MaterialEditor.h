@@ -37,19 +37,29 @@
 extern "C"
 {
 #else	// !__cplusplus
-	//typedef struct a3_Hierarchy				a3_Hierarchy;
-	//typedef struct a3_HierarchyNode			a3_HierarchyNode;
+	typedef struct ParserData				ParserData;
 #endif	// __cplusplus
 
 
 //-----------------------------------------------------------------------------
 
 
-void a3materialParseFile(a3_RenderMaterial* mat, a3byte const* data);
+struct ParserData
+{
+	a3_DemoState* state;
+	a3_RenderMaterial* mat;
+	int* numUnifs;
+};
 
-void a3materialParserHandleKeyword(const a3byte* keyword, const a3byte* data, a3_RenderMaterial* mat);
 
-void a3materialParserHandleProgram(const a3byte* data, a3_RenderMaterial* mat);
+
+void a3materialParseFile(ParserData* parserData, a3byte const* data);
+
+void a3materialParserHandleKeyword(const a3byte* keyword, const a3byte* data, ParserData* pData);
+
+void a3materialParserHandleProgram(const a3byte* data, ParserData* pData);
+
+void a3materialParserHandleTexture(const a3byte* data, ParserData* pData);
 
 
 //-----------------------------------------------------------------------------
