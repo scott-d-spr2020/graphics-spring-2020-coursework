@@ -282,28 +282,25 @@ void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* 
 
 	// temp drawable pointers
 	const a3_VertexDrawable* drawable[] = {
-		demoState->draw_plane,
-		demoState->draw_sphere,
-		demoState->draw_cylinder,
-		demoState->draw_torus,
 		demoState->draw_teapot,
 	};
 
 	// temp texture pointers
 	const a3_Texture* texture_dm[] = {
-		demoState->tex_stone_dm,
-		demoState->tex_earth_dm,
-		demoState->tex_stone_dm,
-		demoState->tex_mars_dm,
-		demoState->tex_checker,
+		demoState->tex_crateColor,
 	};
 	const a3_Texture* texture_sm[] = {
-		demoState->tex_stone_dm,
-		demoState->tex_earth_sm,
-		demoState->tex_stone_dm,
-		demoState->tex_mars_sm,
-		demoState->tex_checker,
+		demoState->tex_crateMetal,
 	};
+
+	const a3_Texture* texture_nm[] = {
+		demoState->tex_crateNormal,
+	};
+
+	const a3_Texture* texture_r[] = {
+		demoState->tex_crateRough,
+	};
+
 
 	// temp texture atlas matrix pointers
 	const a3mat4* atlas[] = {
@@ -317,7 +314,7 @@ void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* 
 	// forward pipeline shader programs
 	const a3_DemoStateShaderProgram* renderProgram[keyframes_pipeline_max][keyframes_render_max] = {
 		{
-			demoState->prog_drawPhong_multi_forward_mrt,
+			demoState->prog_drawPBR_instanced,
 		},
 	};
 
@@ -427,7 +424,7 @@ void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* 
 	currentDemoProgram = demoState->prog_transform;
 	a3shaderProgramActivate(currentDemoProgram->program);
 	for (k = 0,
-		currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject;
+		currentSceneObject = demoState->teapotObject, endSceneObject = demoState->teapotObject;
 		currentSceneObject <= endSceneObject;
 		++k, ++currentSceneObject)
 		a3demo_drawModelSimple_activateModel(modelViewProjectionMat.m, activeShadowCaster->viewProjectionMat.m, currentSceneObject->modelMat.m, currentDemoProgram, drawable[k]);
@@ -477,8 +474,8 @@ void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* 
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
 	a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->renderTimer->totalTime);
 	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
-	a3textureActivate(demoState->tex_ramp_dm, a3tex_unit04);
-	a3textureActivate(demoState->tex_ramp_sm, a3tex_unit05);
+	//a3textureActivate(demoState->tex_ramp_dm, a3tex_unit04);
+	//a3textureActivate(demoState->tex_ramp_sm, a3tex_unit05);
 
 
 	// select pipeline algorithm
@@ -490,7 +487,7 @@ void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* 
 		// activate shadow map and other relevant textures
 		currentReadFBO = demoState->fbo_shadow_d32;
 		a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit06);
-		a3textureActivate(demoState->tex_earth_dm, a3tex_unit07);
+		//a3textureActivate(demoState->tex_earth_dm, a3tex_unit07);
 
 		// send more common uniforms
 		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
@@ -502,14 +499,15 @@ void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* 
 		//	- modelview
 		//	- modelview for normals
 		//	- per-object animation data
-		for (currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject,
+		for (currentSceneObject = demoState->teapotObject, endSceneObject = demoState->teapotObject,
 			j = (a3ui32)(currentSceneObject - demoState->sceneObject), k = 0;
 			currentSceneObject <= endSceneObject;
 			++j, ++k, ++currentSceneObject)
 		{
 			// send data and draw
 			a3textureActivate(texture_dm[k], a3tex_unit00);
-			a3textureActivate(texture_sm[k], a3tex_unit01);
+			a3textureActivate(texture_nm[k], a3tex_unit01);
+			a3textureActivate(texture_sm[k], a3tex_unit02);
 			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
 			a3vertexDrawableActivateAndRender(drawable[k]);
 		}

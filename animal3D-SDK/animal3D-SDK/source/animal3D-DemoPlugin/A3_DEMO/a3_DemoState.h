@@ -117,10 +117,10 @@ extern "C"
 		demoStateMaxCount_vertexArray = 8,
 		demoStateMaxCount_drawable = 16,
 
-		demoStateMaxCount_shaderProgram = 32,
+		demoStateMaxCount_shaderProgram = 40,
 		demoStateMaxCount_uniformBuffer = demoStateMaxCount_lightUniformBuffer + demoStateMaxCount_transformUniformBuffer + demoStateMaxCount_miscUniformBuffer,
 
-		demoStateMaxCount_texture = 16,
+		demoStateMaxCount_texture = 32,
 
 		demoStateMaxCount_framebuffer = 16,
 	};
@@ -396,6 +396,8 @@ extern "C"
 					prog_drawColorizedHierarchy_instanced[1],	// draw instanced hierarchical model with colorization per instance
 					prog_drawPhong_multi_forward_mrt_morph[1],	// draw Phong with forward point lights and MRT with morphing
 					prog_drawOverlays_tb_wf_morph[1];			// draw overlays on morphed mesh
+				a3_DemoStateShaderProgram
+					prog_drawPBR_instanced[1];
 			};
 		};
 
@@ -419,7 +421,11 @@ extern "C"
 					tex_checker[1],
 					tex_SSAONoise[1],
 					tex_crossHatchLower[1],
-					tex_crossHatchUpper[1];
+					tex_crossHatchUpper[1],
+					tex_crateColor[1],
+					tex_crateNormal[1],
+					tex_crateMetal[1],
+					tex_crateRough[1];
 			};
 		};
 

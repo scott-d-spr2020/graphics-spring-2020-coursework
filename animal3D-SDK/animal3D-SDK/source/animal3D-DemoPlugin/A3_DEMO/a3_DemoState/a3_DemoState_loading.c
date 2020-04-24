@@ -235,15 +235,15 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 		a3_ProceduralGeometryDescriptor hiddenShapes[3] = { a3geomShape_none };
 		a3_ProceduralGeometryDescriptor proceduralShapes[4] = { a3geomShape_none };
 		const a3_DemoStateLoadedModel loadedShapes[1] = {
-			{ A3_DEMO_OBJ"teapot/teapot.obj", downscale20x.mm, a3model_calculateVertexTangents },
+			{ A3_DEMO_OBJ"Crate_OBJ.obj", downscale20x.mm, a3model_calculateVertexTangents },
 		};
-		const a3_DemoStateLoadedModel morphShapes[5] = {
+		/*const a3_DemoStateLoadedModel morphShapes[5] = {
 			{ A3_DEMO_OBJ"teapot/morph/teapot_base.obj", downscale20x.mm, a3model_calculateVertexTangents },
 			{ A3_DEMO_OBJ"teapot/morph/teapot_scale.obj", downscale20x.mm, a3model_calculateVertexTangents },
 			{ A3_DEMO_OBJ"teapot/morph/teapot_scale_x.obj", downscale20x.mm, a3model_calculateVertexTangents },
 			{ A3_DEMO_OBJ"teapot/morph/teapot_scale_y.obj", downscale20x.mm, a3model_calculateVertexTangents },
 			{ A3_DEMO_OBJ"teapot/morph/teapot_scale_z.obj", downscale20x.mm, a3model_calculateVertexTangents },
-		};
+		};*/
 
 		const a3ubyte lightVolumeSlices = 8, lightVolumeStacks = 6;
 		const a3real lightVolumeRadius = a3real_one;
@@ -292,12 +292,12 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 			a3fileStreamWriteObject(fileStream, loadedModelsData + i, (a3_FileStreamWriteFunc)a3geometrySaveDataBinary);
 		}
 
-		// morph targets loaded from mesh files
-		for (i = 0; i < morphModelsCount; ++i)
-		{
-			a3modelLoadOBJ(morphModelsData + i, morphShapes[i].filePath, morphShapes[i].flag, morphShapes[i].transform);
-			a3fileStreamWriteObject(fileStream, morphShapes + i, (a3_FileStreamWriteFunc)a3geometrySaveDataBinary);
-		}
+		//// morph targets loaded from mesh files
+		//for (i = 0; i < morphModelsCount; ++i)
+		//{
+		//	a3modelLoadOBJ(morphModelsData + i, morphShapes[i].filePath, morphShapes[i].flag, morphShapes[i].transform);
+		//	a3fileStreamWriteObject(fileStream, morphShapes + i, (a3_FileStreamWriteFunc)a3geometrySaveDataBinary);
+		//}
 
 		// done
 		a3fileStreamClose(fileStream);
@@ -468,6 +468,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			a3_DemoStateShader
 				passColor_hierarchy_transform_instanced_vs[1],
 				passTangentBasis_transform_instanced_morph_vs[1];
+			a3_DemoStateShader
+				pbr_instanced_vs[1];
 
 			// geometry shaders
 			// 07-curves
@@ -517,6 +519,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 07-curves
 			a3_DemoStateShader
 				drawPhong_multi_forward_mrt_fs[1];
+			a3_DemoStateShader
+				drawPBR_multi_forward_mrt_fs[1];
 		};
 	} shaderList = {
 		{
@@ -545,6 +549,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 07-keyframes
 			{ { { 0 },	"shdr-vs:pass-col-hierarchy-t-i",	a3shader_vertex  ,	1,{ A3_DEMO_VS"07-keyframes/passColor_hierarchy_transform_instanced_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-tb-trans-morph",		a3shader_vertex  ,	1,{ A3_DEMO_VS"07-keyframes/passTangentBasis_transform_instanced_morph_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pbr-instanced",			a3shader_vertex  ,	1,{ A3_DEMO_VS"FINAL/pbr_instanced_vs4x.glsl" } } },
 
 			// gs
 			// 07-curves
@@ -585,6 +590,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-SSAO-def",			a3shader_fragment,	1,{ A3_DEMO_FS"midterm-SSAO-Cross/drawSSAO_multi_deferred_fs4x.glsl" } } },
 			// 07-curves
 			{ { { 0 },	"shdr-fs:draw-Phong-mul-fwd-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"07-curves/drawPhong_multi_forward_mrt_fs4x.glsl" } } },
+
+			{ { { 0 },	"shdr-fs:draw-PBR-mul-fwd-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"FINAL/drawPBR_multi_forward_mrt_fs4x.glsl" } } },
 			
 		}
 	};
@@ -806,6 +813,10 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passColor_hierarchy_transform_instanced_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
 
+	currentDemoProg = demoState->prog_drawPBR_instanced;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-pbr-inst");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.pbr_instanced_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPBR_multi_forward_mrt_fs->shader);
 
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs
@@ -972,6 +983,10 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			a3_DemoStateTexture texChecker[1];
 			a3_DemoStateTexture texCrossHatchLower[1];
 			a3_DemoStateTexture texCrossHatchUpper[1];
+			a3_DemoStateTexture texCrateColor[1];
+			a3_DemoStateTexture texCrateNorm[1];
+			a3_DemoStateTexture texCrateMetal[1];
+			a3_DemoStateTexture texCrateRough[1];
 		};
 	} textureList = {
 		{
@@ -989,6 +1004,10 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			{ demoState->tex_checker,		"tex:checker",		"../../../../resource/tex/sprite/checker.png" },
 			{ demoState->tex_crossHatchLower,"tex:crossDown",	"../../../../resource/tex/sprite/hatchdarkest.png" },
 			{ demoState->tex_crossHatchUpper,"tex:crossUp",		"../../../../resource/tex/sprite/hatchbrightest.png" },
+			{ demoState->tex_crateColor     ,"tex:cratecol",	"../../../../resource/tex/crate/crate4_low_lambert1_BaseColor.tga" },
+			{ demoState->tex_crateNormal,	 "tex:cratenorm",	"../../../../resource/tex/crate/crate4_low_lambert1_Normal.tga" },
+			{ demoState->tex_crateMetal,	 "tex:crateMetal",	"../../../../resource/tex/crate/crate4_low_lambert1_Metallic.tga" },
+			{ demoState->tex_crateRough,	 "tex:crateRough",	"../../../../resource/tex/crate/crate4_low_lambert1_Roughness.tga" },
 		}
 	};
 	const a3ui32 numTextures = sizeof(textureList) / sizeof(a3_DemoStateTexture);

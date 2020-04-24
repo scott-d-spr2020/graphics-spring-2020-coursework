@@ -418,5 +418,11 @@
     <None Include="..\..\..\resource\glsl\4x\vs\04-multipass\passLightingData_shadowmat_transform_vs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\vs\04-multipass</Filter>
     </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\FINAL\drawPBR_multi_forward_mrt_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\FINAL\pbr_isntanced_vs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\vs</Filter>
+    </None>
   </ItemGroup>
 </Project>
