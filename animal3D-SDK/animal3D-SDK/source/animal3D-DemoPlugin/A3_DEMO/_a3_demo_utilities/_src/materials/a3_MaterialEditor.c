@@ -9,6 +9,14 @@ a3byte const* keywords[3] = {
 	"renderpackage"
 };
 
+a3byte const* texTypeStrings[4] =
+{
+	"color",
+	"normal",
+	"metallic",
+	"roughness"
+};
+
 a3byte const* shaderProgNames[32] = {
 	"prog:draw-Phong-mul-fwd-mrt",
 	"prog:draw-nonphoto-multi-mrt"
@@ -17,8 +25,8 @@ a3byte const* shaderProgNames[32] = {
 
 void a3materialParseFile(ParserData* pData, a3byte const* data)
 {
-	pData->mat->numPasses = 1; //Arbitrary for now, should we define it in the file?
-	pData->mat->passes = malloc(sizeof(a3_RenderPass) * pData->mat->numPasses);
+	pData->state->materials[0].numPasses = 1; //Arbitrary for now, should we define it in the file?
+	pData->state->materials[0].passes = malloc(sizeof(a3_RenderPass) * pData->mat->numPasses);
 
 	char* token;
 
@@ -51,11 +59,11 @@ void a3materialParserHandleKeyword(const a3byte* keyword, const a3byte* data, Pa
 	{
 		a3materialParserHandleProgram(data, pData);
 	}
-	else if (keyword = keywords[1])
+	else if (keyword == keywords[1])
 	{
-		
+		a3materialParserHandleTexture(data, pData);
 	}
-	else if (keyword = keywords[2])
+	else if (keyword == keywords[2])
 	{
 		
 	}
@@ -64,22 +72,40 @@ void a3materialParserHandleKeyword(const a3byte* keyword, const a3byte* data, Pa
 void a3materialParserHandleProgram(const a3byte* data, ParserData* pData)
 {
 	// Need to figure out better way of defining number of program names and keywords
+
 	for (int i = 0; i < 2; i++)
 	{
 		if (strstr((char*)data, (char*)shaderProgNames[i]))
 		{
-			initRenderPass(pData->mat->passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawPhong_multi_forward_mrt);
+			initRenderPass(&pData->state->passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawPhong_multi_forward_mrt);
 			break;
 		}
 	}
 }
 
+// Data here will contain the texture type and the file path under the resource folder (we'll require it to be in the resources folder somewhere), separated by a space
 void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 {
 	// This will LOAD in a texture from file just like it does in loading, BUT...
 	// we need each material to have its own set of texture handles (like demoState).
 	// These would be tex_color, tex_normal, tex_metallic, tex_roughness, etc.
-	// This means we can probably ditch the a3_MaterialTexture stuff
 	// Refer to 994-1004 in demoState loading for what I think we should do
 	// This way, we can dynamically load in textures, and not have to worry about demoState having handles
+
+	char* texType = strtok((char*)data, " ");
+	char* filePath = strtok(NULL, "\n");
+	char* relativePath = "../../../../resource/";
+
+	filePath = strcat(relativePath, filePath);
+
+	printf("%s", filePath);
+
+	if (strstr(texType, texTypeStrings[0]))
+	{
+		a3textureCreateFromFile(pData->mat->matTex_color, "tex:material-color", filePath);
+		a3textureActivate(pData->mat->matTex_color, a3tex_unit00);
+		a3textureDefaultSettings();
+	}
+
+	a3textureDeactivate(a3tex_unit00);
 }

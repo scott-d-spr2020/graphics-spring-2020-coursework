@@ -96,7 +96,23 @@ extern "C"
 	struct a3_RenderMaterial
 	{
 		a3_RenderPass** passes;						//array of POINTERS to render passes. Not sure if passes can be reused yet. Probably?
-		a3_MaterialTexture maps[a3tex_unitMax];		//TODO array of maps for each pass. Needs restructuring probably. Maybe map[] and a bitstring that's sizeof(passes)/sizeof(passes[0]) long?
+
+		//TODO array of maps for each pass. Needs restructuring probably. Maybe map[] and a bitstring that's sizeof(passes)/sizeof(passes[0]) long?
+
+		// This is the way it's done in demoState.h
+		union
+		{
+			a3_Texture maps[a3tex_unitMax];
+			struct
+			{
+				a3_Texture
+					matTex_color[1],
+					matTex_normal[1],
+					matTex_metallic[1],
+					matTex_roughness[1];
+			};
+		};
+
 		a3ui32 numPasses;
 		a3ui32 numMaps;
 	};

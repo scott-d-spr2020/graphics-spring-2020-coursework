@@ -1,4 +1,4 @@
 shaderprogram
 	prog:draw-Phong-mul-fwd-mrt
 texture
-	testpath.png
+	color tex/crate/crate4_low_lambert1_BaseColor.tga

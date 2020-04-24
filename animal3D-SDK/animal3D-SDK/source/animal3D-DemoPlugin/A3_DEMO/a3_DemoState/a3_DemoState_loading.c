@@ -1764,10 +1764,12 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 	a3_RenderMaterial rm[1] = { 0 };
 	a3ui32 fileLength = a3streamLoadContents(fs, "../../../../resource/materials/testmat.txt");
 
+	int uniformCount = 14;
+
 	ParserData* tempParserData = malloc(sizeof(ParserData));
 	tempParserData->state = demoState;
 	tempParserData->mat = rm;
-	tempParserData->numUnifs = 14;
+	tempParserData->numUnifs = uniformCount;
 
 	if (fileLength > 0)
 	{
@@ -1776,7 +1778,7 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 
 	demoState->materials[0].numPasses = 1; //arbitrary number for now
 	demoState->materials[0].passes = malloc(sizeof(a3_RenderPass) * demoState->materials[0].numPasses);
-	int uniformCount = 14;
+	
 
 	initRenderPass(&demoState->passes[0], uniformCount, demoState->fbo_scene_c16d24s8_mrt, demoState->prog_drawPhong_multi_forward_mrt);
 
