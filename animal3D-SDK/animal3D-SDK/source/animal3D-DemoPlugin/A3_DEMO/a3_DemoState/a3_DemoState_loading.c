@@ -1761,18 +1761,27 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 {
 	//File loading
 	a3_Stream fs[1] = { 0 }; //is this memset?
-	if (a3streamLoadContents(fs, "../temp_notarealfile.txt") > 0)
-	{
-		a3_RenderMaterial rm[1] = { 0 };
-		a3streamObjectRead(fs, rm, (a3_StreamReadFunc)a3materialParseFile);
-	}
-	demoState->materials[0].numPasses = 1;
-	demoState->materials[0].passes = malloc(sizeof(a3_RenderPass *) * demoState->materials[0].numPasses);
-	for (a3ui32 i = 0; i < demoState->materials[0].numPasses; i++)
-	{
-		demoState->materials[0].passes[i] = malloc(sizeof(a3_RenderPass));
-	}
+	a3_RenderMaterial rm[1] = { 0 };
+	a3ui32 fileLength = a3streamLoadContents(fs, "../../../../resource/materials/testmat.txt");
+
 	int uniformCount = 18;
+
+	ParserData* tempParserData = malloc(sizeof(ParserData));
+	tempParserData->state = demoState;
+	tempParserData->mat = rm;
+	tempParserData->numUnifs = uniformCount;
+
+	if (fileLength > 0)
+	{
+		a3streamObjectRead(fs, tempParserData, (a3_StreamReadFunc)a3materialParseFile);
+	}
+	//demoState->materials[0].numPasses = 1;
+	//demoState->materials[0].passes = malloc(sizeof(a3_RenderPass *) * demoState->materials[0].numPasses);
+	//for (a3ui32 i = 0; i < demoState->materials[0].numPasses; i++)
+	//{
+	//	demoState->materials[0].passes[i] = malloc(sizeof(a3_RenderPass));
+	//}
+	//int uniformCount = 18;
 
 	initRenderPass(demoState->materials[0].passes[0], uniformCount, demoState->fbo_scene_c16d24s8_mrt, demoState->prog_drawPhong_multi_forward_mrt);
 	registerCommonUniforms(demoState, demoState->materials[0].passes[0]);

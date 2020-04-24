@@ -23,27 +23,44 @@
 		hierarchy know the index of their parent node, but not child nodes.
 */
 
-#ifndef __ANIMAL3D_RENDERPASS_H
-#define __ANIMAL3D_RENDERPASS_H
+#ifndef __ANIMAL3D_MATERIALEDITOR_H
+#define __ANIMAL3D_MATERIALEDITOR_H
 
 
 #include "animal3D/a3/a3types_integer.h"
 #include "animal3D/a3utility/a3_Stream.h"
 #include "a3_RenderMaterial.h"
+#include "..//a3_DemoMaterialUtils.h"
 
 
 #ifdef __cplusplus
 extern "C"
 {
 #else	// !__cplusplus
-	//typedef struct a3_Hierarchy				a3_Hierarchy;
-	//typedef struct a3_HierarchyNode			a3_HierarchyNode;
+	typedef struct ParserData				ParserData;
 #endif	// __cplusplus
 
 
 //-----------------------------------------------------------------------------
 
-void a3materialParseFile(a3_RenderMaterial* mat, a3byte const* data);
+//Data holder for the parser to access certain things
+//Necessary to get both the proper uniform count, demoState (for programs), and renderMaterial from loading to the parser
+struct ParserData
+{
+	a3_DemoState* state;
+	a3_RenderMaterial* mat;
+	int numUnifs;
+};
+
+
+
+void a3materialParseFile(ParserData* parserData, a3byte const* data);
+
+void a3materialParserHandleKeyword(const a3byte* keyword, const a3byte* data, ParserData* pData);
+
+void a3materialParserHandleProgram(const a3byte* data, ParserData* pData);
+
+void a3materialParserHandleTexture(const a3byte* data, ParserData* pData);
 
 
 //-----------------------------------------------------------------------------
