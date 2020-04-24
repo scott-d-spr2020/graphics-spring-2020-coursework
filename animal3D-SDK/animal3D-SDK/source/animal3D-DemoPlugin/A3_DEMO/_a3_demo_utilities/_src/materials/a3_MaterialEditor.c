@@ -98,12 +98,9 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 
 	char* texType = strtok((char*)data, " ");
 	char* dirtyFilePath = strtok(NULL, "\n");
-	char* filePath = malloc(strlen(dirtyFilePath) - 4);
+	char* filePath = calloc(1, strlen(dirtyFilePath) - 4);
 
-	for (int i = 0; i < strlen(dirtyFilePath) - 1; i++)
-	{
-		filePath[i] = dirtyFilePath[i];
-	}
+	strcpy(filePath, dirtyFilePath);
 
 	filePath[strlen(filePath) - 1] = '\0';
 
