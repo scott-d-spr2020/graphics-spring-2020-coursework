@@ -23,8 +23,8 @@
 		hierarchy know the index of their parent node, but not child nodes.
 */
 
-#ifndef __ANIMAL3D_RENDERPASS_H
-#define __ANIMAL3D_RENDERPASS_H
+#ifndef __ANIMAL3D_MATERIALEDITOR_H
+#define __ANIMAL3D_MATERIALEDITOR_H
 
 
 #include "animal3D/a3/a3types_integer.h"

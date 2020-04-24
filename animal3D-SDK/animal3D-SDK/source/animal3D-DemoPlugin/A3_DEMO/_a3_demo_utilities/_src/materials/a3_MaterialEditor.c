@@ -26,8 +26,11 @@ a3byte const* shaderProgNames[32] = {
 void a3materialParseFile(ParserData* pData, a3byte const* data)
 {
 	pData->state->materials[0].numPasses = 1; //Arbitrary for now, should we define it in the file?
-	pData->state->materials[0].passes = malloc(sizeof(a3_RenderPass) * pData->mat->numPasses);
-
+	pData->state->materials[0].passes = calloc(pData->mat->numPasses, sizeof(a3_RenderPass *));
+	for (a3ui32 i = 0; i < pData->state->materials[0].numPasses; i++)
+	{
+		pData->state->materials[0].passes[i] = calloc(1, sizeof(a3_RenderPass));
+	}
 	char* token;
 
 	// Just a delimiter function, using it to pull out whole lines, since the material file is formatted in a certain way
