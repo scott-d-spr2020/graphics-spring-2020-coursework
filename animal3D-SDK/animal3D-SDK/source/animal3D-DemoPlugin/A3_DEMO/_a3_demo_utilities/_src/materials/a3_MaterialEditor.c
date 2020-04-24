@@ -73,13 +73,17 @@ void a3materialParserHandleProgram(const a3byte* data, ParserData* pData)
 {
 	// Need to figure out better way of defining number of program names and keywords
 
-	for (int i = 0; i < 2; i++)
+	if (strstr((char*)data, (char*)shaderProgNames[0]))
 	{
-		if (strstr((char*)data, (char*)shaderProgNames[i]))
-		{
-			initRenderPass(&pData->state->passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawPhong_multi_forward_mrt);
-			break;
-		}
+		initRenderPass(&pData->state->passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawPhong_multi_forward_mrt);
+	}
+	else if (strstr((char*)data, (char*)shaderProgNames[1]))
+	{
+		initRenderPass(&pData->state->passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawNonphoto_multi_mrt);
+	}
+	else
+	{
+		printf("\nERROR: %s is not a valid shader program for material use!\n", (char*)data);
 	}
 }
 
@@ -95,17 +99,77 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 	char* texType = strtok((char*)data, " ");
 	char* filePath = strtok(NULL, "\n");
 	char* relativePath = "../../../../resource/";
+	a3_Texture* tex;
 
 	filePath = strcat(relativePath, filePath);
 
-	printf("%s", filePath);
-
 	if (strstr(texType, texTypeStrings[0]))
 	{
-		a3textureCreateFromFile(pData->mat->matTex_color, "tex:material-color", filePath);
+		int flag = a3textureCreateFromFile(pData->mat->matTex_color, "tex:material-color", filePath);
+
+		if (flag <= 0)
+		{
+			printf("\nERROR: could not find texture %s , code %i !\n", filePath, flag);
+		}
+
 		a3textureActivate(pData->mat->matTex_color, a3tex_unit00);
 		a3textureDefaultSettings();
+
+		tex = pData->mat->matTex_color;
+	}
+	else if (strstr(texType, texTypeStrings[1]))
+	{
+		int flag = a3textureCreateFromFile(pData->mat->matTex_normal, "tex:material-normal", filePath);
+
+		if (flag <= 0)
+		{
+			printf("\nERROR: could not find texture %s , code %i !\n", filePath, flag);
+		}
+
+		a3textureActivate(pData->mat->matTex_normal, a3tex_unit00);
+		a3textureDefaultSettings();
+
+		tex = pData->mat->matTex_normal;
+	}
+	else if (strstr(texType, texTypeStrings[2]))
+	{
+		int flag = a3textureCreateFromFile(pData->mat->matTex_metallic, "tex:material-metallic", filePath);
+
+		if (flag <= 0)
+		{
+			printf("\nERROR: could not find texture %s , code %i !\n", filePath, flag);
+		}
+
+		a3textureActivate(pData->mat->matTex_metallic, a3tex_unit00);
+		a3textureDefaultSettings();
+
+		tex = pData->mat->matTex_metallic;
+	}
+	else if (strstr(texType, texTypeStrings[3]))
+	{
+		int flag = a3textureCreateFromFile(pData->mat->matTex_roughness, "tex:material-roughness", filePath);
+
+		if (flag <= 0)
+		{
+			printf("\nERROR: could not find texture %s , code %i !\n", filePath, flag);
+		}
+
+		a3textureActivate(pData->mat->matTex_roughness, a3tex_unit00);
+		a3textureDefaultSettings();
+
+		tex = pData->mat->matTex_roughness;
+	}
+	else
+	{
+		tex = NULL;
+		printf("\nERROR: %s is not a valid texture type for material use!\n", texType);
 	}
 
-	a3textureDeactivate(a3tex_unit00);
+	if (tex != NULL)
+	{
+		a3textureActivate(tex, a3tex_unit00);
+		a3textureChangeFilterMode(a3tex_filterLinear);
+
+		a3textureDeactivate(a3tex_unit00);
+	}
 }
