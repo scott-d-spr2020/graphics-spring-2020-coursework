@@ -16,4 +16,8 @@ void* uniform_retrieveActiveCamProjMatInv(a3_DemoState* demoState);
 void* uniform_retrieveActiveCamProjBiasMat(a3_DemoState* demoState);
 void* uniform_retrieveActiveCamProjBiasMatInv(a3_DemoState* demoState);
 void* uniform_retrieveTotalRenderTime(a3_DemoState* demoState);
+
+//loader
+
+a3ret registerCommonUniforms(a3_DemoState* demoState, a3_RenderPass* pass);
 #endif

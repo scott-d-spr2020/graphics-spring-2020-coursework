@@ -1772,55 +1772,11 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 	{
 		demoState->materials[0].passes[i] = malloc(sizeof(a3_RenderPass));
 	}
-	int uniformCount = 0;
+	int uniformCount = 18;
 
 	initRenderPass(demoState->materials[0].passes[0], uniformCount, demoState->fbo_scene_c16d24s8_mrt, demoState->prog_drawPhong_multi_forward_mrt);
-
-	// 474 uP
-	//addRenderUniform(&demoState->passes[0], 0, uniformSwitch_FloatMat, a3unif_mat4, demoState->passes[0].shaderProgram->uP, 1, NULL, uniform_retrieveActiveCamProjMat, 1);
-	//
-	//// 475 uP_inv
-	//addRenderUniform(&demoState->passes[0], 1, uniformSwitch_FloatMat, a3unif_mat4, demoState->passes[0].shaderProgram->uP_inv, 1, NULL, uniform_retrieveActiveCamProjMatInv, 1);
-	//
-	//// 476 uPB (needs to get projectionBiasMat, which is calculated at 407 in idle render using active camera)
-	//addRenderUniform(&demoState->passes[0], 2, uniformSwitch_FloatMat, a3unif_mat4, demoState->passes[0].shaderProgram->uPB, 1, NULL, uniform_retrieveActiveCamProjBiasMat, 1);
-	//
-	//// 477 uPB_inv (needs to get projectionBiasMatInv, which is calculated at 408 in idle render using active camera)
-	//addRenderUniform(&demoState->passes[0], 3, uniformSwitch_FloatMat, a3unif_mat4, demoState->passes[0].shaderProgram->uPB_inv, 1, NULL, uniform_retrieveActiveCamProjBiasMatInv, 1);
-	//
-	//// 478 uAtlas
-	//addRenderUniform(&demoState->passes[0], 4, uniformSwitch_FloatMat, a3unif_mat4, demoState->passes[0].shaderProgram->uAtlas, 1, (void*)a3mat4_identity.mm, NULL, 0);
-	//
-	//// 479 uTime
-	//addRenderUniform(&demoState->passes[0], 5, uniformSwitch_Double, a3unif_single, demoState->passes[0].shaderProgram->uTime, 1, NULL, uniform_retrieveTotalRenderTime, 1);
-
-
-	// 480 uColor
-	//a3vec4* skyBlueArr = malloc(sizeof(a3vec4));		//why
-	//skyBlueArr->r = 0.0f;								//does
-	//skyBlueArr->g = 0.5f;								//this
-	//skyBlueArr->b = 1.0f;								//code
-	//skyBlueArr->a = 1.0f;								//work?
-	//addRenderUniform(&demoState->passes[0], 6, uniformSwitch_Float, a3unif_vec4, demoState->passes[0].shaderProgram->uColor, 1, skyBlueArr->v, NULL, 0);
-	//
-	//addRenderUniform(&demoState->passes[0], 7, uniformSwitch_TextureUnit, -1, a3tex_unit04, 1, demoState->tex_ramp_dm, NULL, 0);
-	//
-	//addRenderUniform(&demoState->passes[0], 8, uniformSwitch_TextureUnit, -1, a3tex_unit05, 1, demoState->tex_ramp_sm, NULL, 0);
-	//
-	//addRenderUniform(&demoState->passes[0], 9, uniformSwitch_DepthBuffer, -1, a3tex_unit06, 1, demoState->fbo_shadow_d32, NULL, 0);
-	//
-	//addRenderUniform(&demoState->passes[0], 10, uniformSwitch_TextureUnit, -1, a3tex_unit07, 1, demoState->tex_earth_dm, NULL, 0);
-	//
-	//addRenderUniform(&demoState->passes[0], 11, uniformSwitch_Int, a3unif_single, demoState->passes[0].shaderProgram->uLightCt, 1, &demoState->forwardLightCount, NULL, 0);
-	//
-	//addRenderUniform(&demoState->passes[0], 12, uniformSwitch_UniformBuffer, -1, 0, 1, demoState->ubo_transformStack_model, NULL, 0);
-	//
-	//addRenderUniform(&demoState->passes[0], 13, uniformSwitch_UniformBuffer, -1, 4, 1, demoState->ubo_pointLight, NULL, 0);
-
+	registerCommonUniforms(demoState, demoState->materials[0].passes[0]);
 	//shaderProgram
-	demoState->materials[0].passes[0] = &demoState->passes[0];
-
-
 	demoState->planeObject->renderMaterial = &demoState->materials[0];
 	demoState->sphereObject->renderMaterial = &demoState->materials[0];
 	demoState->cylinderObject->renderMaterial = &demoState->materials[0];
