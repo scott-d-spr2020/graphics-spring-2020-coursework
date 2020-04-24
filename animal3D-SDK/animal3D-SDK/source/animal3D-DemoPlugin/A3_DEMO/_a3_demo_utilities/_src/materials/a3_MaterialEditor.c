@@ -17,28 +17,24 @@ a3byte const* shaderProgNames[32] = {
 
 void a3materialParseFile(ParserData* pData, a3byte const* data)
 {
-	//size_t fileLength = strlen((char*)data);
-
-	//char* origData = malloc(fileLength);
-	//strcpy(origData, (char*)data);
-
-	pData->mat->numPasses = 1;
+	pData->mat->numPasses = 1; //Arbitrary for now, should we define it in the file?
 	pData->mat->passes = malloc(sizeof(a3_RenderPass) * pData->mat->numPasses);
 
 	char* token;
-	size_t position = 0;
 
+	// Just a delimiter function, using it to pull out whole lines, since the material file is formatted in a certain way
 	token = strtok((char*)data, "\n");
-	position += strlen(token);
 
 	while (token != NULL)
 	{
 		for (int i = 0; i < 3; i++)
 		{
+			// lots of strstr() is used because escape characters are in the data, so finding substrings is the easiest way
 			if (strstr(token, (char*)keywords[i]))
 			{
+				// If you pass NULL, it uses the data from the last strtok call
 				token = strtok(NULL, "\n");
-				a3materialParserHandleKeyword(keywords[i], token, pData);
+				a3materialParserHandleKeyword(keywords[i], token, pData);	//This passes the next line of data (retrieved just above) which holds the actual user-defined data
 				break;
 			}
 		}
@@ -49,6 +45,8 @@ void a3materialParseFile(ParserData* pData, a3byte const* data)
 
 void a3materialParserHandleKeyword(const a3byte* keyword, const a3byte* data, ParserData* pData)
 {
+	// Can do address comparisons here because I'm sending in the keyword from the array anyways, this just determines which one it is
+
 	if (keyword == keywords[0])
 	{
 		a3materialParserHandleProgram(data, pData);
@@ -65,6 +63,7 @@ void a3materialParserHandleKeyword(const a3byte* keyword, const a3byte* data, Pa
 
 void a3materialParserHandleProgram(const a3byte* data, ParserData* pData)
 {
+	// Need to figure out better way of defining number of program names and keywords
 	for (int i = 0; i < 2; i++)
 	{
 		if (strstr((char*)data, (char*)shaderProgNames[i]))

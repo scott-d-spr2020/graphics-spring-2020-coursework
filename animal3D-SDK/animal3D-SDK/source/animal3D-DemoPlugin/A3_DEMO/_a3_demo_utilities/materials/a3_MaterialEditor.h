@@ -43,7 +43,8 @@ extern "C"
 
 //-----------------------------------------------------------------------------
 
-
+//Data holder for the parser to access certain things
+//Necessary to get both the proper uniform count, demoState (for programs), and renderMaterial from loading to the parser
 struct ParserData
 {
 	a3_DemoState* state;
