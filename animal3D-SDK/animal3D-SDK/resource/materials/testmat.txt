@@ -1,4 +1,10 @@
 shaderprogram
 	prog:draw-Phong-mul-fwd-mrt
 texture
-	color tex/crate/crate4_low_lambert1_BaseColor.tga
+	color resource/tex/crate/crate4_low_lambert1_BaseColor.tga
+texture
+	normal resource/tex/crate/crate4_low_lambert1_Normal.tga
+texture
+	metallic resource/tex/crate/crate4_low_lambert1_Metallic.tga
+texture
+	roughness resource/tex/crate/crate4_low_lambert1_Roughness.tga

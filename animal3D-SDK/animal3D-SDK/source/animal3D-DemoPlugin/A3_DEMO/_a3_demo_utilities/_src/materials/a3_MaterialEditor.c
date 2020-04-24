@@ -97,19 +97,29 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 	// This way, we can dynamically load in textures, and not have to worry about demoState having handles
 
 	char* texType = strtok((char*)data, " ");
-	char* filePath = strtok(NULL, "\n");
-	char* relativePath = "../../../../resource/";
+	char* dirtyFilePath = strtok(NULL, "\n");
+	char* filePath = malloc(strlen(dirtyFilePath) - 4);
+
+	for (int i = 0; i < strlen(dirtyFilePath) - 1; i++)
+	{
+		filePath[i] = dirtyFilePath[i];
+	}
+
+	filePath[strlen(filePath) - 1] = '\0';
+
+	char* relativePath = "../../../../";
 	a3_Texture* tex;
 
-	filePath = strcat(relativePath, filePath);
+	strcat(relativePath, filePath);
 
 	if (strstr(texType, texTypeStrings[0]))
 	{
-		int flag = a3textureCreateFromFile(pData->mat->matTex_color, "tex:material-color", filePath);
+		int flag = a3textureCreateFromFile(pData->mat->matTex_color, "tex:material-color", relativePath);
 
 		if (flag <= 0)
 		{
-			printf("\nERROR: could not find texture %s , code %i !\n", filePath, flag);
+			printf("ERROR: texture %s not found, code %i !\n", filePath, flag);
+			return;
 		}
 
 		a3textureActivate(pData->mat->matTex_color, a3tex_unit00);
@@ -119,11 +129,12 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 	}
 	else if (strstr(texType, texTypeStrings[1]))
 	{
-		int flag = a3textureCreateFromFile(pData->mat->matTex_normal, "tex:material-normal", filePath);
+		int flag = a3textureCreateFromFile(pData->mat->matTex_normal, "tex:material-normal", relativePath);
 
 		if (flag <= 0)
 		{
-			printf("\nERROR: could not find texture %s , code %i !\n", filePath, flag);
+			printf("ERROR: texture %s not found, code %i !\n", filePath, flag);
+			return;
 		}
 
 		a3textureActivate(pData->mat->matTex_normal, a3tex_unit00);
@@ -133,11 +144,12 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 	}
 	else if (strstr(texType, texTypeStrings[2]))
 	{
-		int flag = a3textureCreateFromFile(pData->mat->matTex_metallic, "tex:material-metallic", filePath);
+		int flag = a3textureCreateFromFile(pData->mat->matTex_metallic, "tex:material-metallic", relativePath);
 
 		if (flag <= 0)
 		{
-			printf("\nERROR: could not find texture %s , code %i !\n", filePath, flag);
+			printf("ERROR: texture %s not found, code %i !\n", filePath, flag);
+			return;
 		}
 
 		a3textureActivate(pData->mat->matTex_metallic, a3tex_unit00);
@@ -147,11 +159,12 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 	}
 	else if (strstr(texType, texTypeStrings[3]))
 	{
-		int flag = a3textureCreateFromFile(pData->mat->matTex_roughness, "tex:material-roughness", filePath);
+		int flag = a3textureCreateFromFile(pData->mat->matTex_roughness, "tex:material-roughness", relativePath);
 
 		if (flag <= 0)
 		{
-			printf("\nERROR: could not find texture %s , code %i !\n", filePath, flag);
+			printf("ERROR: texture %s not found, code %i !\n", filePath, flag);
+			return;
 		}
 
 		a3textureActivate(pData->mat->matTex_roughness, a3tex_unit00);
