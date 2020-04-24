@@ -1783,8 +1783,8 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 	//}
 	//int uniformCount = 18;
 
-	initRenderPass(demoState->materials[0].passes[0], uniformCount, demoState->fbo_scene_c16d24s8_mrt, demoState->prog_drawPhong_multi_forward_mrt);
-	registerCommonUniforms(demoState, demoState->materials[0].passes[0]);
+	//initRenderPass(demoState->materials[0].passes[0], uniformCount, demoState->fbo_scene_c16d24s8_mrt, demoState->prog_drawPhong_multi_forward_mrt);
+	//registerCommonUniforms(demoState, demoState->materials[0].passes[0]);
 	//shaderProgram
 	demoState->planeObject->renderMaterial = &demoState->materials[0];
 	demoState->sphereObject->renderMaterial = &demoState->materials[0];
