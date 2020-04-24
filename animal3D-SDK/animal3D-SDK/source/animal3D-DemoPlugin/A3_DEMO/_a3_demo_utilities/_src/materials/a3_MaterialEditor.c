@@ -120,7 +120,7 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 
 	if (strstr(texType, texTypeStrings[0]))
 	{
-		int flag = a3textureCreateFromFile(pData->mat->matTex_color, "tex:material-color", relativePath);
+		int flag = a3textureCreateFromFile(pData->state->materials[0].matTex_color, "tex:material-color", relativePath);
 
 		if (flag <= 0)
 		{
@@ -128,14 +128,14 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 			return;
 		}
 
-		a3textureActivate(pData->mat->matTex_color, a3tex_unit00);
+		a3textureActivate(pData->state->materials[0].matTex_color, a3tex_unit00);
 		a3textureDefaultSettings();
 
-		tex = pData->mat->matTex_color;
+		tex = pData->state->materials[0].matTex_color;
 	}
 	else if (strstr(texType, texTypeStrings[1]))
 	{
-		int flag = a3textureCreateFromFile(pData->mat->matTex_normal, "tex:material-normal", relativePath);
+		int flag = a3textureCreateFromFile(pData->state->materials[0].matTex_normal, "tex:material-normal", relativePath);
 
 		if (flag <= 0)
 		{
@@ -143,14 +143,14 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 			return;
 		}
 
-		a3textureActivate(pData->mat->matTex_normal, a3tex_unit00);
+		a3textureActivate(pData->state->materials[0].matTex_normal, a3tex_unit00);
 		a3textureDefaultSettings();
 
-		tex = pData->mat->matTex_normal;
+		tex = pData->state->materials[0].matTex_normal;
 	}
 	else if (strstr(texType, texTypeStrings[2]))
 	{
-		int flag = a3textureCreateFromFile(pData->mat->matTex_metallic, "tex:material-metallic", relativePath);
+		int flag = a3textureCreateFromFile(pData->state->materials[0].matTex_metallic, "tex:material-metallic", relativePath);
 
 		if (flag <= 0)
 		{
@@ -158,14 +158,14 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 			return;
 		}
 
-		a3textureActivate(pData->mat->matTex_metallic, a3tex_unit00);
+		a3textureActivate(pData->state->materials[0].matTex_metallic, a3tex_unit00);
 		a3textureDefaultSettings();
 
-		tex = pData->mat->matTex_metallic;
+		tex = pData->state->materials[0].matTex_metallic;
 	}
 	else if (strstr(texType, texTypeStrings[3]))
 	{
-		int flag = a3textureCreateFromFile(pData->mat->matTex_roughness, "tex:material-roughness", relativePath);
+		int flag = a3textureCreateFromFile(pData->state->materials[0].matTex_roughness, "tex:material-roughness", relativePath);
 
 		if (flag <= 0)
 		{
@@ -173,10 +173,10 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 			return;
 		}
 
-		a3textureActivate(pData->mat->matTex_roughness, a3tex_unit00);
+		a3textureActivate(pData->state->materials[0].matTex_roughness, a3tex_unit00);
 		a3textureDefaultSettings();
 
-		tex = pData->mat->matTex_roughness;
+		tex = pData->state->materials[0].matTex_roughness;
 	}
 	else
 	{
