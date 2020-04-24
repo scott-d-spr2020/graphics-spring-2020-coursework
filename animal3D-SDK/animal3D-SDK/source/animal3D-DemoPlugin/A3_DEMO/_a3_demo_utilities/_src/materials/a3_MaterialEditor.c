@@ -75,18 +75,24 @@ void a3materialParserHandleKeyword(const a3byte* keyword, const a3byte* data, Pa
 void a3materialParserHandleProgram(const a3byte* data, ParserData* pData)
 {
 	// Need to figure out better way of defining number of program names and keywords
-
+	int success = 0;
 	if (strstr((char*)data, (char*)shaderProgNames[0]))
 	{
 		initRenderPass(&pData->state->passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawPhong_multi_forward_mrt);
+		success = 1;
 	}
 	else if (strstr((char*)data, (char*)shaderProgNames[1]))
 	{
 		initRenderPass(&pData->state->passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawNonphoto_multi_mrt);
+		success = 1;
 	}
 	else
 	{
 		printf("\nERROR: %s is not a valid shader program for material use!\n", (char*)data);
+	}
+	if (success)
+	{
+		registerCommonUniforms(pData->state, &pData->state->passes[0]);
 	}
 }
 
