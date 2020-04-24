@@ -122,8 +122,8 @@ void main()
 	vec4 diffColor = texture(mainTex, coordData.texCoord) * diffuse;
 	vec4 specularColor = texture(mainTex, coordData.texCoord) * specular;
 
-	//rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.3f * ambientColor), 1.0);
-	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.3f * ambientColor), 1.0);
+	//rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
 
 	rtViewPosition = coordData.mvPosition;
 	rtNormal =  vec4(mvNormal_normalized.xyz, 1.0);
