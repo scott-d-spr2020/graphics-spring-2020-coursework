@@ -1766,12 +1766,15 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 		a3_RenderMaterial rm[1] = { 0 };
 		a3streamObjectRead(fs, rm, (a3_StreamReadFunc)a3materialParseFile);
 	}
-
-	demoState->materials[0].numPasses = 1; //arbitrary number for now
-	demoState->materials[0].passes = malloc(sizeof(a3_RenderPass) * demoState->materials[0].numPasses);
+	demoState->materials[0].numPasses = 1;
+	demoState->materials[0].passes = malloc(sizeof(a3_RenderPass *) * demoState->materials[0].numPasses);
+	for (a3ui32 i = 0; i < demoState->materials[0].numPasses; i++)
+	{
+		demoState->materials[0].passes[i] = malloc(sizeof(a3_RenderPass));
+	}
 	int uniformCount = 14;
 
-	initRenderPass(&demoState->passes[0], uniformCount, demoState->fbo_scene_c16d24s8_mrt, demoState->prog_drawPhong_multi_forward_mrt);
+	initRenderPass(demoState->materials[0].passes[0], uniformCount, demoState->fbo_scene_c16d24s8_mrt, demoState->prog_drawPhong_multi_forward_mrt);
 
 	// 474 uP
 	addRenderUniform(&demoState->passes[0], 0, uniformSwitch_FloatMat, a3unif_mat4, demoState->passes[0].shaderProgram->uP, 1, NULL, uniform_retrieveActiveCamProjMat, 1);
