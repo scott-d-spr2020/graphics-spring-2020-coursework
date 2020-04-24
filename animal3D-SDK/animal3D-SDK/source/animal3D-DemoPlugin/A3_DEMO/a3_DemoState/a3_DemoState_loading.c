@@ -1761,14 +1761,14 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 {
 	//File loading
 	a3_Stream fs[1] = { 0 }; //is this memset?
-	a3_RenderMaterial rm[1] = { 0 };
+	//a3_RenderMaterial rm[1] = { 0 };
 	a3ui32 fileLength = a3streamLoadContents(fs, "../../../../resource/materials/testmat.txt");
 
 	int uniformCount = 18;
 
 	ParserData* tempParserData = malloc(sizeof(ParserData));
 	tempParserData->state = demoState;
-	tempParserData->mat = rm;
+	//tempParserData->mat = rm;
 	tempParserData->numUnifs = uniformCount;
 
 	if (fileLength > 0)

@@ -48,7 +48,7 @@ extern "C"
 struct ParserData
 {
 	a3_DemoState* state;
-	a3_RenderMaterial* mat;
+	//a3_RenderMaterial* mat;
 	int numUnifs;
 };
 
