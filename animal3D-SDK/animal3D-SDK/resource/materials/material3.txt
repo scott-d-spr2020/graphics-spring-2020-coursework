@@ -1,0 +1,10 @@
+shaderprogram
+	prog:draw-Phong-mul-fwd-mrt
+texture
+	color resource/tex/mars/1k/mars_1k_dm.png
+texture
+	normal resource/tex/mars/1k/mars_1k_nm.png
+texture
+	metallic resource/tex/mars/1k/mars_1k_sm.png
+texture
+	roughness no_rm_exists_for_mars_tex

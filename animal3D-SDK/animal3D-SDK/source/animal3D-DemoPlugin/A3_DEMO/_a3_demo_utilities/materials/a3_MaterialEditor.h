@@ -52,7 +52,7 @@ struct ParserData
 	int numUnifs;
 };
 
-
+void a3materialReset();
 
 void a3materialParseFile(ParserData* parserData, a3byte const* data);
 

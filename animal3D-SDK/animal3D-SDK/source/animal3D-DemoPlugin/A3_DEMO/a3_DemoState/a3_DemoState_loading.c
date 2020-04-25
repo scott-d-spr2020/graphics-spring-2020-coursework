@@ -1756,7 +1756,6 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	a3hierarchyStateCreate(hierarchyState, hierarchyPoseGroup);
 }
 
-
 void a3demo_loadMaterials(a3_DemoState* demoState)
 {
 	//File loading
@@ -1783,6 +1782,30 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 	{
 		a3streamObjectRead(fs2, tempParserData, (a3_StreamReadFunc)a3materialParseFile);
 	}
+
+	a3_Stream fs3[1] = { 0 };
+	fileLength = a3streamLoadContents(fs3, "../../../../resource/materials/material2.txt");
+
+	if (fileLength > 0)
+	{
+		a3streamObjectRead(fs3, tempParserData, (a3_StreamReadFunc)a3materialParseFile);
+	}
+
+	a3_Stream fs4[1] = { 0 };
+	fileLength = a3streamLoadContents(fs4, "../../../../resource/materials/material3.txt");
+
+	if (fileLength > 0)
+	{
+		a3streamObjectRead(fs4, tempParserData, (a3_StreamReadFunc)a3materialParseFile);
+	}
+
+	a3_Stream fs5[1] = { 0 };
+	fileLength = a3streamLoadContents(fs5, "../../../../resource/materials/material4.txt");
+
+	if (fileLength > 0)
+	{
+		a3streamObjectRead(fs5, tempParserData, (a3_StreamReadFunc)a3materialParseFile);
+	}
 	//demoState->materials[0].numPasses = 1;
 	//demoState->materials[0].passes = malloc(sizeof(a3_RenderPass *) * demoState->materials[0].numPasses);
 	//for (a3ui32 i = 0; i < demoState->materials[0].numPasses; i++)
@@ -1794,10 +1817,10 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 	//initRenderPass(demoState->materials[0].passes[0], uniformCount, demoState->fbo_scene_c16d24s8_mrt, demoState->prog_drawPhong_multi_forward_mrt);
 	//registerCommonUniforms(demoState, demoState->materials[0].passes[0]);
 	//shaderProgram
-	demoState->planeObject->renderMaterial = &demoState->materials[0];
+	demoState->planeObject->renderMaterial = &demoState->materials[4];
 	demoState->sphereObject->renderMaterial = &demoState->materials[1];
-	demoState->cylinderObject->renderMaterial = &demoState->materials[0];
-	demoState->torusObject->renderMaterial = &demoState->materials[0];
+	demoState->cylinderObject->renderMaterial = &demoState->materials[2];
+	demoState->torusObject->renderMaterial = &demoState->materials[3];
 	demoState->teapotObject->renderMaterial = &demoState->materials[0];
 }
 

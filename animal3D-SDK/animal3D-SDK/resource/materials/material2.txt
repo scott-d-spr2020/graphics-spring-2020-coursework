@@ -1,0 +1,10 @@
+shaderprogram
+	prog:draw-Phong-mul-fwd-mrt
+texture
+	color resource/tex/stone/stone_dm.png
+texture
+	normal resource/tex/stone/stone_nm.png
+texture
+	metallic no_sm_exists_for_stone_tex
+texture
+	roughness no_rm_exists_for_stone_tex

@@ -24,6 +24,11 @@ a3byte const* shaderProgNames[32] = {
 
 int matNum = 0;
 
+void a3materialReset()
+{
+	matNum = 0;
+}
+
 void a3materialParseFile(ParserData* pData, a3byte const* data)
 {
 	pData->state->materials[matNum].numPasses = 1; //Arbitrary for now, should we define it in the file?
