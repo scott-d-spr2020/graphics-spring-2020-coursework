@@ -469,6 +469,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			a3_DemoStateShader
 				passColor_hierarchy_transform_instanced_vs[1],
 				passTangentBasis_transform_instanced_morph_vs[1];
+			a3_DemoStateShader
+				passPBRData_transform_vs[1];
 
 			// geometry shaders
 			// 07-curves
@@ -518,6 +520,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 07-curves
 			a3_DemoStateShader
 				drawPhong_multi_forward_mrt_fs[1];
+			a3_DemoStateShader
+				drawPBR_multi_mrt_fs[1];
 		};
 	} shaderList = {
 		{
@@ -546,6 +550,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 07-keyframes
 			{ { { 0 },	"shdr-vs:pass-col-hierarchy-t-i",	a3shader_vertex  ,	1,{ A3_DEMO_VS"07-keyframes/passColor_hierarchy_transform_instanced_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-tb-trans-morph",		a3shader_vertex  ,	1,{ A3_DEMO_VS"07-keyframes/passTangentBasis_transform_instanced_morph_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-pbr-data",			a3shader_vertex  ,	1,{ A3_DEMO_VS"FINAL_vs/pbr_instanced_vs4x.glsl" } } },
 
 			// gs
 			// 07-curves
@@ -586,6 +591,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-SSAO-def",			a3shader_fragment,	1,{ A3_DEMO_FS"midterm-SSAO-Cross/drawSSAO_multi_deferred_fs4x.glsl" } } },
 			// 07-curves
 			{ { { 0 },	"shdr-fs:draw-Phong-mul-fwd-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"07-curves/drawPhong_multi_forward_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-pbr-mul-mrt",			a3shader_fragment,	1,{ A3_DEMO_FS"FINAL_fs/drawPBR_multi_forward_mrt_fs4x.glsl" } } },
 			
 		}
 	};
@@ -807,6 +813,10 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passColor_hierarchy_transform_instanced_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
 
+	currentDemoProg = demoState->prog_PBR_rendering;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-pbr");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passPBRData_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPBR_multi_mrt_fs->shader);
 
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs
