@@ -270,6 +270,7 @@
     <None Include="..\..\..\resource\glsl\4x\fs\07-curves\drawPhong_multi_forward_mrt_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\drawColorAttrib_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\drawColorUnif_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\fs\FINAL_fs\drawPBR_multi_forward_mrt_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\midterm-SSAO-Cross\drawPhong_cross_deferred_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\midterm-SSAO-Cross\drawSSAO_multi_deferred_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\gs\07-curves\drawCurveSegment_gs4x.glsl" />
@@ -283,6 +284,7 @@
     <None Include="..\..\..\resource\glsl\4x\vs\06-deferred\passLightingData_transform_bias_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\07-curves\passTangentBasis_transform_instanced_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\07-keyframes\passColor_hierarchy_transform_instanced_vs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\vs\FINAL_vs\pbr_instanced_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\passColor_transform_instanced_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\passColor_transform_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\passthru_transform_instanced_vs4x.glsl" />
