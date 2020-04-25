@@ -14,6 +14,8 @@ Choose one of the above shader programs to use for this material (currently just
 
 Then, choose what textures you want to use. A texture declaration is one of the above texture types followed by the path to the texture. The texture must be placed somewhere inside of the 'resources' folder, such as 'resources/image.png' or 'resources/tex/earth/image.tga'.
 
+Each material must be stored under 'resource/materials'
+
 Example given below:
 
 shaderprogram

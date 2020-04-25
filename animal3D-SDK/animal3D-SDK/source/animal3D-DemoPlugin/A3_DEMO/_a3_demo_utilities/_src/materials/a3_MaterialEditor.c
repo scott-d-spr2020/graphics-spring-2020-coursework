@@ -109,20 +109,22 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 
 	char* texType = strtok((char*)data, " ");
 	char* dirtyFilePath = strtok(NULL, "\n");
-	char* filePath = calloc(1, strlen(dirtyFilePath) - 4);
+	char* filePath = calloc(1, strlen(dirtyFilePath));
 
 	strcpy(filePath, dirtyFilePath);
 
 	filePath[strlen(filePath) - 1] = '\0';
 
 	char* relativePath = "../../../../";
+	char* tempPath = calloc(strlen(relativePath) + strlen(filePath) + 1, sizeof(char));
 	a3_Texture* tex;
 
-	strcat(relativePath, filePath);
+	strcat(tempPath, relativePath);
+	strcat(tempPath, filePath);
 
 	if (strstr(texType, texTypeStrings[0]))
 	{
-		int flag = a3textureCreateFromFile(pData->state->materials[matNum].matTex_color, "tex:material-color", relativePath);
+		int flag = a3textureCreateFromFile(pData->state->materials[matNum].matTex_color, "tex:material-color", tempPath);
 
 		if (flag <= 0)
 		{
@@ -137,7 +139,7 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 	}
 	else if (strstr(texType, texTypeStrings[1]))
 	{
-		int flag = a3textureCreateFromFile(pData->state->materials[matNum].matTex_normal, "tex:material-normal", relativePath);
+		int flag = a3textureCreateFromFile(pData->state->materials[matNum].matTex_normal, "tex:material-normal", tempPath);
 
 		if (flag <= 0)
 		{
@@ -152,7 +154,7 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 	}
 	else if (strstr(texType, texTypeStrings[2]))
 	{
-		int flag = a3textureCreateFromFile(pData->state->materials[matNum].matTex_metallic, "tex:material-metallic", relativePath);
+		int flag = a3textureCreateFromFile(pData->state->materials[matNum].matTex_metallic, "tex:material-metallic", tempPath);
 
 		if (flag <= 0)
 		{
@@ -167,7 +169,7 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 	}
 	else if (strstr(texType, texTypeStrings[3]))
 	{
-		int flag = a3textureCreateFromFile(pData->state->materials[matNum].matTex_roughness, "tex:material-roughness", relativePath);
+		int flag = a3textureCreateFromFile(pData->state->materials[matNum].matTex_roughness, "tex:material-roughness", tempPath);
 
 		if (flag <= 0)
 		{
