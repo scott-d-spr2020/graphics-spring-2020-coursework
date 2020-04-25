@@ -319,7 +319,7 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 	// forward pipeline shader programs
 	const a3_DemoStateShaderProgram* renderProgram[materials_pipeline_max][materials_render_max] = {
 		{
-			demoState->prog_drawPhong_multi_forward_mrt,
+			demoState->prog_drawPhong_multi_mrt,
 		},
 	};
 
@@ -461,25 +461,32 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 	if (demoState->stencilTest)
 		a3demo_drawStencilTest(modelViewProjectionMat.m, viewProjectionMat.m, modelMat.m, demoState->prog_drawColorUnif, demoState->draw_sphere);
 
+	const a3_DemoPointLight* pointLight;
+	a3f32 lightSz[demoStateMaxCount_lightObject];
+	a3f32 lightSzInvSq[demoStateMaxCount_lightObject];
+	a3vec4 lightPos[demoStateMaxCount_lightObject];
+	a3vec4 lightCol[demoStateMaxCount_lightObject];
+	// copy temp light data
+	for (k = 0, pointLight = demoState->forwardPointLight;
+		k < demoState->forwardLightCount;
+		++k, ++pointLight)
+	{
+		lightSz[k] = pointLight->radius;
+		lightSzInvSq[k] = pointLight->radiusInvSq;
+		lightPos[k] = pointLight->viewPos;
+		lightCol[k] = pointLight->color;
+	}
 
 	// select program based on settings
 	currentDemoProgram = renderProgram[pipeline][render];
-	a3shaderProgramActivate(currentDemoProgram->program);
+	//a3shaderProgramActivate(currentDemoProgram->program);
 
 	// send shared data: 
 	//	- projection matrix
 	//	- light data
 	//	- activate shared textures including atlases if using
 	//	- shared animation data
-	//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, activeCamera->projectionMat.mm);
-	//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP_inv, 1, activeCamera->projectionMatInv.mm);
-	//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB, 1, projectionBiasMat.mm);
-	//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMat_inv.mm);
-	//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
-	//a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->renderTimer->totalTime);
-	//a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
-	//a3textureActivate(demoState->tex_ramp_dm, a3tex_unit04);
-	//a3textureActivate(demoState->tex_ramp_sm, a3tex_unit05);
+	//replaced these with registerCommonUniforms()
 
 
 	// select pipeline algorithm
@@ -489,31 +496,15 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 		// scene pass using forward pipeline
 	case materials_forward: {
 		// activate shadow map and other relevant textures
-		currentReadFBO = demoState->fbo_shadow_d32;
-		//a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit06);
-		//a3textureActivate(demoState->tex_earth_dm, a3tex_unit07);
-		//
-		//// send more common uniforms
-		//a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
-		//a3shaderUniformBufferActivate(demoState->ubo_transformStack_model, 0);
-		//a3shaderUniformBufferActivate(demoState->ubo_pointLight, 4);
+
+		//more common uniforms for textures and lights
 
 		// individual object requirements: 
 		//	- modelviewprojection
 		//	- modelview
 		//	- modelview for normals
 		//	- per-object animation data
-		for (currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject,
-			j = (a3ui32)(currentSceneObject - demoState->sceneObject), k = 0;
-			currentSceneObject <= endSceneObject;
-			++j, ++k, ++currentSceneObject)
-		{
-			// send data and draw
-			//a3textureActivate(texture_dm[k], a3tex_unit00);
-			//a3textureActivate(texture_sm[k], a3tex_unit01);
-			//a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
-			//a3vertexDrawableActivateAndRender(drawable[k]);
-		}
+
 		for (currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject,
 			j = (a3ui32)(currentSceneObject - demoState->sceneObject), k = 0;
 			currentSceneObject <= endSceneObject;
@@ -521,10 +512,12 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 		{
 			if (currentSceneObject->renderMaterial != NULL)
 			{
-				a3textureActivate(texture_dm[k], a3tex_unit00);
-				a3textureActivate(texture_sm[k], a3tex_unit01);
-				a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
-				drawMaterial(demoState, drawable[k], currentSceneObject->renderMaterial);
+				//a3textureActivate(texture_dm[k], a3tex_unit00);
+				//a3textureActivate(texture_sm[k], a3tex_unit01);
+				//sendMatrices(modelViewProjectionBiasMat_other.m, modelViewProjectionMat.m, modelViewMat.m, viewProjectionBiasMat_other.m, viewProjectionMat.m, viewMat.m, currentSceneObject->modelMat.m, currentDemoProgram, drawable[k], rgba4[k + 3].v);
+				const void* arr[] = { rgba4[k + 3].v, lightSz, lightSzInvSq, lightPos, lightCol };
+				//need to examine the matrices further
+				drawMaterial(demoState, drawable[k], currentSceneObject->renderMaterial, arr, 1);
 			}
 		}
 	}	break;
@@ -855,8 +848,8 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 	// hidden volumes
 	if (demoState->displayHiddenVolumes && demoMode->pass != materials_passShadow)
 	{
-		const a3_HierarchyState* currentHierarchyState;
-		const a3_Hierarchy* currentHierarchy;
+		//const a3_HierarchyState* currentHierarchyState;
+		//const a3_Hierarchy* currentHierarchy;
 
 		glCullFace(GL_FRONT);
 
@@ -883,88 +876,88 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 
 		glCullFace(GL_BACK);
 
-
-		// draw curves
-		if (demoState->segmentCount)
-		{
-			a3ui32* kptr = &k;
-			currentDemoProgram = demoState->prog_drawCurveSegment;
-			a3shaderProgramActivate(currentDemoProgram->program);
-			k = demoMode->interp;
-			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uFlag, 1, kptr);
-			k = demoState->segmentIndex;
-			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, kptr);
-			k = demoState->segmentCount;
-			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uCount, 1, kptr);
-			a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uTime, 1, &demoState->segmentParam);
-			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
-			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, activeCamera->viewProjectionMat.mm);
-			a3shaderUniformBufferActivate(demoState->ubo_curveWaypoint, 4);
-			a3vertexDrawableActivateAndRenderInstanced(demoState->dummyDrawable, demoState->segmentCount);
-		}
-
-
-		// set up to draw skeleton
-		currentDemoProgram = demoState->prog_drawColorUnif_instanced;
-		a3shaderProgramActivate(currentDemoProgram->program);
-		currentHierarchyState = demoState->hierarchyState_skel + demoMode->editSkeletonIndex;
-		currentHierarchy = currentHierarchyState->poseGroup->hierarchy;
-
-		// draw skeletal joints
-		a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_joint, 0);
-		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, orange);
-		currentDrawable = demoState->draw_skeletal_joint;
-		a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
-
-		// draw bones
-		currentDemoProgram = demoState->prog_drawColorizedHierarchy_instanced;
-		a3shaderProgramActivate(currentDemoProgram->program);
-		a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_bone, 0);
-		a3shaderUniformBufferActivate(demoState->ubo_hierarchy, 4);
-		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, hueCount, hueWheel->v);
-		currentDrawable = demoState->draw_skeletal_bone;
-		a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
-
-		// draw skeletal joint orientations
-		if (demoState->displayTangentBases)
-		{
-			currentDemoProgram = demoState->prog_drawColorAttrib_instanced;
-			a3shaderProgramActivate(currentDemoProgram->program);
-			a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_joint, 0);
-			currentDrawable = demoState->draw_axes;
-			a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
-		}
-
-		// set up to draw skeleton (creeper)
-		currentDemoProgram = demoState->prog_drawColorUnif_instanced;
-		a3shaderProgramActivate(currentDemoProgram->program);
-		currentHierarchyState = demoState->hierarchyState_skel_creeper + demoMode->editSkeletonIndex;
-		currentHierarchy = currentHierarchyState->poseGroup->hierarchy;
-
-		// draw skeletal joints
-		a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_joint_creeper, 0);
-		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, orange);
-		currentDrawable = demoState->draw_skeletal_joint;
-		a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
-
-		// draw bones
-		currentDemoProgram = demoState->prog_drawColorizedHierarchy_instanced;
-		a3shaderProgramActivate(currentDemoProgram->program);
-		a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_bone_creeper, 0);
-		a3shaderUniformBufferActivate(demoState->ubo_hierarchy_creeper, 4);
-		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, hueCount, hueWheel->v);
-		currentDrawable = demoState->draw_skeletal_bone;
-		a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
-
-		// draw skeletal joint orientations
-		if (demoState->displayTangentBases)
-		{
-			currentDemoProgram = demoState->prog_drawColorAttrib_instanced;
-			a3shaderProgramActivate(currentDemoProgram->program);
-			a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_joint_creeper, 0);
-			currentDrawable = demoState->draw_axes;
-			a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
-		}
+//
+//		// draw curves
+//		if (demoState->segmentCount)
+//		{
+//			a3ui32* kptr = &k;
+//			currentDemoProgram = demoState->prog_drawCurveSegment;
+//			a3shaderProgramActivate(currentDemoProgram->program);
+//			k = demoMode->interp;
+//			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uFlag, 1, kptr);
+//			k = demoState->segmentIndex;
+//			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, kptr);
+//			k = demoState->segmentCount;
+//			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uCount, 1, kptr);
+//			a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uTime, 1, &demoState->segmentParam);
+//			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
+//			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, activeCamera->viewProjectionMat.mm);
+//			a3shaderUniformBufferActivate(demoState->ubo_curveWaypoint, 4);
+//			a3vertexDrawableActivateAndRenderInstanced(demoState->dummyDrawable, demoState->segmentCount);
+//		}
+//
+//
+//		// set up to draw skeleton
+//		currentDemoProgram = demoState->prog_drawColorUnif_instanced;
+//		a3shaderProgramActivate(currentDemoProgram->program);
+//		currentHierarchyState = demoState->hierarchyState_skel + demoMode->editSkeletonIndex;
+//		currentHierarchy = currentHierarchyState->poseGroup->hierarchy;
+//
+//		// draw skeletal joints
+//		a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_joint, 0);
+//		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, orange);
+//		currentDrawable = demoState->draw_skeletal_joint;
+//		a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
+//
+//		// draw bones
+//		currentDemoProgram = demoState->prog_drawColorizedHierarchy_instanced;
+//		a3shaderProgramActivate(currentDemoProgram->program);
+//		a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_bone, 0);
+//		a3shaderUniformBufferActivate(demoState->ubo_hierarchy, 4);
+//		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, hueCount, hueWheel->v);
+//		currentDrawable = demoState->draw_skeletal_bone;
+//		a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
+//
+//		// draw skeletal joint orientations
+//		if (demoState->displayTangentBases)
+//		{
+//			currentDemoProgram = demoState->prog_drawColorAttrib_instanced;
+//			a3shaderProgramActivate(currentDemoProgram->program);
+//			a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_joint, 0);
+//			currentDrawable = demoState->draw_axes;
+//			a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
+//		}
+//
+//		// set up to draw skeleton (creeper)
+//		currentDemoProgram = demoState->prog_drawColorUnif_instanced;
+//		a3shaderProgramActivate(currentDemoProgram->program);
+//		currentHierarchyState = demoState->hierarchyState_skel_creeper + demoMode->editSkeletonIndex;
+//		currentHierarchy = currentHierarchyState->poseGroup->hierarchy;
+//
+//		// draw skeletal joints
+//		a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_joint_creeper, 0);
+//		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, orange);
+//		currentDrawable = demoState->draw_skeletal_joint;
+//		a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
+//
+//		// draw bones
+//		currentDemoProgram = demoState->prog_drawColorizedHierarchy_instanced;
+//		a3shaderProgramActivate(currentDemoProgram->program);
+//		a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_bone_creeper, 0);
+//		a3shaderUniformBufferActivate(demoState->ubo_hierarchy_creeper, 4);
+//		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, hueCount, hueWheel->v);
+//		currentDrawable = demoState->draw_skeletal_bone;
+//		a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
+//
+//		// draw skeletal joint orientations
+//		if (demoState->displayTangentBases)
+//		{
+//			currentDemoProgram = demoState->prog_drawColorAttrib_instanced;
+//			a3shaderProgramActivate(currentDemoProgram->program);
+//			a3shaderUniformBufferActivate(demoState->ubo_transformLMVP_joint_creeper, 0);
+//			currentDrawable = demoState->draw_axes;
+//			a3vertexDrawableActivateAndRenderInstanced(currentDrawable, currentHierarchy->numNodes);
+//		}
 	}
 
 

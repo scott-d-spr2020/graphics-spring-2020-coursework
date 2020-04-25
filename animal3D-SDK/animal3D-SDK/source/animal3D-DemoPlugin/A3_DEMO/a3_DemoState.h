@@ -490,7 +490,6 @@ extern "C"
 		//material info
 
 		//dummy data for now
-		a3_RenderPass passes[64];
 		a3_RenderMaterial materials[5];
 		//---------------------------------------------------------------------
 	};
