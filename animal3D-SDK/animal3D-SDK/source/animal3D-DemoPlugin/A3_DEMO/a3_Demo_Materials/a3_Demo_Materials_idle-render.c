@@ -515,7 +515,7 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 				//a3textureActivate(texture_dm[k], a3tex_unit00);
 				//a3textureActivate(texture_sm[k], a3tex_unit01);
 				//sendMatrices(modelViewProjectionBiasMat_other.m, modelViewProjectionMat.m, modelViewMat.m, viewProjectionBiasMat_other.m, viewProjectionMat.m, viewMat.m, currentSceneObject->modelMat.m, currentDemoProgram, drawable[k], rgba4[k + 3].v);
-				const void* arr[] = { rgba4[k + 3].v, lightSz, lightSzInvSq, lightPos, lightCol };
+				const void* arr[] = { rgba4[k + 3].v, lightSz, lightSzInvSq, lightPos, lightCol, currentSceneObject->modelMat.m };
 				//need to examine the matrices further
 				drawMaterial(demoState, drawable[k], currentSceneObject->renderMaterial, arr, 1);
 			}

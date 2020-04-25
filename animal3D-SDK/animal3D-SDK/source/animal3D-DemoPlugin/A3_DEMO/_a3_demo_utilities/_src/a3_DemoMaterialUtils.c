@@ -46,7 +46,6 @@ a3ret drawPass(a3_DemoState const* demoState, const a3_VertexDrawable* drawable,
 	a3shaderProgramActivate(pass->shaderProgram->program);
 	a3textureActivate(mat->matTex_color, a3tex_unit00);
 	a3textureActivate(mat->matTex_metallic, a3tex_unit01);
-	sendMatrices(demoState, pass->shaderProgram, extraData);
 	a3framebufferActivate(pass->writeFBO);
 	//a3framebufferBindDepthTexture(demoState->fbo_shadow_d32, a3tex_unit00); //this needs to be configurable because phong uses 06.
 	for (a3ui32 i = 0; i < pass->numUniforms; ++i)
@@ -91,6 +90,7 @@ a3ret drawPass(a3_DemoState const* demoState, const a3_VertexDrawable* drawable,
 			}
 		}
 	}
+	sendMatrices(demoState, pass->shaderProgram, extraData);
 	a3vertexDrawableActivateAndRender(drawable);
 	return 0;
 }
@@ -223,7 +223,7 @@ a3ret sendMatrices(const a3_DemoState* state, a3_DemoStateShaderProgram * progra
 	a3mat4 viewMat = activeCamera->sceneObject->modelMatInv;
 	a3mat4 viewProjectionMat = activeCamera->viewProjectionMat;
 	a3mat4 modelViewProjectionMat = viewProjectionMat;
-	a3mat4 modelViewMat = a3mat4_identity, modelMat = a3mat4_identity;
+	a3mat4 modelViewMat = a3mat4_identity;
 	a3mat4 modelViewProjectionBiasMat_other, viewProjectionBiasMat_other = state->shadowLight->viewProjectionMat;
 	a3mat4 projectionBiasMat = activeCamera->projectionMat, projectionBiasMat_inv = activeCamera->projectionMatInv;
 
@@ -235,21 +235,22 @@ a3ret sendMatrices(const a3_DemoState* state, a3_DemoStateShaderProgram * progra
 	a3real4x4Product(projectionBiasMat.m, bias.m, activeCamera->projectionMat.m);
 	a3real4x4Product(projectionBiasMat_inv.m, activeCamera->projectionMatInv.m, unbias.m);
 
-	a3real4x4Product(modelViewMat.m, viewMat.m, modelMat.m);
+	a3real4x4Product(modelViewMat.m, viewMat.m, (a3real4*)extraData[5]);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, program->uMV, 1, *modelViewMat.m);
 	a3demo_quickInvertTranspose_internal(modelViewMat.m);
 	a3real4SetReal4(modelViewMat.m[3], a3vec4_zero.v);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, program->uMV_nrm, 1, *modelViewMat.m);
 	a3shaderUniformSendFloat(a3unif_vec4, program->uColor, 1, (a3f32*)extraData[0]);
-	a3real4x4Product(modelViewProjectionBiasMat_other.m, viewProjectionBiasMat_other.m, modelMat.m);
+	a3real4x4Product(modelViewProjectionBiasMat_other.m, viewProjectionBiasMat_other.m, (a3real4*)extraData[5]);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, program->uMVPB_other, 1, *modelViewProjectionBiasMat_other.m);
 
-	a3real4x4Product(modelViewProjectionMat.m, viewProjectionMat.m, modelMat.m);
+	a3real4x4Product(modelViewProjectionMat.m, viewProjectionMat.m, (a3real4*)extraData[5]);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, program->uMVP, 1, *modelViewProjectionMat.m);
 
 	a3shaderUniformSendFloat(a3unif_single, program->uLightSz, state->forwardLightCount, (a3f32*)extraData[1]);
 	a3shaderUniformSendFloat(a3unif_single, program->uLightSzInvSq, state->forwardLightCount, (a3f32*)extraData[2]);
 	a3shaderUniformSendFloat(a3unif_vec4, program->uLightPos, state->forwardLightCount, (a3f32*)extraData[3]);
 	a3shaderUniformSendFloat(a3unif_vec4, program->uLightCol, state->forwardLightCount, (a3f32*)extraData[4]);
+	
 	return 0;
 }
