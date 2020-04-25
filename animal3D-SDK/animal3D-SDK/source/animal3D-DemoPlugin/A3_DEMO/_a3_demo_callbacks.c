@@ -34,6 +34,7 @@
 
 #include "_a3_demo_utilities/a3_DemoMacros.h"
 #include "_a3_demo_utilities/a3_DemoRenderUtils.h"
+#include "_a3_demo_utilities/materials/a3_MaterialEditor.h"
 
 
 #include <stdio.h>
@@ -439,6 +440,11 @@ A3DYLIBSYMBOL void a3demoCB_keyCharPress(a3_DemoState *demoState, a3i32 asciiKey
 	case 'P':
 		a3demo_unloadShaders(demoState);
 		a3demo_loadShaders(demoState);
+		break;
+
+	case 'O':
+		a3materialReset();
+		a3demo_loadMaterials(demoState);
 		break;
 	}
 
