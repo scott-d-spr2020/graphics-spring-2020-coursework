@@ -100,6 +100,7 @@ void a3demo_loadShaders(a3_DemoState* demoState);
 void a3demo_loadTextures(a3_DemoState* demoState);
 void a3demo_loadFramebuffers(a3_DemoState* demoState);
 void a3demo_loadAnimation(a3_DemoState* demoState);
+void a3demo_reloadMaterials(a3_DemoState* demoState);
 void a3demo_loadMaterials(a3_DemoState* demoState);
 void a3demo_refresh(a3_DemoState* demoState);
 
@@ -443,6 +444,7 @@ A3DYLIBSYMBOL void a3demoCB_keyCharPress(a3_DemoState *demoState, a3i32 asciiKey
 		break;
 
 	case 'O':
+		a3demo_reloadMaterials(demoState);
 		a3materialReset();
 		a3demo_loadMaterials(demoState);
 		break;

@@ -78,6 +78,7 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 
 #include "..//_a3_demo_utilities/a3_DemoSSAOUtils.h"
 #include "../_a3_demo_utilities/a3_DemoMaterialUtils.h"
@@ -1756,12 +1757,21 @@ void a3demo_loadAnimation(a3_DemoState* demoState)
 	a3hierarchyStateCreate(hierarchyState, hierarchyPoseGroup);
 }
 
+void a3demo_reloadMaterials(a3_DemoState* demoState)
+{
+	memset(&demoState->materials[0], 0, sizeof(a3_RenderMaterial));
+	memset(&demoState->materials[1], 0, sizeof(a3_RenderMaterial));
+	memset(&demoState->materials[2], 0, sizeof(a3_RenderMaterial));
+	memset(&demoState->materials[3], 0, sizeof(a3_RenderMaterial));
+	memset(&demoState->materials[4], 0, sizeof(a3_RenderMaterial));
+}
+
 void a3demo_loadMaterials(a3_DemoState* demoState)
 {
 	//File loading
-	a3_Stream fs[1] = { 0 }; //is this memset?
+	a3_Stream fs[5] = { 0, 0, 0, 0, 0 }; //is this memset?
 	//a3_RenderMaterial rm[1] = { 0 };
-	a3ui32 fileLength = a3streamLoadContents(fs, "../../../../resource/materials/testmat.txt");
+	a3ui32 fileLength = a3streamLoadContents(&fs[0], "../../../../resource/materials/testmat.txt");
 
 	int uniformCount = 18;
 
@@ -1772,39 +1782,38 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 
 	if (fileLength > 0)
 	{
-		a3streamObjectRead(fs, tempParserData, (a3_StreamReadFunc)a3materialParseFile);
+		a3streamObjectRead(&fs[0], tempParserData, (a3_StreamReadFunc)a3materialParseFile);
 	}
 
-	a3_Stream fs2[1] = { 0 };
-	fileLength = a3streamLoadContents(fs2, "../../../../resource/materials/material1.txt");
+	fileLength = a3streamLoadContents(&fs[1], "../../../../resource/materials/material1.txt");
 	
 	if (fileLength > 0)
 	{
-		a3streamObjectRead(fs2, tempParserData, (a3_StreamReadFunc)a3materialParseFile);
+		a3streamObjectRead(&fs[1], tempParserData, (a3_StreamReadFunc)a3materialParseFile);
 	}
 
 	a3_Stream fs3[1] = { 0 };
-	fileLength = a3streamLoadContents(fs3, "../../../../resource/materials/material2.txt");
+	fileLength = a3streamLoadContents(&fs[2], "../../../../resource/materials/material2.txt");
 
 	if (fileLength > 0)
 	{
-		a3streamObjectRead(fs3, tempParserData, (a3_StreamReadFunc)a3materialParseFile);
+		a3streamObjectRead(&fs[2], tempParserData, (a3_StreamReadFunc)a3materialParseFile);
 	}
 
 	a3_Stream fs4[1] = { 0 };
-	fileLength = a3streamLoadContents(fs4, "../../../../resource/materials/material3.txt");
+	fileLength = a3streamLoadContents(&fs[3], "../../../../resource/materials/material3.txt");
 
 	if (fileLength > 0)
 	{
-		a3streamObjectRead(fs4, tempParserData, (a3_StreamReadFunc)a3materialParseFile);
+		a3streamObjectRead(&fs[3], tempParserData, (a3_StreamReadFunc)a3materialParseFile);
 	}
 
 	a3_Stream fs5[1] = { 0 };
-	fileLength = a3streamLoadContents(fs5, "../../../../resource/materials/material4.txt");
+	fileLength = a3streamLoadContents(&fs[4], "../../../../resource/materials/material4.txt");
 
 	if (fileLength > 0)
 	{
-		a3streamObjectRead(fs5, tempParserData, (a3_StreamReadFunc)a3materialParseFile);
+		a3streamObjectRead(&fs[4], tempParserData, (a3_StreamReadFunc)a3materialParseFile);
 	}
 	//demoState->materials[0].numPasses = 1;
 	//demoState->materials[0].passes = malloc(sizeof(a3_RenderPass *) * demoState->materials[0].numPasses);
