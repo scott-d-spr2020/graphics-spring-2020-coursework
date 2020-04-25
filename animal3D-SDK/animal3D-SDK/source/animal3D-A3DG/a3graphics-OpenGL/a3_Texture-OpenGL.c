@@ -202,9 +202,11 @@ a3ret a3textureCreateFromFile(a3_Texture* texture_out, const a3byte name_opt[32]
 	return -1;
 }
 
-a3ret a3cubemapCreateFromSources(a3_Texture* texture_out, char** sources, const a3byte name_opt[32])
+a3ret a3cubemapCreateFromSources(a3_Texture* texture_out, a3_Texture** sources, const a3byte name_opt[32])
 {
 	a3_Texture ret = { 0 };
+	int result = 0;
+
 	if (texture_out)
 	{
 		if (!texture_out->handle->handle)
@@ -212,75 +214,43 @@ a3ret a3cubemapCreateFromSources(a3_Texture* texture_out, char** sources, const 
 			// multi-platform-friendly way of doing this: 
 			//	no platform-specific calls
 			// start by initializing image library in case it hasn't been
-			a3i32 result = a3textureInitializeImageLibrary();
-			a3i32 convertFormat, convertType, textureFormat, textureFormatInternal;
 			a3ui32 glHandle = 0;
-			a3ui32 ilHandle = 0;
-			a3ui32 width, height, channels, bytes;
 
-			// generate IL handle
-			ilHandle = ilGenImage();
-			if (ilHandle)
+			// create GL texture with default settings
+			glGenTextures(1, &glHandle);
+			if (glHandle)
 			{
-				ilBindImage(ilHandle);
-				result = ilLoadImage(filePath);
-				if (result)
+				glBindTexture(GL_TEXTURE_CUBE_MAP, glHandle);
+
+				for (int i = 0; i < 6; i++)
 				{
-					result = 0;
-					width = ilGetInteger(IL_IMAGE_WIDTH);
-					height = ilGetInteger(IL_IMAGE_HEIGHT);
-					channels = ilGetInteger(IL_IMAGE_CHANNELS);
-					bytes = ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL) / channels;
-
-					if (width && height && channels && bytes)
-					{
-						// determine format: want all images to be one of 4 types: 
-						//	rgb8, rgb16, rgba8 or rgba16
-						channels = channels >= 3 ? channels <= 4 ? channels : 4 : 3;
-						bytes = bytes >= 1 ? bytes <= 2 ? bytes : 2 : 1;
-
-						// select descriptors and convert image
-						if (channels == 3)
-							textureFormat = bytes == 1 ? GL_RGB8 : GL_RGB16;
-						else
-							textureFormat = bytes == 1 ? GL_RGBA8 : GL_RGBA16;
-						convertFormat = textureFormatInternal = channels == 3 ? IL_RGB : IL_RGBA;
-						convertType = bytes == 1 ? IL_UNSIGNED_BYTE : IL_UNSIGNED_SHORT;
-						ilConvertImage(convertFormat, convertType);
-
-						// create GL texture with default settings
-						glGenTextures(1, &glHandle);
-						if (glHandle)
-						{
-							glBindTexture(GL_TEXTURE_2D, glHandle);
-							glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, width, height, 0, textureFormatInternal, convertType, ilGetData());
-							a3textureDefaultSettings();
-							glBindTexture(GL_TEXTURE_2D, 0);
-
-							// configure the output
-							a3handleCreateHandle(ret.handle, a3textureInternalHandleReleaseFunc, name_opt, glHandle, 1);
-							ret.width = width;
-							ret.height = height;
-							ret.channels = channels;
-							ret.bytes = bytes;
-							ret.internalFormat = textureFormatInternal;
-							ret.internalType = convertType;
-
-							// done
-							*texture_out = ret;
-							a3textureReference(texture_out);
-							result = 1;
-						}
-					}
+					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, 2048, 2048, 0, GL_RGB, GL_RGB, sources[i]->handle);
 				}
 
-				// delete IL image
-				ilDeleteImage(ilHandle);
-			}
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-			// done
-			return result;
+				// configure the output
+				a3handleCreateHandle(ret.handle, a3textureInternalHandleReleaseFunc, name_opt, glHandle, 1);
+				ret.width = 2048;
+				ret.height = 2048;
+				ret.channels = 3;
+				ret.bytes = sources[0]->bytes;
+				ret.internalFormat = GL_RGBA;
+				ret.internalType = GL_UNSIGNED_BYTE;
+
+				// done
+				*texture_out = ret;
+				a3textureReference(texture_out);
+				result = 1;
+			}
 		}
+
+		// done
+		return result;
 	}
 	return -1;
 }
