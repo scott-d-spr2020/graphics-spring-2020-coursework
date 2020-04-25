@@ -112,13 +112,29 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 	// Refer to 994-1004 in demoState loading for what I think we should do
 	// This way, we can dynamically load in textures, and not have to worry about demoState having handles
 
-	char* texType = strtok((char*)data, " ");
-	char* dirtyFilePath = strtok(NULL, "\n");
+	//char* texType = strtok((char*)data, " ");
+	//char* dirtyFilePath = strtok(NULL, "\n");
+
+	char* temp = calloc(1, strlen(data));
+	strcpy(temp, data);
+	temp = temp + 1; //clear the \t
+	int i;
+	for (i = 0; temp[i] != ' '; ++i) //wind through till we find the space
+	{
+
+	}
+	temp[i] = '\0'; //separate the string into two
+	char* texType = temp;
+	char* dirtyFilePath = temp + i + 1;
 	char* filePath = calloc(1, strlen(dirtyFilePath));
 
 	strcpy(filePath, dirtyFilePath);
 
-	filePath[strlen(filePath) - 1] = '\0';
+	char c = filePath[strlen(filePath) - 1];
+	if (c == '\r' || c == '\n')
+	{
+		filePath[strlen(filePath) - 1] = '\0';
+	}
 
 	char* relativePath = "../../../../";
 	char* tempPath = calloc(strlen(relativePath) + strlen(filePath) + 1, sizeof(char));
