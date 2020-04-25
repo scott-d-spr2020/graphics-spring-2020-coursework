@@ -22,14 +22,15 @@ a3byte const* shaderProgNames[32] = {
 	"prog:draw-nonphoto-multi-mrt"
 };
 
+int matNum = 0;
 
 void a3materialParseFile(ParserData* pData, a3byte const* data)
 {
-	pData->state->materials[0].numPasses = 1; //Arbitrary for now, should we define it in the file?
-	pData->state->materials[0].passes = calloc(pData->state->materials[0].numPasses, sizeof(a3_RenderPass *));
-	for (a3ui32 i = 0; i < pData->state->materials[0].numPasses; i++)
+	pData->state->materials[matNum].numPasses = 1; //Arbitrary for now, should we define it in the file?
+	pData->state->materials[matNum].passes = calloc(pData->state->materials[matNum].numPasses, sizeof(a3_RenderPass *));
+	for (a3ui32 i = 0; i < pData->state->materials[matNum].numPasses; i++)
 	{
-		pData->state->materials[0].passes[i] = calloc(1, sizeof(a3_RenderPass));
+		pData->state->materials[matNum].passes[i] = calloc(1, sizeof(a3_RenderPass));
 	}
 	char* token;
 
@@ -52,6 +53,7 @@ void a3materialParseFile(ParserData* pData, a3byte const* data)
 
 		token = strtok(NULL, "\n");
 	}
+	++matNum;
 }
 
 void a3materialParserHandleKeyword(const a3byte* keyword, const a3byte* data, ParserData* pData)
@@ -78,12 +80,12 @@ void a3materialParserHandleProgram(const a3byte* data, ParserData* pData)
 	int success = 0;
 	if (strstr((char*)data, (char*)shaderProgNames[0]))
 	{
-		initRenderPass(pData->state->materials[0].passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawPhong_multi_mrt);
+		initRenderPass(pData->state->materials[matNum].passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawPhong_multi_mrt);
 		success = 1;
 	}
 	else if (strstr((char*)data, (char*)shaderProgNames[1]))
 	{
-		initRenderPass(pData->state->materials[0].passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawNonphoto_multi_mrt);
+		initRenderPass(pData->state->materials[matNum].passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawNonphoto_multi_mrt);
 		success = 1;
 	}
 	else
@@ -92,7 +94,7 @@ void a3materialParserHandleProgram(const a3byte* data, ParserData* pData)
 	}
 	if (success)
 	{
-		registerCommonUniforms(pData->state, pData->state->materials[0].passes[0]);
+		registerCommonUniforms(pData->state, pData->state->materials[matNum].passes[0]);
 	}
 }
 
@@ -120,7 +122,7 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 
 	if (strstr(texType, texTypeStrings[0]))
 	{
-		int flag = a3textureCreateFromFile(pData->state->materials[0].matTex_color, "tex:material-color", relativePath);
+		int flag = a3textureCreateFromFile(pData->state->materials[matNum].matTex_color, "tex:material-color", relativePath);
 
 		if (flag <= 0)
 		{
@@ -128,14 +130,14 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 			return;
 		}
 
-		a3textureActivate(pData->state->materials[0].matTex_color, a3tex_unit00);
+		a3textureActivate(pData->state->materials[matNum].matTex_color, a3tex_unit00);
 		a3textureDefaultSettings();
 
-		tex = pData->state->materials[0].matTex_color;
+		tex = pData->state->materials[matNum].matTex_color;
 	}
 	else if (strstr(texType, texTypeStrings[1]))
 	{
-		int flag = a3textureCreateFromFile(pData->state->materials[0].matTex_normal, "tex:material-normal", relativePath);
+		int flag = a3textureCreateFromFile(pData->state->materials[matNum].matTex_normal, "tex:material-normal", relativePath);
 
 		if (flag <= 0)
 		{
@@ -143,14 +145,14 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 			return;
 		}
 
-		a3textureActivate(pData->state->materials[0].matTex_normal, a3tex_unit00);
+		a3textureActivate(pData->state->materials[matNum].matTex_normal, a3tex_unit00);
 		a3textureDefaultSettings();
 
-		tex = pData->state->materials[0].matTex_normal;
+		tex = pData->state->materials[matNum].matTex_normal;
 	}
 	else if (strstr(texType, texTypeStrings[2]))
 	{
-		int flag = a3textureCreateFromFile(pData->state->materials[0].matTex_metallic, "tex:material-metallic", relativePath);
+		int flag = a3textureCreateFromFile(pData->state->materials[matNum].matTex_metallic, "tex:material-metallic", relativePath);
 
 		if (flag <= 0)
 		{
@@ -158,14 +160,14 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 			return;
 		}
 
-		a3textureActivate(pData->state->materials[0].matTex_metallic, a3tex_unit00);
+		a3textureActivate(pData->state->materials[matNum].matTex_metallic, a3tex_unit00);
 		a3textureDefaultSettings();
 
-		tex = pData->state->materials[0].matTex_metallic;
+		tex = pData->state->materials[matNum].matTex_metallic;
 	}
 	else if (strstr(texType, texTypeStrings[3]))
 	{
-		int flag = a3textureCreateFromFile(pData->state->materials[0].matTex_roughness, "tex:material-roughness", relativePath);
+		int flag = a3textureCreateFromFile(pData->state->materials[matNum].matTex_roughness, "tex:material-roughness", relativePath);
 
 		if (flag <= 0)
 		{
@@ -173,10 +175,10 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 			return;
 		}
 
-		a3textureActivate(pData->state->materials[0].matTex_roughness, a3tex_unit00);
+		a3textureActivate(pData->state->materials[matNum].matTex_roughness, a3tex_unit00);
 		a3textureDefaultSettings();
 
-		tex = pData->state->materials[0].matTex_roughness;
+		tex = pData->state->materials[matNum].matTex_roughness;
 	}
 	else
 	{

@@ -1775,6 +1775,14 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 	{
 		a3streamObjectRead(fs, tempParserData, (a3_StreamReadFunc)a3materialParseFile);
 	}
+
+	a3_Stream fs2[1] = { 0 };
+	fileLength = a3streamLoadContents(fs2, "../../../../resource/materials/material1.txt");
+	
+	if (fileLength > 0)
+	{
+		a3streamObjectRead(fs2, tempParserData, (a3_StreamReadFunc)a3materialParseFile);
+	}
 	//demoState->materials[0].numPasses = 1;
 	//demoState->materials[0].passes = malloc(sizeof(a3_RenderPass *) * demoState->materials[0].numPasses);
 	//for (a3ui32 i = 0; i < demoState->materials[0].numPasses; i++)
@@ -1787,7 +1795,7 @@ void a3demo_loadMaterials(a3_DemoState* demoState)
 	//registerCommonUniforms(demoState, demoState->materials[0].passes[0]);
 	//shaderProgram
 	demoState->planeObject->renderMaterial = &demoState->materials[0];
-	demoState->sphereObject->renderMaterial = &demoState->materials[0];
+	demoState->sphereObject->renderMaterial = &demoState->materials[1];
 	demoState->cylinderObject->renderMaterial = &demoState->materials[0];
 	demoState->torusObject->renderMaterial = &demoState->materials[0];
 	demoState->teapotObject->renderMaterial = &demoState->materials[0];

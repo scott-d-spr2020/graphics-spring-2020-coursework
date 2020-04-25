@@ -1,0 +1,10 @@
+shaderprogram
+	prog:draw-Phong-mul-fwd-mrt
+texture
+	color resource/tex/earth/2k/earth_dm_2k.png
+texture
+	normal resource/tex/crate/crate4_low_lambert1_Normal.tga
+texture
+	metallic resource/tex/earth/2k/earth_sm_2k.png
+texture
+	roughness resource/tex/crate/crate4_low_lambert1_Roughness.tga
