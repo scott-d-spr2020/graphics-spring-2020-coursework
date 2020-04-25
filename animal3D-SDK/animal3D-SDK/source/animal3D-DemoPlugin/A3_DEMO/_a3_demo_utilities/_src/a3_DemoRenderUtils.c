@@ -145,6 +145,7 @@ extern inline void a3demo_drawModelTexturedColored_invertModel(a3real4x4p modelV
 	// set up render
 	a3shaderProgramActivate(program->program);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, program->uAtlas, 1, *atlasMat);
+	a3shaderUniformSendFloatMat(a3unif_mat4, 0, program->uVP, 1, *viewProjectionMat);
 	a3shaderUniformSendFloat(a3unif_vec4, program->uColor, 1, color);
 	a3textureActivate(texture, a3tex_unit00);
 

@@ -470,6 +470,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				passTangentBasis_transform_instanced_morph_vs[1];
 			a3_DemoStateShader
 				pbr_instanced_vs[1];
+			a3_DemoStateShader
+				passCubeMapData[1];
 
 			// geometry shaders
 			// 07-curves
@@ -521,6 +523,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				drawPhong_multi_forward_mrt_fs[1];
 			a3_DemoStateShader
 				drawPBR_multi_forward_mrt_fs[1];
+			a3_DemoStateShader
+				drawCubeMap_fs[1];
 		};
 	} shaderList = {
 		{
@@ -550,6 +554,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-vs:pass-col-hierarchy-t-i",	a3shader_vertex  ,	1,{ A3_DEMO_VS"07-keyframes/passColor_hierarchy_transform_instanced_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-tb-trans-morph",		a3shader_vertex  ,	1,{ A3_DEMO_VS"07-keyframes/passTangentBasis_transform_instanced_morph_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pbr-instanced",			a3shader_vertex  ,	1,{ A3_DEMO_VS"FINAL/pbr_instanced_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-cube-map",			a3shader_vertex  ,	1,{ A3_DEMO_VS"FINAL/passCubeMapData_vs4x.glsl" } } },
 
 			// gs
 			// 07-curves
@@ -592,6 +597,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-Phong-mul-fwd-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"07-curves/drawPhong_multi_forward_mrt_fs4x.glsl" } } },
 
 			{ { { 0 },	"shdr-fs:draw-PBR-mul-fwd-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"FINAL/drawPBR_multi_forward_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-cube-map",		a3shader_fragment,	1,{ A3_DEMO_FS"FINAL/drawCubeMap_fs4x.glsl" } } },
 			
 		}
 	};
@@ -818,6 +824,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.pbr_instanced_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPBR_multi_forward_mrt_fs->shader);
 
+	currentDemoProg = demoState->prog_drawCubeMap;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-cube-map");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passCubeMapData->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawCubeMap_fs->shader);
+
+
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs
 	// good idea to activate the drawable with the most attributes
@@ -865,6 +877,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		a3demo_setUniformDefaultMat4(currentDemoProg, uMV_nrm);
 		a3demo_setUniformDefaultMat4(currentDemoProg, uMVPB);
 		a3demo_setUniformDefaultMat4(currentDemoProg, uMVPB_other);
+		a3demo_setUniformDefaultMat4(currentDemoProg, uVP);
 		a3demo_setUniformDefaultMat4(currentDemoProg, uAtlas);
 		
 		// common FS
@@ -987,6 +1000,13 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			a3_DemoStateTexture texCrateNorm[1];
 			a3_DemoStateTexture texCrateMetal[1];
 			a3_DemoStateTexture texCrateRough[1];
+
+			a3_DemoStateTexture texCubeBack[1];
+			a3_DemoStateTexture texCubeBottom[1];
+			a3_DemoStateTexture texCubeFront[1];
+			a3_DemoStateTexture texCubeLeft[1];
+			a3_DemoStateTexture texCubeRight[1];
+			a3_DemoStateTexture texCubeTop[1];
 		};
 	} textureList = {
 		{
@@ -1008,10 +1028,24 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 			{ demoState->tex_crateNormal,	 "tex:cratenorm",	"../../../../resource/tex/crate/crate4_low_lambert1_Normal.tga" },
 			{ demoState->tex_crateMetal,	 "tex:crateMetal",	"../../../../resource/tex/crate/crate4_low_lambert1_Metallic.tga" },
 			{ demoState->tex_crateRough,	 "tex:crateRough",	"../../../../resource/tex/crate/crate4_low_lambert1_Roughness.tga" },
+
+			{ demoState->tex_cubeBack,		 "tex:cubeBack",	"../../../../resource/tex/skybox/back.jpg" },
+			{ demoState->tex_cubeBottom,	 "tex:cubeBot",		"../../../../resource/tex/skybox/bottom.jpg" },
+			{ demoState->tex_cubeFront,		 "tex:cubeFront",	"../../../../resource/tex/skybox/front.jpg" },
+			{ demoState->tex_cubeLeft,		 "tex:cubeLeft",	"../../../../resource/tex/skybox/left.jpg" },
+			{ demoState->tex_cubeRight,		 "tex:cubeRight",	"../../../../resource/tex/skybox/right.jpg" },
+			{ demoState->tex_cubeTop,		 "tex:cubeTop",		"../../../../resource/tex/skybox/top.jpg" },
 		}
 	};
 	const a3ui32 numTextures = sizeof(textureList) / sizeof(a3_DemoStateTexture);
 	a3_DemoStateTexture* const textureListPtr = (a3_DemoStateTexture*)(&textureList), * texturePtr;
+
+	a3_Texture** cubeSources = calloc(6, sizeof(a3_Texture*));
+
+	for (int i = 0; i < 6; i++)
+	{
+		cubeSources[i] = calloc(1, sizeof(a3_Texture));
+	}
 
 	// load all textures
 	for (i = 0; i < numTextures; ++i)
@@ -1021,6 +1055,18 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 		a3textureActivate(texturePtr->texture, a3tex_unit00);
 		a3textureDefaultSettings();
 	}
+
+	// load cubemap using separate sky textures
+	cubeSources[0] = demoState->tex_cubeRight;
+	cubeSources[1] = demoState->tex_cubeLeft;
+	cubeSources[2] = demoState->tex_cubeTop;
+	cubeSources[3] = demoState->tex_cubeBottom;
+	cubeSources[4] = demoState->tex_cubeFront;
+	cubeSources[5] = demoState->tex_cubeBack;
+
+	a3cubemapCreateFromSources(demoState->tex_skyCubeMap, cubeSources, "tex:skyboxmap");
+	a3textureActivate(demoState->tex_skyCubeMap, a3tex_unit00);
+	
 
 	// change settings on a per-texture or per-type basis
 	tex = demoState->texture;

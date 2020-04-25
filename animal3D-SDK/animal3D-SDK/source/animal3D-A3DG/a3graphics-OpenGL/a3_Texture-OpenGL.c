@@ -17,7 +17,7 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
-	
+
 	a3_Texture-OpenGL.c
 	Definitions for OpenGL texture object (using DevIL for now).
 
@@ -55,11 +55,11 @@
 //-----------------------------------------------------------------------------
 
 // flip the data and store in dst
-void a3textureInternalFlipData(a3byte *dataDst, const a3byte *dataSrc, const a3ui32 rowSz, const a3ui32 totalSz);
+void a3textureInternalFlipData(a3byte* dataDst, const a3byte* dataSrc, const a3ui32 rowSz, const a3ui32 totalSz);
 
 
 // auto-release function
-void a3textureInternalHandleReleaseFunc(a3i32 count, a3ui32 *handlePtr)
+void a3textureInternalHandleReleaseFunc(a3i32 count, a3ui32* handlePtr)
 {
 	glDeleteTextures(count, handlePtr);
 }
@@ -67,7 +67,7 @@ void a3textureInternalHandleReleaseFunc(a3i32 count, a3ui32 *handlePtr)
 
 //-----------------------------------------------------------------------------
 
-a3ret a3textureCreatePixelFormatDescriptor(a3_TexturePixelFormatDescriptor *pixelFormat_out, const a3_TexturePixelType pixelType)
+a3ret a3textureCreatePixelFormatDescriptor(a3_TexturePixelFormatDescriptor* pixelFormat_out, const a3_TexturePixelType pixelType)
 {
 	static const a3_TexturePixelFormatDescriptor pixelFormats[] = {
 		{ GL_RED,	GL_R8,		GL_UNSIGNED_BYTE,	1, 1 },
@@ -110,7 +110,7 @@ a3ret a3textureInitializeImageLibrary()
 		iluInit();
 		ilutInit();
 		ilutRenderer(ILUT_OPENGL);
-	//	ilEnable(IL_FILE_OVERWRITE);
+		//	ilEnable(IL_FILE_OVERWRITE);
 		ilEnable(IL_ORIGIN_SET);
 		ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
 		initialized = 1;
@@ -119,7 +119,7 @@ a3ret a3textureInitializeImageLibrary()
 	return 0;
 }
 
-a3ret a3textureCreateFromFile(a3_Texture *texture_out, const a3byte name_opt[32], const a3byte *filePath)
+a3ret a3textureCreateFromFile(a3_Texture* texture_out, const a3byte name_opt[32], const a3byte* filePath)
 {
 	a3_Texture ret = { 0 };
 	if (texture_out)
@@ -202,7 +202,90 @@ a3ret a3textureCreateFromFile(a3_Texture *texture_out, const a3byte name_opt[32]
 	return -1;
 }
 
-a3ret a3textureCreateFromData(a3_Texture *texture_out, const a3byte name_opt[32], const a3_TexturePixelFormatDescriptor *pixelFormat, const a3ui32 width, const a3ui32 height, const void *data_opt, a3boolean dataFlipped)
+a3ret a3cubemapCreateFromSources(a3_Texture* texture_out, char** sources, const a3byte name_opt[32])
+{
+	a3_Texture ret = { 0 };
+	if (texture_out)
+	{
+		if (!texture_out->handle->handle)
+		{
+			// multi-platform-friendly way of doing this: 
+			//	no platform-specific calls
+			// start by initializing image library in case it hasn't been
+			a3i32 result = a3textureInitializeImageLibrary();
+			a3i32 convertFormat, convertType, textureFormat, textureFormatInternal;
+			a3ui32 glHandle = 0;
+			a3ui32 ilHandle = 0;
+			a3ui32 width, height, channels, bytes;
+
+			// generate IL handle
+			ilHandle = ilGenImage();
+			if (ilHandle)
+			{
+				ilBindImage(ilHandle);
+				result = ilLoadImage(filePath);
+				if (result)
+				{
+					result = 0;
+					width = ilGetInteger(IL_IMAGE_WIDTH);
+					height = ilGetInteger(IL_IMAGE_HEIGHT);
+					channels = ilGetInteger(IL_IMAGE_CHANNELS);
+					bytes = ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL) / channels;
+
+					if (width && height && channels && bytes)
+					{
+						// determine format: want all images to be one of 4 types: 
+						//	rgb8, rgb16, rgba8 or rgba16
+						channels = channels >= 3 ? channels <= 4 ? channels : 4 : 3;
+						bytes = bytes >= 1 ? bytes <= 2 ? bytes : 2 : 1;
+
+						// select descriptors and convert image
+						if (channels == 3)
+							textureFormat = bytes == 1 ? GL_RGB8 : GL_RGB16;
+						else
+							textureFormat = bytes == 1 ? GL_RGBA8 : GL_RGBA16;
+						convertFormat = textureFormatInternal = channels == 3 ? IL_RGB : IL_RGBA;
+						convertType = bytes == 1 ? IL_UNSIGNED_BYTE : IL_UNSIGNED_SHORT;
+						ilConvertImage(convertFormat, convertType);
+
+						// create GL texture with default settings
+						glGenTextures(1, &glHandle);
+						if (glHandle)
+						{
+							glBindTexture(GL_TEXTURE_2D, glHandle);
+							glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, width, height, 0, textureFormatInternal, convertType, ilGetData());
+							a3textureDefaultSettings();
+							glBindTexture(GL_TEXTURE_2D, 0);
+
+							// configure the output
+							a3handleCreateHandle(ret.handle, a3textureInternalHandleReleaseFunc, name_opt, glHandle, 1);
+							ret.width = width;
+							ret.height = height;
+							ret.channels = channels;
+							ret.bytes = bytes;
+							ret.internalFormat = textureFormatInternal;
+							ret.internalType = convertType;
+
+							// done
+							*texture_out = ret;
+							a3textureReference(texture_out);
+							result = 1;
+						}
+					}
+				}
+
+				// delete IL image
+				ilDeleteImage(ilHandle);
+			}
+
+			// done
+			return result;
+		}
+	}
+	return -1;
+}
+
+a3ret a3textureCreateFromData(a3_Texture* texture_out, const a3byte name_opt[32], const a3_TexturePixelFormatDescriptor* pixelFormat, const a3ui32 width, const a3ui32 height, const void* data_opt, a3boolean dataFlipped)
 {
 	a3_Texture ret = { 0 };
 	a3ui32 handle;
@@ -220,7 +303,7 @@ a3ret a3textureCreateFromData(a3_Texture *texture_out, const a3byte name_opt[32]
 				glGenTextures(1, &handle);
 				if (handle)
 				{
-					a3byte *tmpDataPtr;
+					a3byte* tmpDataPtr;
 
 					// if data is flipped, need to re-order it row-by-row
 					// do so in a temporarily-allocated image
@@ -228,8 +311,8 @@ a3ret a3textureCreateFromData(a3_Texture *texture_out, const a3byte name_opt[32]
 					{
 						const a3ui32 rowSz = width * pixelFormat->channelsPerPixel * pixelFormat->bytesPerChannel;
 						const a3ui32 totalSz = height * rowSz;
-						tmpDataPtr = (a3byte *)malloc(totalSz);
-						a3textureInternalFlipData(tmpDataPtr, (const a3byte *)data_opt, rowSz, totalSz);
+						tmpDataPtr = (a3byte*)malloc(totalSz);
+						a3textureInternalFlipData(tmpDataPtr, (const a3byte*)data_opt, rowSz, totalSz);
 						data_opt = tmpDataPtr;
 					}
 
@@ -261,7 +344,7 @@ a3ret a3textureCreateFromData(a3_Texture *texture_out, const a3byte name_opt[32]
 			}
 			else
 				printf("\n A3 ERROR (TEX \'%s\'): \n\t Invalid dimensions; texture not created.", name_opt);
-			
+
 			// fail
 			return 0;
 		}
@@ -269,7 +352,7 @@ a3ret a3textureCreateFromData(a3_Texture *texture_out, const a3byte name_opt[32]
 	return -1;
 }
 
-a3ret a3textureReplaceData(const a3_Texture *texture, const a3ui32 offsetWidth, const a3ui32 offsetHeight, const a3ui32 replaceWidth, const a3ui32 replaceHeight, const void *data_opt, a3boolean dataFlipped)
+a3ret a3textureReplaceData(const a3_Texture* texture, const a3ui32 offsetWidth, const a3ui32 offsetHeight, const a3ui32 replaceWidth, const a3ui32 replaceHeight, const void* data_opt, a3boolean dataFlipped)
 {
 	if (texture)
 	{
@@ -279,13 +362,13 @@ a3ret a3textureReplaceData(const a3_Texture *texture, const a3ui32 offsetWidth, 
 			if (replaceWidth && replaceHeight && endWidth <= texture->width && endHeight <= texture->height)
 			{
 				// same flip algo as above
-				a3byte *tmpDataPtr;
+				a3byte* tmpDataPtr;
 				if (data_opt && dataFlipped)
 				{
 					const a3ui32 rowSz = replaceWidth * texture->channels * texture->bytes;
 					const a3ui32 totalSz = replaceHeight * rowSz;
-					tmpDataPtr = (a3byte *)malloc(totalSz);
-					a3textureInternalFlipData(tmpDataPtr, (const a3byte *)data_opt, rowSz, totalSz);
+					tmpDataPtr = (a3byte*)malloc(totalSz);
+					a3textureInternalFlipData(tmpDataPtr, (const a3byte*)data_opt, rowSz, totalSz);
 					data_opt = tmpDataPtr;
 				}
 
@@ -310,7 +393,7 @@ a3ret a3textureReplaceData(const a3_Texture *texture, const a3ui32 offsetWidth, 
 	return -1;
 }
 
-a3ret a3textureActivate(const a3_Texture *texture, const a3_TextureUnit unit)
+a3ret a3textureActivate(const a3_Texture* texture, const a3_TextureUnit unit)
 {
 	// switch unit
 	glActiveTexture(GL_TEXTURE0 + unit);

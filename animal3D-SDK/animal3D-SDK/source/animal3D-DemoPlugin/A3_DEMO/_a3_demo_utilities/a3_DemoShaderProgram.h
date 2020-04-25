@@ -75,6 +75,7 @@ extern "C"
 				uMV_nrm,					// model-view matrix for normals (object -> view)
 				uMVPB,						// model-view-projection-bias transform (object -> biased clip)
 				uMVPB_other,				// model-view-projection-bias transform to other (object -> bias clip other)
+				uVP,
 				uAtlas;						// atlas matrix for texture coordinates
 
 			a3i32

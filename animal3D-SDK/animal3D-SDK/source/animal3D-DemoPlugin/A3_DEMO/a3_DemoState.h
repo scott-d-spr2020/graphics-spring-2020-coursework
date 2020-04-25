@@ -398,6 +398,8 @@ extern "C"
 					prog_drawOverlays_tb_wf_morph[1];			// draw overlays on morphed mesh
 				a3_DemoStateShaderProgram
 					prog_drawPBR_instanced[1];
+				a3_DemoStateShaderProgram
+					prog_drawCubeMap[1];
 			};
 		};
 
@@ -425,7 +427,14 @@ extern "C"
 					tex_crateColor[1],
 					tex_crateNormal[1],
 					tex_crateMetal[1],
-					tex_crateRough[1];
+					tex_crateRough[1],
+					tex_cubeBack[1],
+					tex_cubeBottom[1],
+					tex_cubeFront[1],
+					tex_cubeLeft[1],
+					tex_cubeRight[1],
+					tex_cubeTop[1],
+					tex_skyCubeMap[1];
 			};
 		};
 

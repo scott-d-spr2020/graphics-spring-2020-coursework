@@ -181,6 +181,8 @@ extern "C"
 	//	return: -1 if invalid params or already initialized
 	a3ret a3textureCreateFromFile(a3_Texture *texture_out, const a3byte name_opt[32], const a3byte *filePath);
 
+	a3ret a3cubemapCreateFromSources(a3_Texture* texture_out, char** sources, const a3byte name_opt[32]);
+
 	// A3: Create texture from raw data.
 	//	param texture_out: non-null pointer to uninitialized texture
 	//	param name_opt: optional cstring for short name/description; max 31 

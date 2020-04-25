@@ -32,7 +32,7 @@
 in vbVertexData {
 	mat4 vTangentBasis_view;
 	vec4 vTexcoord_atlas;
-	//vec4 vLocalReflectedSurfaceToViewerDir;
+	//vec4 vLocalReflectedSurfaceToViewerDir;	// For reflections
 	flat int vVertexID, vInstanceID, vModelID;
 };
 
@@ -59,8 +59,8 @@ uniform vec4 uColor;
 uniform sampler2D uImage00;	// color
 uniform sampler2D uImage01;	// normal
 uniform sampler2D uImage02;	// metallic
-//uniform sampler2D uImage03; // roughness
-//uniform sampler2D uImage04; // skybox cubemap
+uniform sampler2D uImage03; // roughness
+uniform samplerCube uImage04; // skybox cubemap
 
 
 // final color
@@ -166,6 +166,10 @@ void main()
 //	vec4 color[6] = vec4[6] ( vec4(1.0, 0.0, 0.0, 1.0), vec4(1.0, 1.0, 0.0, 1.0), vec4(0.0, 1.0, 0.0, 1.0), vec4(0.0, 1.0, 1.0, 1.0), vec4(0.0, 0.0, 1.0, 1.0), vec4(1.0, 0.0, 1.0, 1.0) );
 //	rtFragColor = color[vModelID % 6];
 
+	//vec4 normalizedReflectedSurfaceToViewerDir = normalize(vLocalReflectedSurfaceToViewerDir);
+	//vec3 reflectionSourceRGB = texture(uImage04, normalizedReflectedSurfaceToViewerDir.xyz).rgb;	//reflections all need cube map
+	//vec3 reflectionRGB = reflectionSourceRGB;
+
 	mat4 tangentBasis_view = mat4(
 		normalize(vTangentBasis_view[0]),
 		normalize(vTangentBasis_view[1]),
@@ -206,7 +210,9 @@ void main()
 
 	// textures
 	vec4 sample_dm = texture(uImage00, vTexcoord_atlas.xy);
-	vec4 sample_sm = texture(uImage02, vTexcoord_atlas.xy);
+	vec3 sample_sm = texture(uImage02, vTexcoord_atlas.xy).rgb;
+
+	//reflectionRGB *= sample_sm;
 
 
 	// final color
@@ -216,6 +222,7 @@ void main()
 	rtFragColor.a = sample_dm.a;
 
 	//rtFragColor = vec4(map_normal.rgb, 1.0);
+	//rtFragColor = vec4(reflectionRGB, 1.0);	// This will work as soon as Animal has cube map support
 
 	// output attributes
 	rtAtlasTexcoord = vTexcoord_atlas;

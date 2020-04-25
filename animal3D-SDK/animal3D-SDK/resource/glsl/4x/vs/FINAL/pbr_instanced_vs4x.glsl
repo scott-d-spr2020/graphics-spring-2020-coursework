@@ -73,7 +73,7 @@ void main()
 	vTangentBasis_view = t.modelViewNormalMat * tangentBasis_object;
 	vTangentBasis_view[3] = t.modelViewMat * aPosition;
 
-	vec4 vLocalSurfaceToViewerDir = normalize((t.modelViewMatInverse * vec4(0.0, 0.0, 0.0, 1.0) - aPosition));
+	//vec4 vLocalSurfaceToViewerDir = normalize((t.modelViewMatInverse * vec4(0.0, 0.0, 0.0, 1.0) - aPosition));
 	//vLocalReflectedSurfaceToViewerDir = normalize(reflect(vLocalSurfaceToViewerDir, aNormal));
 
 	gl_Position = t.modelViewProjectionMat * aPosition;

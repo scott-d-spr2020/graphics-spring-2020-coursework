@@ -468,6 +468,7 @@ void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* 
 	//	- activate shared textures including atlases if using
 	//	- shared animation data
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, activeCamera->projectionMat.mm);
+	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uVP, 1, viewProjectionMat.mm);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP_inv, 1, activeCamera->projectionMatInv.mm);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB, 1, projectionBiasMat.mm);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMat_inv.mm);
@@ -487,7 +488,7 @@ void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* 
 		// activate shadow map and other relevant textures
 		currentReadFBO = demoState->fbo_shadow_d32;
 		a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit06);
-		//a3textureActivate(demoState->tex_earth_dm, a3tex_unit07);
+		a3textureActivate(demoState->tex_skybox_clouds, a3tex_unit04);
 
 		// send more common uniforms
 		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
@@ -508,6 +509,7 @@ void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* 
 			a3textureActivate(texture_dm[k], a3tex_unit00);
 			a3textureActivate(texture_nm[k], a3tex_unit01);
 			a3textureActivate(texture_sm[k], a3tex_unit02);
+			a3textureActivate(texture_r[k], a3tex_unit03);
 			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
 			a3vertexDrawableActivateAndRender(drawable[k]);
 		}
@@ -531,8 +533,8 @@ void a3keyframes_render(a3_DemoState const* demoState, a3_Demo_Keyframes const* 
 	a3framebufferActivate(currentWriteFBO);
 
 	// composite skybox
-	currentDemoProgram = demoState->displaySkybox ? demoState->prog_drawTexture : demoState->prog_drawColorUnif;
-	a3demo_drawModelTexturedColored_invertModel(modelViewProjectionMat.m, viewProjectionMat.m, demoState->skyboxObject->modelMat.m, a3mat4_identity.m, currentDemoProgram, demoState->draw_skybox, demoState->tex_skybox_clouds, grey);
+	currentDemoProgram = demoState->displaySkybox ? demoState->prog_drawCubeMap : demoState->prog_drawColorUnif;
+	a3demo_drawModelTexturedColored_invertModel(modelViewProjectionMat.m, viewProjectionMat.m, demoState->skyboxObject->modelMat.m, a3mat4_identity.m, currentDemoProgram, demoState->draw_skybox, demoState->tex_skyCubeMap, grey);
 	a3demo_enableCompositeBlending();
 
 	// draw textured quad with previous pass image on it
