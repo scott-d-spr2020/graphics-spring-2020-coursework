@@ -235,15 +235,15 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 		a3_ProceduralGeometryDescriptor hiddenShapes[3] = { a3geomShape_none };
 		a3_ProceduralGeometryDescriptor proceduralShapes[4] = { a3geomShape_none };
 		const a3_DemoStateLoadedModel loadedShapes[1] = {
-			{ A3_DEMO_OBJ"teapot/teapot.obj", downscale20x.mm, a3model_calculateVertexTangents },
+			{ A3_DEMO_OBJ"Crate_OBJ.obj", downscale20x.mm, a3model_calculateVertexTangents },
 		};
-		const a3_DemoStateLoadedModel morphShapes[5] = {
-			{ A3_DEMO_OBJ"teapot/morph/teapot_base.obj", downscale20x.mm, a3model_calculateVertexTangents },
-			{ A3_DEMO_OBJ"teapot/morph/teapot_scale.obj", downscale20x.mm, a3model_calculateVertexTangents },
-			{ A3_DEMO_OBJ"teapot/morph/teapot_scale_x.obj", downscale20x.mm, a3model_calculateVertexTangents },
-			{ A3_DEMO_OBJ"teapot/morph/teapot_scale_y.obj", downscale20x.mm, a3model_calculateVertexTangents },
-			{ A3_DEMO_OBJ"teapot/morph/teapot_scale_z.obj", downscale20x.mm, a3model_calculateVertexTangents },
-		};
+		//const a3_DemoStateLoadedModel morphShapes[5] = {
+		//	{ A3_DEMO_OBJ"teapot/morph/teapot_base.obj", downscale20x.mm, a3model_calculateVertexTangents },
+		//	{ A3_DEMO_OBJ"teapot/morph/teapot_scale.obj", downscale20x.mm, a3model_calculateVertexTangents },
+		//	{ A3_DEMO_OBJ"teapot/morph/teapot_scale_x.obj", downscale20x.mm, a3model_calculateVertexTangents },
+		//	{ A3_DEMO_OBJ"teapot/morph/teapot_scale_y.obj", downscale20x.mm, a3model_calculateVertexTangents },
+		//	{ A3_DEMO_OBJ"teapot/morph/teapot_scale_z.obj", downscale20x.mm, a3model_calculateVertexTangents },
+		//};
 
 		const a3ubyte lightVolumeSlices = 8, lightVolumeStacks = 6;
 		const a3real lightVolumeRadius = a3real_one;
@@ -293,11 +293,11 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 		}
 
 		// morph targets loaded from mesh files
-		for (i = 0; i < morphModelsCount; ++i)
-		{
-			a3modelLoadOBJ(morphModelsData + i, morphShapes[i].filePath, morphShapes[i].flag, morphShapes[i].transform);
-			a3fileStreamWriteObject(fileStream, morphShapes + i, (a3_FileStreamWriteFunc)a3geometrySaveDataBinary);
-		}
+		//for (i = 0; i < morphModelsCount; ++i)
+		//{
+		//	a3modelLoadOBJ(morphModelsData + i, morphShapes[i].filePath, morphShapes[i].flag, morphShapes[i].transform);
+		//	a3fileStreamWriteObject(fileStream, morphShapes + i, (a3_FileStreamWriteFunc)a3geometrySaveDataBinary);
+		//}
 
 		// done
 		a3fileStreamClose(fileStream);
