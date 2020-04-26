@@ -115,7 +115,7 @@ void main()
 
 	mat3 TBN_norm = mat3(T, B, N);
 
-	//this part's the same as Lambert
+	// Use an expanded normal map texture and the TBN matrix multiplication to use per-frag normal maps
 	vec3 mapped_normal = texture(uImage02, texCoord).xyz;
 	mapped_normal = mapped_normal * 2.0 - 1.0;
 	mapped_normal = normalize(TBN_norm * mapped_normal);

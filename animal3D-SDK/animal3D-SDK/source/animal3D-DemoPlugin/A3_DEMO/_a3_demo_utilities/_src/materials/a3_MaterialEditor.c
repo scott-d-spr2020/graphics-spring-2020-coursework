@@ -39,7 +39,7 @@ void a3materialReset()
 
 void a3materialParseFile(ParserData* pData, a3byte const* data)
 {
-	pData->state->materials[matNum].numPasses = 1; //Arbitrary for now, should we define it in the file?
+	pData->state->materials[matNum].numPasses = 1; //Arbitrary for now, should we define it in the file? We don't support multiple passes yet
 	pData->state->materials[matNum].passes = calloc(pData->state->materials[matNum].numPasses, sizeof(a3_RenderPass *));
 	for (a3ui32 i = 0; i < pData->state->materials[matNum].numPasses; i++)
 	{
@@ -66,7 +66,7 @@ void a3materialParseFile(ParserData* pData, a3byte const* data)
 
 		token = strtok(NULL, "\n");
 	}
-	++matNum;
+	++matNum; //Increase the global material number after it's done reading in
 }
 
 void a3materialParserHandleKeyword(const a3byte* keyword, const a3byte* data, ParserData* pData)
@@ -83,13 +83,12 @@ void a3materialParserHandleKeyword(const a3byte* keyword, const a3byte* data, Pa
 	}
 	else if (keyword == keywords[2])
 	{
-		
+		// would handle RenderPackages if we had finished those
 	}
 }
 
 void a3materialParserHandleProgram(const a3byte* data, ParserData* pData)
 {
-	// Need to figure out better way of defining number of program names and keywords
 	int success = 0;
 	if (strstr((char*)data, (char*)shaderProgNames[0]))
 	{
@@ -144,9 +143,8 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 	// Refer to 994-1004 in demoState loading for what I think we should do
 	// This way, we can dynamically load in textures, and not have to worry about demoState having handles
 
-	//char* texType = strtok((char*)data, " ");
-	//char* dirtyFilePath = strtok(NULL, "\n");
-
+	//This is a workaround for splitting the data string without using strtok(data, " ") and strtok(NULL, "\n")
+	//because strtok(NULL, "\n") breaks the parsing loop.
 	char* temp = calloc(1, strlen(data));
 	strcpy(temp, data);
 	temp = temp + 1; //clear the \t
@@ -162,12 +160,15 @@ void a3materialParserHandleTexture(const a3byte* data, ParserData* pData)
 
 	strcpy(filePath, dirtyFilePath);
 
+	//Clean out the escape characters from the file path so we can actually load it
 	char c = filePath[strlen(filePath) - 1];
 	if (c == '\r' || c == '\n')
 	{
 		filePath[strlen(filePath) - 1] = '\0';
 	}
 
+	//Since all textures are mandated to be stored under resources, we can use this relative path
+	//The double strcat() fixes an issue where relativePath never gets reset, and has each path appended to it at the same time
 	char* relativePath = "../../../../";
 	char* tempPath = calloc(strlen(relativePath) + strlen(filePath) + 1, sizeof(char));
 	a3_Texture* tex;
