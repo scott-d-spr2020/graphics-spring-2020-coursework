@@ -59,6 +59,9 @@ layout (location = 1) out vec4 rtViewPosition;
 layout (location = 2) out vec4 rtNormal;
 layout (location = 3) out vec4 rtTexCoord;
 layout (location = 4) out vec4 rtDiffuseMap;
+layout (location = 5) out vec4 rtSpecularMap;
+layout (location = 6) out vec4 rtDiffuseTotal;
+layout (location = 7) out vec4 rtSpecularTotal;
 
 
 vec4 CalculateGooch(vec4 n_vector, int index)
@@ -95,4 +98,7 @@ void main()
 	rtNormal = vec4(mvNormal_normalized.xyz, 1.0);
 	rtViewPosition = coordData.mvPosition;
 	rtDiffuseMap = texture(mainTex, coordData.texCoord);
+	rtSpecularMap = vec4(0,0,0,1);
+	rtDiffuseTotal = vec4(1);
+	rtSpecularTotal = vec4(vec3(uLightCt/float(maxLightCount)),1);
 }
