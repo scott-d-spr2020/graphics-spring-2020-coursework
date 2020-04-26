@@ -46,6 +46,8 @@ a3ret drawPass(a3_DemoState const* demoState, const a3_VertexDrawable* drawable,
 	a3shaderProgramActivate(pass->shaderProgram->program);
 	a3textureActivate(mat->matTex_color, a3tex_unit00);
 	a3textureActivate(mat->matTex_metallic, a3tex_unit01);
+	a3textureActivate(mat->matTex_normal, a3tex_unit02);
+	a3textureActivate(mat->matTex_roughness, a3tex_unit03);
 	a3framebufferActivate(pass->writeFBO);
 	//a3framebufferBindDepthTexture(demoState->fbo_shadow_d32, a3tex_unit00); //this needs to be configurable because phong uses 06.
 	for (a3ui32 i = 0; i < pass->numUniforms; ++i)

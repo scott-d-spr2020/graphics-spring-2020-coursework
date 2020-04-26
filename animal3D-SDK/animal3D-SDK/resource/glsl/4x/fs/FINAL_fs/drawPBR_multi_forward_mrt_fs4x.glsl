@@ -102,7 +102,7 @@ vec4 CalculateSpecular(vec4 NVec, int index, LambertData lambert, vec3 VVec3d, o
 void main()
 {
 	//this part's the same as Lambert
-	vec3 mapped_normal = texture(uImage01, texCoord).xyz;
+	vec3 mapped_normal = texture(uImage02, texCoord).xyz;
 	mapped_normal = mapped_normal * 2.0 - 1.0;
 	mapped_normal = normalize(TBN * mapped_normal);
 
@@ -119,7 +119,7 @@ void main()
 		diffuse += tempDiff;
 	}
 	vec4 diffColor = texture(uImage00, texCoord) * diffuse;
-	vec4 specularColor = texture(uImage02, texCoord) * specular;
+	vec4 specularColor = texture(uImage01, texCoord) * specular;
 
 	rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.3f * ambientColor), 1.0);
 	//rtFragColor = vec4(vec3(uLightCt), 1.0);
@@ -128,7 +128,7 @@ void main()
 	rtNormal =  vec4(mapped_normal, 1.0);
 	rtTexCoord = vec4(texCoord, 0.0, 1.0);
 	rtDiffuseMap = texture(uImage00, texCoord);
-	rtSpecularMap = texture(uImage02, texCoord);
+	rtSpecularMap = texture(uImage01, texCoord);
 	rtDiffuseTotal = diffuse;
 	rtSpecularTotal = specular;
 }
