@@ -42,21 +42,22 @@ out CoordData
 {
 	vec2 texCoord;
 	vec4 mvPosition;
-	mat3 TBN;
+	mat4 TBN;
 } coordData;
 
 uniform mat4 uMV;
 uniform mat4 uMV_nrm;
 uniform mat4 uP;
 uniform mat4 uAtlas;
-uniform mat4 uMVPB_other;
 
 void main()
 {
 	coordData.mvPosition = uMV * aPosition;
 	coordData.texCoord = (uAtlas * inTexCoord0).xy;
 
-	coordData.TBN = mat3(normalize(uMV_nrm * aTangent), normalize(uMV_nrm * aBitangent), normalize(uMV_nrm * aNormal));
+	//coordData.TBN = mat3(normalize(uMV_nrm * aTangent), normalize(uMV_nrm * aBitangent), normalize(uMV_nrm * aNormal));
+	coordData.TBN = mat4(aTangent, aBitangent, aNormal, aPosition);
+	coordData.TBN = uMV_nrm * coordData.TBN;
 
 	gl_Position = uP * coordData.mvPosition;
 }

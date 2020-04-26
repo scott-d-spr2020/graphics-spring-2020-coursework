@@ -35,7 +35,7 @@ in CoordData
 {
 	vec2 texCoord;
 	vec4 mvPosition;
-	mat3 TBN;
+	mat4 TBN;
 };
 
 uniform sampler2D uImage00;	// color
@@ -101,10 +101,24 @@ vec4 CalculateSpecular(vec4 NVec, int index, LambertData lambert, vec3 VVec3d, o
 
 void main()
 {
+	mat4 tangentBasis_view = mat4(
+		normalize(TBN[0]),
+		normalize(TBN[1]),
+		normalize(TBN[2]),
+		TBN[3]
+	);
+	
+	vec4 T = tangentBasis_view[0];
+	vec4 B = tangentBasis_view[1];
+	vec4 N = tangentBasis_view[2];
+	vec4 P = tangentBasis_view[3];
+
+	mat3 TBN_norm = mat3(T, B, N);
+
 	//this part's the same as Lambert
 	vec3 mapped_normal = texture(uImage02, texCoord).xyz;
 	mapped_normal = mapped_normal * 2.0 - 1.0;
-	mapped_normal = normalize(TBN * mapped_normal);
+	mapped_normal = normalize(TBN_norm * mapped_normal);
 
 	vec4 diffuse = vec4(0.0, 0.0, 0.0, 1.0);
 	vec4 specular = vec4(0.0, 0.0, 0.0, 1.0);
@@ -123,6 +137,7 @@ void main()
 
 	rtFragColor = vec4(diffColor.rgb + specularColor.rgb + (0.3f * ambientColor), 1.0);
 	//rtFragColor = vec4(vec3(uLightCt), 1.0);
+	//rtFragColor = vec4(mapped_normal.xyz, 1.0);
 
 	rtViewPosition = mvPosition;
 	rtNormal =  vec4(mapped_normal, 1.0);
