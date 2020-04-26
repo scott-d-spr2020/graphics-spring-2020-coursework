@@ -117,7 +117,7 @@ extern "C"
 		demoStateMaxCount_vertexArray = 8,
 		demoStateMaxCount_drawable = 16,
 
-		demoStateMaxCount_shaderProgram = 32,
+		demoStateMaxCount_shaderProgram = 64,
 		demoStateMaxCount_uniformBuffer = demoStateMaxCount_lightUniformBuffer + demoStateMaxCount_transformUniformBuffer + demoStateMaxCount_miscUniformBuffer,
 
 		demoStateMaxCount_texture = 16,
