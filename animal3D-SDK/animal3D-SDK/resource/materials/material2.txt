@@ -1,5 +1,5 @@
 shaderprogram
-	prog:draw-Phong-mul-fwd-mrt
+	Phong
 texture
 	color resource/tex/stone/stone_dm.png
 texture

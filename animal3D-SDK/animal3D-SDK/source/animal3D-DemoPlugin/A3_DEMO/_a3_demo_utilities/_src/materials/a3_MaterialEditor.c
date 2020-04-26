@@ -17,9 +17,17 @@ a3byte const* texTypeStrings[4] =
 	"roughness"
 };
 
+//a3byte const* shaderProgNames[32] = {
+//	"prog:draw-Phong-mul-fwd-mrt",
+//	"prog:draw-nonphoto-multi-mrt"
+//}
 a3byte const* shaderProgNames[32] = {
-	"prog:draw-Phong-mul-fwd-mrt",
-	"prog:draw-nonphoto-multi-mrt"
+	"Phong",
+	"Cel",
+	"Gooch",
+	"PBR",
+	"Shadow-Ph",
+	"Shadow-C"
 };
 
 int matNum = 0;
@@ -91,6 +99,30 @@ void a3materialParserHandleProgram(const a3byte* data, ParserData* pData)
 	else if (strstr((char*)data, (char*)shaderProgNames[1]))
 	{
 		initRenderPass(pData->state->materials[matNum].passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawNonphoto_multi_mrt);
+		success = 1;
+	}
+	else if (strstr((char*)data, (char*)shaderProgNames[2]))
+	{
+		//gooch
+		//initRenderPass(pData->state->materials[matNum].passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawNonphoto_multi_mrt);
+		//success = 1;
+	}
+	else if (strstr((char*)data, (char*)shaderProgNames[3]))
+	{
+		//pbr
+		initRenderPass(pData->state->materials[matNum].passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_PBR_rendering);
+		success = 1;
+	}
+	else if (strstr((char*)data, (char*)shaderProgNames[4]))
+	{
+		//phong-shadow
+		initRenderPass(pData->state->materials[matNum].passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawPhong_multi_shadow_mrt);
+		success = 1;
+	}
+	else if (strstr((char*)data, (char*)shaderProgNames[5]))
+	{
+		//cel-shadow
+		initRenderPass(pData->state->materials[matNum].passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawNP_multi_shadow_mrt);
 		success = 1;
 	}
 	else

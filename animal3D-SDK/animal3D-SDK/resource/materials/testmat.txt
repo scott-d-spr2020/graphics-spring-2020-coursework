@@ -1,5 +1,5 @@
 shaderprogram
-	prog:draw-Phong-mul-fwd-mrt
+	Phong
 texture
 	color resource/tex/crate/crate4_low_lambert1_BaseColor.tga
 texture

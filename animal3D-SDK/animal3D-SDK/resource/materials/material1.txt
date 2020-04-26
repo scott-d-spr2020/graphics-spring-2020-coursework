@@ -1,5 +1,5 @@
 shaderprogram
-	prog:draw-nonphoto-multi-mrt
+	Cel
 texture
 	color resource/tex/earth/2k/earth_dm_2k.png
 texture
