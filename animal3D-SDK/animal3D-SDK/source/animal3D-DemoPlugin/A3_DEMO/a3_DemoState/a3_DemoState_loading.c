@@ -522,6 +522,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				drawPhong_multi_forward_mrt_fs[1];
 			a3_DemoStateShader
 				drawPBR_multi_mrt_fs[1];
+			a3_DemoStateShader
+				drawGooch_multi_mrt_fs[1];
 		};
 	} shaderList = {
 		{
@@ -576,7 +578,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 04-multipass
 			{ { { 0 },	"shdr-fs:draw-tex-outline",			a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/drawTexture_outline_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Phong-multi-shadow",	a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/drawPhong_multi_shadow_mrt_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-NP-multi-shadow",	a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/drawNonphoto_multi_shadow_mrt_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-NP-multi-shadow",		a3shader_fragment,	1,{ A3_DEMO_FS"04-multipass/drawNonphoto_multi_shadow_mrt_fs4x.glsl" } } },
 			// 05-bloom
 			{ { { 0 },	"shdr-fs:draw-tex-bright",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/drawTexture_brightPass_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-tex-blur",			a3shader_fragment,	1,{ A3_DEMO_FS"05-bloom/drawTexture_blurGaussian_fs4x.glsl" } } },
@@ -592,6 +594,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 07-curves
 			{ { { 0 },	"shdr-fs:draw-Phong-mul-fwd-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"07-curves/drawPhong_multi_forward_mrt_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-pbr-mul-mrt",			a3shader_fragment,	1,{ A3_DEMO_FS"FINAL_fs/drawPBR_multi_forward_mrt_fs4x.glsl" } } },
+			{ {	{ 0 }, "shdr-fs:draw-Gooch-multi-mrt",		a3shader_fragment,  1,{ A3_DEMO_FS"FINAL_fs/drawGooch_multi_mrt_fs4x.glsl" } } }
 			
 		}
 	};
@@ -817,6 +820,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-pbr");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passPBRData_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPBR_multi_mrt_fs->shader);
+
+	currentDemoProg = demoState->prog_Gooch_multi_mrt;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Gooch-multi-mrt");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawGooch_multi_mrt_fs->shader);
 
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs

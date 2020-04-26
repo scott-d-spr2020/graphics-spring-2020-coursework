@@ -424,5 +424,8 @@
     <None Include="..\..\..\resource\glsl\4x\vs\FINAL_vs\pbr_instanced_vs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\vs</Filter>
     </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\FINAL_fs\drawGooch_multi_mrt_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs</Filter>
+    </None>
   </ItemGroup>
 </Project>
