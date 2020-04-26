@@ -82,6 +82,7 @@ extern "C"
 		a3ui32 numUniforms;
 	};
 	
+	//TALK 1
 	struct a3_RenderMaterial
 	{
 		a3_RenderPass** passes;						//array of POINTERS to render passes. Not sure if passes can be reused yet. Probably?

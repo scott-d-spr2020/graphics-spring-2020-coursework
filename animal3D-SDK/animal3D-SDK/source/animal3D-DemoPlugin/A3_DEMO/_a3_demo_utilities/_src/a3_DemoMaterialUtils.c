@@ -33,6 +33,7 @@ a3ret addRenderUniform(a3_RenderPass* pass, int unifIndex, a3_UniformSwitch unif
 	return 0;
 }
 
+//TALK 5
 //calls drawPass multiple times. extraData is currently used for passing in color, modelmatrix, and lighting data
 a3ret drawMaterial(a3_DemoState const* demoState, const a3_VertexDrawable* drawable, const a3_RenderMaterial* mat, const void** extraData, a3ui32 dataSize)
 {

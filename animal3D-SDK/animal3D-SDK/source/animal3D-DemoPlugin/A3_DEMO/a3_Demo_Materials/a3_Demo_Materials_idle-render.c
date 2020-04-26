@@ -505,6 +505,7 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 		//	- modelview for normals
 		//	- per-object animation data
 
+		//TALK 4
 		for (currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject,
 			j = (a3ui32)(currentSceneObject - demoState->sceneObject), k = 0;
 			currentSceneObject <= endSceneObject;

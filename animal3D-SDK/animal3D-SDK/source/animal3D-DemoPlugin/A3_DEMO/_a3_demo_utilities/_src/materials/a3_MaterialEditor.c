@@ -37,6 +37,7 @@ void a3materialReset()
 	matNum = 0;
 }
 
+//TALK 3
 void a3materialParseFile(ParserData* pData, a3byte const* data)
 {
 	pData->state->materials[matNum].numPasses = 1; //Arbitrary for now, should we define it in the file? We don't support multiple passes yet

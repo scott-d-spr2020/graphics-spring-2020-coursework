@@ -443,6 +443,7 @@ A3DYLIBSYMBOL void a3demoCB_keyCharPress(a3_DemoState *demoState, a3i32 asciiKey
 		a3demo_loadShaders(demoState);
 		break;
 
+	//TALK 6
 	case 'O':
 		a3demo_reloadMaterials(demoState);
 		a3materialReset();

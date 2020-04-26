@@ -28,7 +28,7 @@
 
 // ****TO-DO: 
 //	0) nothing
-
+//TALK 8
 const int maxLightCount = 4;
 
 in CoordData

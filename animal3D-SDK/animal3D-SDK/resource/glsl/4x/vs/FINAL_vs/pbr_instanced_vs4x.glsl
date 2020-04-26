@@ -30,7 +30,7 @@
 
 // ****TO-DO: 
 //	0) nothing
-
+//TALK 7
 layout (location = 0) in vec4 aPosition;
 layout (location = 2) in vec4 aNormal;
 layout (location = 8) in vec4 inTexCoord0;

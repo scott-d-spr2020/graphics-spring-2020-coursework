@@ -1784,6 +1784,7 @@ void a3demo_reloadMaterials(a3_DemoState* demoState)
 	memset(&demoState->materials[4], 0, sizeof(a3_RenderMaterial));
 }
 
+//TALK 2
 void a3demo_loadMaterials(a3_DemoState* demoState)
 {
 	//File loading
