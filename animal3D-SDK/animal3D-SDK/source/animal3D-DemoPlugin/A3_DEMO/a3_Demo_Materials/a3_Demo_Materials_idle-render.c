@@ -96,11 +96,11 @@ void a3materials_render_controls(a3_DemoState const* demoState, a3_Demo_Material
 	};
 	a3byte const* targetText_scene[materials_target_scene_max] = {
 		"Color target 0: FINAL DISPLAY COLOR",
-		"Color target 1: Attrib data: atlas texcoord",
-		"Color target 2: Attrib data: view tangent",
+		"Color target 1: Attrib data: view position",
+		"Color target 2: Attrib data: view normal",
 		"Color target 3: Attrib data: view bitangent",
-		"Color target 4: Attrib data: view normal",
-		"Color target 5: Attrib data: view position",
+		"Color target 4: Attrib data: view diffuse map or shadow coord",
+		"Color target 5: Attrib data: view specular map",
 		"Color target 6: Lighting: diffuse total",
 		"Color target 7: Lighting: specular total",
 		"Depth buffer",
