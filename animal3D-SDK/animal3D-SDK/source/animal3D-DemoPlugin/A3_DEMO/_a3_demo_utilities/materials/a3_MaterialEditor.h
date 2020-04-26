@@ -45,6 +45,7 @@ extern "C"
 
 //Data holder for the parser to access certain things
 //Necessary to get both the proper uniform count, demoState (for programs), and renderMaterial from loading to the parser
+// We store materials under DemoState rather than per-object so we aren't loading copies of materials.
 struct ParserData
 {
 	a3_DemoState* state;
@@ -52,14 +53,36 @@ struct ParserData
 	int numUnifs;
 };
 
+//Just reset the material number to 0 on reload
+//it's...... it's just... oh god it's just data
 void a3materialReset();
 
+// Parsing function callback used by a3streamObjetRead for loading a material
+//Params:
+//parserData: pointer to a struct created in loading and passed in. Init parserData with the demoState and target number of uniforms.
+//data: the a3FileStream data, which is the file contents. It's just data.
 void a3materialParseFile(ParserData* parserData, a3byte const* data);
 
+//Handle keywords encountered by the main parsing loop
+//Params:
+//keyword: the single word that the parser found and identified as a keyword
+//data: the line of data following the keyword (contains the data pertinent to the keyword, i.e a shader program or texture)
+//pData: the parser data containing demoState and num uniforms
+//It's all just data.
 void a3materialParserHandleKeyword(const a3byte* keyword, const a3byte* data, ParserData* pData);
 
+//Handle a shader program found in the file, and load it to the corresponding material along with all common uniforms
+//Params:
+//data: the name of the shader program
+//pData: the same parser data with demoState and num uniforms.
+//Still all just data.
 void a3materialParserHandleProgram(const a3byte* data, ParserData* pData);
 
+//Handle a texture found in the file, and load it to the corresponding material's texture handle according to its type
+//Params:
+//data: line containing the texture type and file path (always under resources), separated by a space
+//pData: the same parser data with demoState and num uniforms
+//JUST DATA JUST DATA JUST DATA JUST DATA
 void a3materialParserHandleTexture(const a3byte* data, ParserData* pData);
 
 
