@@ -52,6 +52,7 @@ extern "C"
 
 //-----------------------------------------------------------------------------
 
+	//determines the uniform dataType, so we can reuse the uniform enums elsewhere
 	enum a3_UniformSwitch
 	{
 		uniformSwitch_Int = 0,
@@ -65,20 +66,10 @@ extern "C"
 		uniformSwitch_ColorBuffer = 8
 	};
 
-	enum a3_MaterialTextureType
-	{
-		textype_color = 0,
-		textype_normal,
-		textype_metallic,
-		textype_roughness,
-
-		total_textypes
-	};
-
 	struct a3_RenderPass //TODO we only support floats currently. How do we support doubles and ints?
 	{
 		a3_Framebuffer* writeFBO;					// output
-		a3_DemoStateShaderProgram* shaderProgram;			// shader program to use
+		a3_DemoStateShaderProgram* shaderProgram;	// shader program to use
 		a3i32* uniformHandles;						// the handle (or in some cases texture unit) to pass uniforms to. Used as the index for UBOs
 		a3i32* uniformTypes;						// is it a vec3? a mat4? used in conjunction with uniformFlags.
 		a3_UniformSwitch* uniformFlags;				// we're combining uniform and uniformMat, so this distinguishes what to parse the uniformType as
@@ -89,15 +80,11 @@ extern "C"
 		a3ui32* unifDataCounts;						// how many of a uniform to pass. Will usually be 1.
 		a3ui32* unifSourceTargets;					// the target for texture units
 		a3ui32 numUniforms;
-		a3_MaterialTextureType requiredTextures[a3tex_unitMax];		// list of required textures for this pass
-		a3ui32 numReqTextures;
 	};
 	
 	struct a3_RenderMaterial
 	{
 		a3_RenderPass** passes;						//array of POINTERS to render passes. Not sure if passes can be reused yet. Probably?
-
-		//TODO array of maps for each pass. Needs restructuring probably. Maybe map[] and a bitstring that's sizeof(passes)/sizeof(passes[0]) long?
 
 		// This is the way it's done in demoState.h
 		union

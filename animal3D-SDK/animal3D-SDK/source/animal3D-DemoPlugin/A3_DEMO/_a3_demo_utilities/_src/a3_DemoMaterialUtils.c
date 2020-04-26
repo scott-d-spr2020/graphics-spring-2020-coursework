@@ -2,6 +2,7 @@
 #include "..\a3_DemoRenderUtils.h"
 #include <assert.h>
 
+//when given a non-null renderpass pointer, defines its uniform count, fbo, and shader program, as well as allocating space for all the uniforms
 a3ret initRenderPass(a3_RenderPass* pass, a3ui32 uniformCount, a3_Framebuffer* writeFBO, a3_DemoStateShaderProgram* shaderProgram)
 {
 	pass->numUniforms = uniformCount;
@@ -18,6 +19,7 @@ a3ret initRenderPass(a3_RenderPass* pass, a3ui32 uniformCount, a3_Framebuffer* w
 	return 0;
 }
 
+//adds a uniform to a renderpass. No guard exists for running past the end of the array currently, so be careful
 a3ret addRenderUniform(a3_RenderPass* pass, int unifIndex, a3_UniformSwitch unifSwitch, a3i32 unifType, a3i32 unifHandle, a3ui32 count, void* source, a3_UnifFunction sourceFunction, a3boolean functionFlag)
 {
 	pass->uniformFlags[unifIndex] = unifSwitch;
@@ -31,6 +33,7 @@ a3ret addRenderUniform(a3_RenderPass* pass, int unifIndex, a3_UniformSwitch unif
 	return 0;
 }
 
+//calls drawPass multiple times. extraData is currently used for passing in color, modelmatrix, and lighting data
 a3ret drawMaterial(a3_DemoState const* demoState, const a3_VertexDrawable* drawable, const a3_RenderMaterial* mat, const void** extraData, a3ui32 dataSize)
 {
 	for (a3ui32 i = 0; i < mat->numPasses; ++i)
@@ -40,23 +43,26 @@ a3ret drawMaterial(a3_DemoState const* demoState, const a3_VertexDrawable* drawa
 	return 0;
 }
 
+//renders a pass for a drawable
 a3ret drawPass(a3_DemoState const* demoState, const a3_VertexDrawable* drawable, const a3_RenderMaterial* mat, a3ui32 index, void** extraData, a3ui32 dataSize)
 {
 	const a3_RenderPass* pass = mat->passes[index];
-	a3shaderProgramActivate(pass->shaderProgram->program);
-	a3textureActivate(mat->matTex_color, a3tex_unit00);
-	a3textureActivate(mat->matTex_metallic, a3tex_unit01);
-	a3textureActivate(mat->matTex_normal, a3tex_unit02);
-	a3textureActivate(mat->matTex_roughness, a3tex_unit03);
+	a3shaderProgramActivate(pass->shaderProgram->program);	//activate shader program
+	a3textureActivate(mat->matTex_color, a3tex_unit00);		//activate diffuse map
+	a3textureActivate(mat->matTex_metallic, a3tex_unit01);	//activate specular/metallic map, if it exists
+	a3textureActivate(mat->matTex_normal, a3tex_unit02);	//activate normal map, if it exists
+	a3textureActivate(mat->matTex_roughness, a3tex_unit03);	//activate roughness map, if it exists
 	a3framebufferActivate(pass->writeFBO);
-	//a3framebufferBindDepthTexture(demoState->fbo_shadow_d32, a3tex_unit00); //this needs to be configurable because phong uses 06.
+
 	for (a3ui32 i = 0; i < pass->numUniforms; ++i)
 	{
 		if ((pass->sources[i] != NULL && pass->sources[i] != (void*)0xcdcdcdcdcdcdcdcd)
 			|| (pass->sourceFunctions[i] != NULL && pass->sourceFunctions[i] != (a3_UnifFunction)0xcdcdcdcdcdcdcdcd)) //uninitialized memory
 		{
+			//if a source/sourceFunction exists, get the source void*
 			void* source = pass->sourceFunctionFlags[i] ? pass->sourceFunctions[i](demoState) : pass->sources[i];
-			//start of loading uniforms, not sure what else I'm missing or if this works.
+
+			//what data type is the uniform?
 			switch (pass->uniformFlags[i])
 			{
 			case uniformSwitch_Int:
@@ -68,15 +74,14 @@ a3ret drawPass(a3_DemoState const* demoState, const a3_VertexDrawable* drawable,
 			case uniformSwitch_Double:
 				a3shaderUniformSendDouble(pass->uniformTypes[i], pass->uniformHandles[i], pass->unifDataCounts[i], (const a3f64*)source);
 				break;
-			case uniformSwitch_FloatMat: //this only supports floats. How do we support doubles?
+			case uniformSwitch_FloatMat:
 				a3shaderUniformSendFloatMat(pass->uniformTypes[i], 0, pass->uniformHandles[i], pass->unifDataCounts[i], (const a3f32*)source);
 				break;
 			case uniformSwitch_DoubleMat:
 				a3shaderUniformSendDoubleMat(pass->uniformTypes[i], 0, pass->uniformHandles[i], pass->unifDataCounts[i], (const a3f64*)source);
 				break;
 			case uniformSwitch_UniformBuffer:
-				//if it's a uniform buffer, the handle is just the index to bind it at. Usually a 0, 1, or 4. I'm not sure how this would be programmatically solved.
-				//look up ubTransformStack and ubo_transformStack_model for more information.
+				//this is currently-unused, but is known to work because an older version of the render system used it
 				a3shaderUniformBufferActivate((const a3_UniformBuffer*)source, pass->uniformHandles[i]);
 				break;
 			case uniformSwitch_TextureUnit:
@@ -92,6 +97,7 @@ a3ret drawPass(a3_DemoState const* demoState, const a3_VertexDrawable* drawable,
 			}
 		}
 	}
+	//calculate extra matrices
 	sendMatrices(demoState, pass->shaderProgram, extraData);
 	a3vertexDrawableActivateAndRender(drawable);
 	return 0;
@@ -106,6 +112,7 @@ a3_DemoProjector* getActiveCamera(a3_DemoState* demoState)
 	return (demoState->projector + demoState->activeCamera);
 }
 
+//function pointers! This data isn't constant so it needs to be retrieved at runtime. 
 void* uniform_retrieveActiveCamProjMat(a3_DemoState* demoState)
 {
 	return (void*)getActiveCamera(demoState)->projectionMat.mm;
@@ -204,6 +211,7 @@ a3ret registerCommonUniforms(a3_DemoState* demoState, a3_RenderPass* pass)
 	return 0;
 }
 
+//recreates a lot of idle-render, unfortunately, but the data's needed in both places and we needed to recreate a3demo_drawModelLighting_bias_other() WITHIN a renderpass
 a3ret sendMatrices(const a3_DemoState* state, a3_DemoStateShaderProgram * program, void** extraData)
 {
 	const a3mat4 bias = {
@@ -220,7 +228,7 @@ a3ret sendMatrices(const a3_DemoState* state, a3_DemoStateShaderProgram * progra
 		-1.0f, -1.0f, -1.0f, 1.0f,
 	};
 
-	//this cast shouldn't be here but I'm not going back to fix this now.
+	//forces the state to not be const.
 	a3_DemoProjector * activeCamera = getActiveCamera((a3_DemoState*)state);
 	a3mat4 viewMat = activeCamera->sceneObject->modelMatInv;
 	a3mat4 viewProjectionMat = activeCamera->viewProjectionMat;
@@ -232,8 +240,6 @@ a3ret sendMatrices(const a3_DemoState* state, a3_DemoStateShaderProgram * progra
 	a3real4x4ConcatR(bias.m, viewProjectionBiasMat_other.m);
 	modelViewProjectionBiasMat_other = viewProjectionBiasMat_other;
 
-	//a3real4x4ConcatR(bias.m, projectionBiasMat.m);
-	//a3real4x4ConcatL(projectionBiasMat_inv.m, unbias.m);
 	a3real4x4Product(projectionBiasMat.m, bias.m, activeCamera->projectionMat.m);
 	a3real4x4Product(projectionBiasMat_inv.m, activeCamera->projectionMatInv.m, unbias.m);
 

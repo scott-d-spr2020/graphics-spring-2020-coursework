@@ -1,5 +1,5 @@
 shaderprogram
-	Phong
+	Gooch
 texture
 	color resource/tex/mars/1k/mars_1k_dm.png
 texture
