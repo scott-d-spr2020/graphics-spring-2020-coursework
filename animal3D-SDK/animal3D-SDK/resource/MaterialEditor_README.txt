@@ -1,8 +1,12 @@
 Instructions for how to use Material Editor .txt format:
 
 Available Shader Programs:
-	prog:draw-Phong-mul-fwd-mrt
-	prog:draw-nonphoto-multi-mrt
+	Phong
+	Cel
+	Gooch
+	PBR
+	Shadow-Ph
+	Shadow-C
 
 Available Texture Types:
 	color
@@ -16,10 +20,12 @@ Then, choose what textures you want to use. A texture declaration is one of the 
 
 Each material must be stored under 'resource/materials'
 
+To load in your material, go into a3_DemoState_loading.c, a3demo_loadMaterials() and follow the format for loading currently in place.
+
 Example given below:
 
 shaderprogram
-	prog:draw-Phong-mul-fwd-mrt
+	PBR
 texture
 	color tex/crate/crate4_low_lambert1_BaseColor.tga
 texture
