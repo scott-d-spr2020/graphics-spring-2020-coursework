@@ -270,6 +270,7 @@
     <None Include="..\..\..\resource\glsl\4x\fs\07-curves\drawPhong_multi_forward_mrt_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\drawColorAttrib_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\drawColorUnif_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\fs\FINAL_fs\drawGooch_multi_mrt_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\FINAL_fs\drawPBR_multi_forward_mrt_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\midterm-SSAO-Cross\drawPhong_cross_deferred_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\midterm-SSAO-Cross\drawSSAO_multi_deferred_fs4x.glsl" />
