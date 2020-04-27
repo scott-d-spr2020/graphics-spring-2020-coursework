@@ -1788,7 +1788,7 @@ void a3demo_reloadMaterials(a3_DemoState* demoState)
 void a3demo_loadMaterials(a3_DemoState* demoState)
 {
 	//File loading
-	a3_Stream fs[5] = { 0, 0, 0, 0, 0 }; //is this memset?
+	a3_Stream fs[5] = { 0, 0, 0, 0, 0 };
 	//a3_RenderMaterial rm[1] = { 0 };
 	a3ui32 fileLength = a3streamLoadContents(&fs[0], "../../../../resource/materials/testmat.txt");
 

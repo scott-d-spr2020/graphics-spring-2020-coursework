@@ -93,11 +93,13 @@ void a3materialParserHandleProgram(const a3byte* data, ParserData* pData)
 	int success = 0;
 	if (strstr((char*)data, (char*)shaderProgNames[0]))
 	{
+		//phong
 		initRenderPass(pData->state->materials[matNum].passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawPhong_multi_mrt);
 		success = 1;
 	}
 	else if (strstr((char*)data, (char*)shaderProgNames[1]))
 	{
+		//cel
 		initRenderPass(pData->state->materials[matNum].passes[0], pData->numUnifs, pData->state->fbo_scene_c16d24s8_mrt, pData->state->prog_drawNonphoto_multi_mrt);
 		success = 1;
 	}

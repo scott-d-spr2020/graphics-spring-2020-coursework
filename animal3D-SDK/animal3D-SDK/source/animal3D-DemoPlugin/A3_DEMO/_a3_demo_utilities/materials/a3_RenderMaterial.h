@@ -45,7 +45,6 @@ extern "C"
 	typedef enum a3_UniformSwitch				a3_UniformSwitch;
 	typedef enum a3_MaterialTextureType			a3_MaterialTextureType;
 	//https://stackoverflow.com/questions/19751015/void-function-pointer
-	//https://stackoverflow.com/questions/19751015/void-function-pointer
 	typedef void* (*a3_UnifFunction)();
 #endif	// __cplusplus
 
@@ -66,7 +65,7 @@ extern "C"
 		uniformSwitch_ColorBuffer = 8
 	};
 
-	struct a3_RenderPass //TODO we only support floats currently. How do we support doubles and ints?
+	struct a3_RenderPass
 	{
 		a3_Framebuffer* writeFBO;					// output
 		a3_DemoStateShaderProgram* shaderProgram;	// shader program to use
@@ -75,8 +74,8 @@ extern "C"
 		a3_UniformSwitch* uniformFlags;				// we're combining uniform and uniformMat, so this distinguishes what to parse the uniformType as
 		void** sources;								// sources can be ANYTHING. We're relying on the uniform type to help distinguish things.
 		//void* (**sourceFunctions)();
-		a3_UnifFunction* sourceFunctions;
-		a3boolean* sourceFunctionFlags;
+		a3_UnifFunction* sourceFunctions;			// sources can also be functions
+		a3boolean* sourceFunctionFlags;				// is the source a function?
 		a3ui32* unifDataCounts;						// how many of a uniform to pass. Will usually be 1.
 		a3ui32* unifSourceTargets;					// the target for texture units
 		a3ui32 numUniforms;
@@ -85,7 +84,7 @@ extern "C"
 	//TALK 1
 	struct a3_RenderMaterial
 	{
-		a3_RenderPass** passes;						//array of POINTERS to render passes. Not sure if passes can be reused yet. Probably?
+		a3_RenderPass** passes;						//array of POINTERS to render passes.
 
 		// This is the way it's done in demoState.h
 		union
@@ -102,7 +101,6 @@ extern "C"
 		};
 
 		a3ui32 numPasses;
-		a3ui32 numMaps;
 	};
 
 //-----------------------------------------------------------------------------

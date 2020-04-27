@@ -98,7 +98,7 @@ void a3materials_render_controls(a3_DemoState const* demoState, a3_Demo_Material
 		"Color target 0: FINAL DISPLAY COLOR",
 		"Color target 1: Attrib data: view position",
 		"Color target 2: Attrib data: view normal",
-		"Color target 3: Attrib data: view bitangent",
+		"Color target 3: Attrib data: view texcoord",
 		"Color target 4: Attrib data: view diffuse map or shadow coord",
 		"Color target 5: Attrib data: view specular map",
 		"Color target 6: Lighting: diffuse total",
@@ -516,7 +516,7 @@ void a3materials_render(a3_DemoState const* demoState, a3_Demo_Materials const* 
 				//extra data that's needed for sendMatrices()
 				const void* arr[] = { rgba4[k + 3].v, lightSz, lightSzInvSq, lightPos, lightCol, currentSceneObject->modelMat.m };
 				//draws the material
-				drawMaterial(demoState, drawable[k], currentSceneObject->renderMaterial, arr, 1);
+				drawMaterial(demoState, drawable[k], currentSceneObject->renderMaterial, arr, 6);
 			}
 		}
 	}	break;
